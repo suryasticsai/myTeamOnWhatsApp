@@ -10,12 +10,12 @@
             --bg: #111b21;
             --panel: #202c33;
             --panel-2: #2a3942;
-            --hover: #202c33;
+            --hover: #2a3942;
             --active: #2a3942;
             --txt: #e9edef;
             --txt-2: #8696a0;
             --accent: #00a884;
-            --accent-deep: #103529;
+            --accent-deep: #0b2f2a;
             --bubble-in: #202c33;
             --bubble-out: #005c4b;
             --chat-bg: #0b141a;
@@ -23,35 +23,35 @@
             --border: rgba(134, 150, 160, .14);
             --icon: #aebac1;
             --danger: #ea4335;
+            --shadow: 0 1px 3px rgba(0, 0, 0, .3);
         }
         * {
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
+            margin: 0;
+            padding: 0;
         }
         html,
         body {
             height: 100%;
-            margin: 0;
+            overflow: hidden;
         }
         body {
             font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif;
             color: var(--txt);
-            overflow: hidden;
-            background: radial-gradient(900px 500px at 8% -10%, rgba(0, 168, 132, .07), transparent 60%),
-                radial-gradient(800px 600px at 100% 110%, rgba(83, 189, 235, .05), transparent 55%), #0a0f12;
+            background: #0a0f12;
         }
         ::selection {
             background: rgba(0, 168, 132, .35);
         }
-        *::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        ::-webkit-scrollbar {
+            width: 5px;
         }
-        *::-webkit-scrollbar-thumb {
-            background: rgba(134, 150, 160, .28);
+        ::-webkit-scrollbar-thumb {
+            background: rgba(134, 150, 160, .3);
             border-radius: 3px;
         }
-        *::-webkit-scrollbar-track {
+        ::-webkit-scrollbar-track {
             background: transparent;
         }
         button {
@@ -61,6 +61,7 @@
             border: 0;
             cursor: pointer;
             padding: 0;
+            outline: 0;
         }
         img {
             display: block;
@@ -77,17 +78,7 @@
             display: flex;
             height: 100vh;
             width: 100%;
-            animation: appIn .4s ease both;
-        }
-        @keyframes appIn {
-            from {
-                opacity: 0;
-                transform: scale(.995);
-            }
-            to {
-                opacity: 1;
-                transform: none;
-            }
+            background: var(--bg);
         }
 
         /* ── sidebar ── */
@@ -101,14 +92,18 @@
             border-right: 1px solid var(--border);
             position: relative;
             z-index: 5;
+            height: 100vh;
+            overflow: hidden;
         }
         .s-head {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px 16px;
+            padding: 8px 16px;
             height: 60px;
             background: var(--panel);
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--border);
         }
         .avatar {
             width: 40px;
@@ -116,6 +111,7 @@
             border-radius: 50%;
             object-fit: cover;
             background: var(--panel-2);
+            flex-shrink: 0;
         }
         .s-actions {
             display: flex;
@@ -133,14 +129,14 @@
             position: relative;
         }
         .ibtn:hover {
-            background: rgba(134, 150, 160, .15);
+            background: rgba(134, 150, 160, .12);
         }
         .ibtn:active {
             transform: scale(.92);
         }
         .ibtn svg {
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             fill: var(--icon);
         }
 
@@ -148,17 +144,18 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 8px 12px;
+            padding: 6px 12px;
             background: var(--bg);
+            flex-shrink: 0;
         }
         .search-box {
             flex: 1;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: var(--panel);
             border-radius: 8px;
-            height: 35px;
+            height: 36px;
             padding: 0 12px;
             transition: box-shadow .2s;
         }
@@ -179,6 +176,7 @@
             color: var(--txt);
             font-size: 14px;
             min-width: 0;
+            height: 100%;
         }
         .search-box input::placeholder {
             color: var(--txt-2);
@@ -186,20 +184,23 @@
 
         .tabs {
             display: flex;
-            gap: 8px;
-            padding: 6px 12px 10px;
+            gap: 4px;
+            padding: 4px 12px 8px;
             background: var(--bg);
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--border);
         }
         .tab {
-            padding: 6px 14px;
-            border-radius: 18px;
-            font-size: 13.5px;
+            padding: 5px 14px;
+            border-radius: 16px;
+            font-size: 13px;
             color: var(--txt-2);
-            background: var(--panel);
+            background: transparent;
             transition: all .18s;
+            font-weight: 500;
         }
         .tab:hover {
-            background: var(--panel-2);
+            background: var(--panel);
         }
         .tab.active {
             background: var(--accent-deep);
@@ -210,6 +211,7 @@
             flex: 1;
             overflow-y: auto;
             overscroll-behavior: contain;
+            padding-bottom: 4px;
         }
         .chat-item {
             display: flex;
@@ -219,6 +221,7 @@
             position: relative;
             transition: background .12s;
             animation: itemIn .25s ease both;
+            border-bottom: 1px solid var(--border);
         }
         @keyframes itemIn {
             from {
@@ -236,15 +239,6 @@
         .chat-item.active {
             background: var(--active);
         }
-        .chat-item::after {
-            content: '';
-            position: absolute;
-            left: 78px;
-            right: 14px;
-            bottom: 0;
-            height: 1px;
-            background: var(--border);
-        }
         .chat-item .avatar {
             width: 49px;
             height: 49px;
@@ -255,7 +249,7 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            gap: 3px;
+            gap: 2px;
         }
         .ci-top {
             display: flex;
@@ -265,17 +259,19 @@
         }
         .ci-name {
             font-size: 16px;
+            font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
         .ci-time {
-            font-size: 12px;
+            font-size: 11.5px;
             color: var(--txt-2);
             flex: 0 0 auto;
         }
         .ci-time.unread {
             color: var(--accent);
+            font-weight: 600;
         }
         .ci-bottom {
             display: flex;
@@ -284,7 +280,7 @@
             gap: 8px;
         }
         .ci-preview {
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--txt-2);
             white-space: nowrap;
             overflow: hidden;
@@ -313,8 +309,8 @@
             border-radius: 12px;
             background: var(--accent);
             color: #111b21;
-            font-size: 12px;
-            font-weight: 600;
+            font-size: 11px;
+            font-weight: 700;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -342,12 +338,13 @@
             top: 54px;
             background: #233138;
             border-radius: 10px;
-            padding: 8px 0;
-            min-width: 230px;
-            box-shadow: 0 8px 30px rgba(0, 0, 0, .45);
+            padding: 6px 0;
+            min-width: 220px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
             z-index: 40;
             display: none;
             transform-origin: top right;
+            overflow: hidden;
         }
         .menu.open {
             display: block;
@@ -367,9 +364,10 @@
             display: block;
             width: 100%;
             text-align: left;
-            padding: 11px 24px;
-            font-size: 14.5px;
+            padding: 10px 22px;
+            font-size: 14px;
             color: var(--txt);
+            transition: background .1s;
         }
         .menu button:hover {
             background: #182229;
@@ -382,6 +380,8 @@
             flex-direction: column;
             position: relative;
             min-width: 0;
+            height: 100vh;
+            background: var(--chat-bg);
         }
 
         #emptyState {
@@ -391,14 +391,13 @@
             align-items: center;
             justify-content: center;
             text-align: center;
-            border-bottom: 6px solid #25d366;
             padding: 0 40px;
             background: var(--bg);
         }
         #emptyState h1 {
-            font-size: 32px;
+            font-size: 28px;
             font-weight: 300;
-            margin: 34px 0 14px;
+            margin: 30px 0 12px;
         }
         #emptyState p {
             font-size: 14px;
@@ -408,7 +407,7 @@
             margin: 0;
         }
         .enc-note {
-            margin-top: 40px;
+            margin-top: 30px;
             font-size: 14px;
             color: var(--txt-2);
             display: flex;
@@ -424,6 +423,7 @@
             margin-top: 10px;
             font-size: 12.5px;
             color: var(--accent);
+            opacity: .8;
         }
 
         /* ── chat view ── */
@@ -433,39 +433,50 @@
             flex-direction: column;
             position: relative;
             min-width: 0;
+            height: 100vh;
+            background: var(--chat-bg);
         }
         .c-head {
             display: flex;
             align-items: center;
-            gap: 14px;
-            padding: 10px 16px;
+            gap: 12px;
+            padding: 8px 14px;
             height: 60px;
             background: var(--panel);
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--border);
             z-index: 6;
         }
         .c-head .avatar {
             width: 40px;
             height: 40px;
             cursor: pointer;
+            flex-shrink: 0;
         }
         .c-info {
             flex: 1;
             min-width: 0;
             cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 0;
         }
         #cvName {
             font-size: 16px;
+            font-weight: 500;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            line-height: 1.3;
         }
         #cvStatus {
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--txt-2);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             transition: color .2s;
+            line-height: 1.2;
         }
         #cvStatus.typing {
             color: var(--accent);
@@ -478,37 +489,44 @@
         }
 
         /* ── messages ── */
+        .messages-wrap {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
         .messages {
             flex: 1;
             overflow-y: auto;
             overscroll-behavior: contain;
-            padding: 14px 6% 26px;
-            position: relative;
+            padding: 14px 5% 16px;
             background-color: var(--chat-bg);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cg fill='none' stroke='%23e9edef' stroke-opacity='.038' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='40' cy='48' r='9'/%3E%3Cpath d='M120 40q8-12 16 0t16 0'/%3E%3Crect x='212' y='36' width='16' height='16' rx='4'/%3E%3Cpath d='M60 130l10 10m0-10l-10 10'/%3E%3Ccircle cx='160' cy='130' r='6'/%3E%3Cpath d='M230 120v20m-10-10h20'/%3E%3Cpath d='M36 220q10-10 20 0'/%3E%3Crect x='110' y='210' width='20' height='12' rx='6'/%3E%3Cpath d='M200 226l14-14'/%3E%3Ccircle cx='252' cy='216' r='7'/%3E%3Cpath d='M150 268q6-8 12 0'/%3E%3C/g%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cg fill='none' stroke='%23e9edef' stroke-opacity='.04' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='40' cy='48' r='9'/%3E%3Cpath d='M120 40q8-12 16 0t16 0'/%3E%3Crect x='212' y='36' width='16' height='16' rx='4'/%3E%3Cpath d='M60 130l10 10m0-10l-10 10'/%3E%3Ccircle cx='160' cy='130' r='6'/%3E%3Cpath d='M230 120v20m-10-10h20'/%3E%3Cpath d='M36 220q10-10 20 0'/%3E%3Crect x='110' y='210' width='20' height='12' rx='6'/%3E%3Cpath d='M200 226l14-14'/%3E%3Ccircle cx='252' cy='216' r='7'/%3E%3Cpath d='M150 268q6-8 12 0'/%3E%3C/g%3E%3C/svg%3E");
         }
         .chip {
             width: max-content;
             max-width: 520px;
-            margin: 14px auto;
-            padding: 6px 12px;
+            margin: 10px auto;
+            padding: 5px 14px;
             border-radius: 8px;
-            background: #182229;
+            background: #1e2a33;
             color: var(--txt-2);
-            font-size: 12.5px;
+            font-size: 12px;
             box-shadow: 0 1px 1px rgba(0, 0, 0, .2);
             text-align: center;
         }
         .chip.enc {
             color: #ffd279;
-            line-height: 1.5;
+            line-height: 1.4;
+            font-size: 11.5px;
         }
         .chip.date {
-            margin: 8px auto 12px;
-            font-size: 12px;
+            margin: 6px auto 10px;
+            font-size: 11.5px;
             background: #1e2a33;
             color: var(--txt-2);
-            padding: 4px 14px;
+            padding: 3px 14px;
         }
         .msg {
             display: flex;
@@ -526,24 +544,24 @@
             }
         }
         .msg.first {
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .msg.out {
             justify-content: flex-end;
         }
         .bubble {
-            max-width: min(65%, 640px);
+            max-width: min(65%, 580px);
             position: relative;
-            padding: 6px 8px 8px 9px;
+            padding: 6px 8px 7px 9px;
             border-radius: 8px;
-            font-size: 14.2px;
+            font-size: 14px;
             line-height: 19px;
             word-wrap: break-word;
-            box-shadow: 0 1px .5px rgba(11, 20, 26, .25);
+            box-shadow: 0 1px .5px rgba(11, 20, 26, .2);
             transition: filter .15s;
         }
         .bubble:hover {
-            filter: brightness(1.06);
+            filter: brightness(1.04);
         }
         .msg.in .bubble {
             background: var(--bubble-in);
@@ -557,39 +575,43 @@
             top: 0;
             width: 0;
             height: 0;
-            border-top: 11px solid transparent;
+            border-top: 10px solid transparent;
         }
         .msg.first.in .bubble::before {
-            left: -8px;
+            left: -7px;
             border-top-color: var(--bubble-in);
-            border-left: 8px solid transparent;
+            border-left: 7px solid transparent;
         }
         .msg.first.out .bubble::before {
-            right: -8px;
+            right: -7px;
             border-top-color: var(--bubble-out);
-            border-right: 8px solid transparent;
+            border-right: 7px solid transparent;
         }
         .mname {
             display: block;
-            font-size: 12.8px;
+            font-size: 12.5px;
             font-weight: 600;
             margin-bottom: 2px;
+            cursor: pointer;
+        }
+        .mname:hover {
+            text-decoration: underline;
         }
         .meta {
             float: right;
-            margin: 8px -2px -3px 10px;
+            margin: 6px -2px -2px 8px;
             display: flex;
             align-items: center;
             gap: 3px;
-            font-size: 11px;
-            color: rgba(233, 237, 239, .6);
+            font-size: 10.5px;
+            color: rgba(233, 237, 239, .55);
             user-select: none;
         }
         .meta .star {
             font-size: 10px;
         }
         .ticks {
-            color: rgba(233, 237, 239, .55);
+            color: rgba(233, 237, 239, .45);
             display: inline-flex;
             transition: color .35s;
         }
@@ -597,19 +619,19 @@
             color: var(--blue);
         }
         .quote {
-            background: rgba(0, 0, 0, .18);
-            border-left: 4px solid var(--accent);
-            border-radius: 6px;
-            padding: 5px 10px;
+            background: rgba(0, 0, 0, .2);
+            border-left: 3px solid var(--accent);
+            border-radius: 4px;
+            padding: 4px 10px;
             margin: 2px 0 5px;
-            font-size: 13px;
+            font-size: 12.5px;
             cursor: pointer;
-            min-width: 180px;
+            min-width: 140px;
         }
         .q-name {
             display: block;
             color: var(--accent);
-            font-size: 12.5px;
+            font-size: 12px;
             font-weight: 500;
             margin-bottom: 1px;
         }
@@ -619,7 +641,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 280px;
+            max-width: 240px;
         }
         .react {
             position: absolute;
@@ -627,10 +649,11 @@
             left: 8px;
             background: var(--panel);
             border-radius: 12px;
-            padding: 2px 7px;
+            padding: 1px 7px;
             font-size: 12px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, .4);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .4);
             animation: badgePop .25s cubic-bezier(.5, 1.8, .6, 1) both;
+            line-height: 1.4;
         }
         .msg.out .react {
             left: auto;
@@ -675,24 +698,24 @@
             padding: 4px 4px 3px;
         }
         .imgph {
-            width: 238px;
-            height: 146px;
+            width: 200px;
+            height: 130px;
             border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 36px;
+            font-size: 32px;
             background: linear-gradient(135deg, #14443a, #0d2f3a 55%, #1a2436);
         }
         .msg.media .meta {
-            margin: 6px 4px 2px 10px;
+            margin: 5px 4px 2px 10px;
         }
 
         .voice {
             display: flex;
             align-items: center;
             gap: 10px;
-            min-width: 238px;
+            min-width: 200px;
             padding: 2px 2px 4px;
         }
         .vplay {
@@ -703,10 +726,15 @@
             align-items: center;
             justify-content: center;
             flex: 0 0 auto;
+            background: rgba(255, 255, 255, .05);
+            transition: background .15s;
+        }
+        .vplay:hover {
+            background: rgba(255, 255, 255, .1);
         }
         .vplay svg {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             fill: var(--txt-2);
         }
         .vplay .pa {
@@ -723,7 +751,7 @@
             position: relative;
             display: flex;
             align-items: center;
-            height: 26px;
+            height: 24px;
         }
         .wave .bars {
             display: flex;
@@ -733,9 +761,9 @@
         }
         .wave .bars i {
             flex: 1;
-            height: 6px;
+            height: 5px;
             border-radius: 2px;
-            background: rgba(233, 237, 239, .35);
+            background: rgba(233, 237, 239, .25);
         }
         .wprog {
             position: absolute;
@@ -743,22 +771,23 @@
             top: 0;
             bottom: 0;
             width: 0%;
-            background: rgba(0, 168, 132, .4);
+            background: rgba(0, 168, 132, .3);
             border-radius: 4px;
             pointer-events: none;
+            transition: width .1s linear;
         }
         .vdur {
-            font-size: 11px;
-            color: rgba(233, 237, 239, .6);
+            font-size: 10.5px;
+            color: rgba(233, 237, 239, .5);
             flex: 0 0 auto;
         }
 
         .fab {
             position: absolute;
-            right: 22px;
-            bottom: 86px;
-            width: 42px;
-            height: 42px;
+            right: 20px;
+            bottom: 80px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             background: var(--panel);
             box-shadow: 0 3px 10px rgba(0, 0, 0, .4);
@@ -777,37 +806,39 @@
             transform: none;
         }
         .fab svg {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             fill: var(--icon);
         }
 
         .reply-bar {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: var(--panel);
-            padding: 8px 14px 0;
+            padding: 6px 14px 2px;
+            flex-shrink: 0;
+            border-top: 1px solid var(--border);
         }
         .rb-txt {
             flex: 1;
             background: var(--panel-2);
-            border-left: 4px solid var(--accent);
-            border-radius: 8px;
-            padding: 7px 12px;
+            border-left: 3px solid var(--accent);
+            border-radius: 6px;
+            padding: 5px 12px;
             min-width: 0;
             animation: msgIn .15s ease both;
         }
         #rbName {
             display: block;
             color: var(--accent);
-            font-size: 12.5px;
+            font-size: 12px;
             font-weight: 600;
         }
         #rbSnippet {
             display: block;
             color: var(--txt-2);
-            font-size: 13px;
+            font-size: 12.5px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -816,24 +847,24 @@
         /* ── composer ── */
         .composer {
             background: var(--panel);
-            padding: 8px 16px;
-            position: relative;
-            z-index: 7;
+            padding: 6px 12px 8px;
             flex-shrink: 0;
+            border-top: 1px solid var(--border);
+            z-index: 7;
         }
         .c-row {
             display: flex;
-            align-items: center;
+            align-items: flex-end;
             gap: 6px;
         }
         .input-wrap {
             flex: 1;
             background: var(--panel-2);
             border-radius: 8px;
-            padding: 9px 14px;
-            min-height: 42px;
+            padding: 7px 12px;
+            min-height: 40px;
             display: flex;
-            align-items: center;
+            align-items: flex-end;
         }
         #msgInput {
             flex: 1;
@@ -843,19 +874,25 @@
             resize: none;
             color: var(--txt);
             font: inherit;
-            font-size: 15px;
+            font-size: 14.5px;
             line-height: 20px;
-            max-height: 120px;
-            min-height: 24px;
+            max-height: 100px;
+            min-height: 22px;
+            padding: 2px 0;
+            width: 100%;
         }
         #msgInput::placeholder {
             color: var(--txt-2);
         }
         #sendBtn {
             display: none;
+            flex-shrink: 0;
+            align-self: center;
         }
         #sendBtn svg {
             fill: var(--accent);
+            width: 22px;
+            height: 22px;
         }
         .composer.has-text #sendBtn {
             display: flex;
@@ -874,6 +911,16 @@
                 opacity: 1;
             }
         }
+        .composer .ibtn {
+            width: 36px;
+            height: 36px;
+            flex-shrink: 0;
+            align-self: center;
+        }
+        .composer .ibtn svg {
+            width: 20px;
+            height: 20px;
+        }
 
         .c-row.rec {
             display: none;
@@ -883,14 +930,16 @@
         }
         .composer.recording .c-row.rec {
             display: flex;
+            align-items: center;
         }
         .rec-dot {
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: var(--danger);
-            margin: 0 8px;
+            margin: 0 6px;
             animation: recPulse 1s infinite;
+            flex-shrink: 0;
         }
         @keyframes recPulse {
             0%,
@@ -902,20 +951,21 @@
             }
         }
         #recTime {
-            font-size: 15px;
+            font-size: 14px;
             font-variant-numeric: tabular-nums;
+            color: var(--txt);
         }
         .rec-hint {
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--txt-2);
-            margin-left: 8px;
+            margin-left: 6px;
         }
 
         /* ── emoji tray ── */
         .tray {
             position: absolute;
-            bottom: 64px;
-            left: 14px;
+            bottom: 62px;
+            left: 12px;
             background: #233138;
             border-radius: 12px;
             z-index: 30;
@@ -938,26 +988,26 @@
             }
         }
         #emojiTray {
-            width: 344px;
+            width: 320px;
             padding: 10px 12px 14px;
         }
         .tray-label {
-            font-size: 12.5px;
+            font-size: 12px;
             color: var(--txt-2);
-            padding: 6px 4px 8px;
+            padding: 4px 4px 8px;
         }
         .emoji-grid {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             gap: 2px;
-            max-height: 220px;
+            max-height: 200px;
             overflow-y: auto;
         }
         .emoji-grid button {
-            font-size: 21px;
-            width: 38px;
-            height: 38px;
-            border-radius: 8px;
+            font-size: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -965,7 +1015,7 @@
         }
         .emoji-grid button:hover {
             background: #182229;
-            transform: scale(1.15);
+            transform: scale(1.12);
         }
 
         /* ── context menu ── */
@@ -973,11 +1023,12 @@
             position: fixed;
             background: #233138;
             border-radius: 10px;
-            padding: 8px 0;
-            min-width: 180px;
+            padding: 6px 0;
+            min-width: 170px;
             z-index: 60;
             display: none;
             box-shadow: 0 10px 34px rgba(0, 0, 0, .55);
+            overflow: hidden;
         }
         .ctx.open {
             display: block;
@@ -987,8 +1038,10 @@
             display: block;
             width: 100%;
             text-align: left;
-            padding: 10px 22px;
-            font-size: 14.5px;
+            padding: 9px 20px;
+            font-size: 14px;
+            color: var(--txt);
+            transition: background .1s;
         }
         .ctx button:hover {
             background: #182229;
@@ -1000,24 +1053,26 @@
         /* ── toasts ── */
         #toasts {
             position: fixed;
-            left: 22px;
-            bottom: 22px;
+            left: 20px;
+            bottom: 20px;
             z-index: 80;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 8px;
+            pointer-events: none;
         }
         .toast {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             background: #233138;
             border-radius: 10px;
-            padding: 10px 16px 10px 10px;
+            padding: 9px 14px 9px 10px;
             box-shadow: 0 8px 26px rgba(0, 0, 0, .5);
             cursor: pointer;
-            max-width: 360px;
+            max-width: 340px;
             animation: toastIn .28s cubic-bezier(.3, 1.3, .5, 1) both;
+            pointer-events: auto;
         }
         @keyframes toastIn {
             from {
@@ -1035,23 +1090,24 @@
             transition: all .3s;
         }
         .toast img {
-            width: 38px;
-            height: 38px;
+            width: 34px;
+            height: 34px;
             border-radius: 50%;
+            flex-shrink: 0;
         }
         .toast b {
             display: block;
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 500;
         }
         .toast span {
             display: block;
-            font-size: 13px;
+            font-size: 12.5px;
             color: var(--txt-2);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            max-width: 260px;
+            max-width: 220px;
         }
 
         /* ── profile modal ── */
@@ -1065,6 +1121,7 @@
             justify-content: center;
             backdrop-filter: blur(2px);
             animation: fadeIn .2s ease both;
+            padding: 20px;
         }
         .modal-overlay.open {
             display: flex;
@@ -1080,9 +1137,9 @@
         .modal {
             background: var(--panel);
             border-radius: 18px;
-            max-width: 420px;
-            width: 92%;
-            padding: 28px 30px 24px;
+            max-width: 400px;
+            width: 100%;
+            padding: 28px 28px 24px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, .6);
             animation: modalIn .25s cubic-bezier(.3, 1.3, .5, 1) both;
             max-height: 90vh;
@@ -1099,31 +1156,31 @@
             }
         }
         .modal .avatar-lg {
-            width: 80px;
-            height: 80px;
+            width: 76px;
+            height: 76px;
             border-radius: 50%;
-            margin: 0 auto 14px;
+            margin: 0 auto 12px;
             display: block;
             border: 3px solid var(--accent);
         }
         .modal h2 {
-            font-size: 22px;
+            font-size: 20px;
             font-weight: 500;
             margin: 0 0 4px;
             text-align: center;
         }
         .modal .sub {
             color: var(--txt-2);
-            font-size: 14px;
+            font-size: 13.5px;
             text-align: center;
-            margin-bottom: 18px;
+            margin-bottom: 16px;
         }
         .modal .bio {
-            font-size: 14px;
+            font-size: 13.5px;
             line-height: 1.6;
             color: var(--txt);
-            margin: 12px 0 16px;
-            padding: 12px 16px;
+            margin: 10px 0 14px;
+            padding: 10px 14px;
             background: var(--bg);
             border-radius: 10px;
             border-left: 3px solid var(--accent);
@@ -1131,19 +1188,19 @@
         .modal .links {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
+            gap: 6px;
             justify-content: center;
-            margin: 14px 0 18px;
+            margin: 12px 0 16px;
         }
         .modal .links a {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
+            gap: 5px;
+            padding: 5px 12px;
             border-radius: 20px;
             background: var(--bg);
             color: var(--txt);
-            font-size: 13px;
+            font-size: 12.5px;
             text-decoration: none;
             transition: background .15s;
         }
@@ -1151,14 +1208,14 @@
             background: var(--panel-2);
         }
         .modal .links a svg {
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
             fill: var(--txt-2);
         }
         .modal .close-btn {
             display: block;
             margin: 0 auto;
-            padding: 8px 32px;
+            padding: 7px 30px;
             border-radius: 20px;
             background: var(--accent-deep);
             color: var(--accent);
@@ -1171,12 +1228,12 @@
         }
         .modal .tag {
             display: inline-block;
-            font-size: 12px;
+            font-size: 11.5px;
             padding: 2px 12px;
             border-radius: 12px;
             background: var(--accent-deep);
             color: var(--accent);
-            margin: 4px 2px;
+            margin: 3px 2px;
         }
 
         /* ── responsive ── */
@@ -1204,14 +1261,46 @@
                 display: none !important;
             }
             .messages {
-                padding: 12px 14px 22px;
+                padding: 10px 12px 16px;
             }
             .bubble {
-                max-width: 82%;
+                max-width: 84%;
+                font-size: 13.5px;
             }
             #emojiTray {
-                width: 280px;
+                width: 260px;
                 left: 5px;
+                bottom: 58px;
+            }
+            .emoji-grid {
+                grid-template-columns: repeat(7, 1fr);
+            }
+            .emoji-grid button {
+                width: 32px;
+                height: 32px;
+                font-size: 18px;
+            }
+            .c-head {
+                padding: 6px 10px;
+                height: 54px;
+            }
+            .composer {
+                padding: 4px 10px 6px;
+            }
+            .input-wrap {
+                min-height: 36px;
+                padding: 5px 10px;
+            }
+            #msgInput {
+                font-size: 14px;
+            }
+            .composer .ibtn {
+                width: 32px;
+                height: 32px;
+            }
+            .composer .ibtn svg {
+                width: 18px;
+                height: 18px;
             }
         }
 
@@ -1225,9 +1314,9 @@
         }
 
         .msg-count {
-            font-size: 12px;
+            font-size: 11.5px;
             color: var(--txt-2);
-            padding: 0 8px;
+            padding: 0 6px;
             white-space: nowrap;
         }
         #meAvatar {
@@ -1237,6 +1326,25 @@
         }
         #meAvatar:hover {
             border-color: var(--accent);
+        }
+
+        /* scrollbar for messages */
+        .messages::-webkit-scrollbar {
+            width: 4px;
+        }
+        .messages::-webkit-scrollbar-thumb {
+            background: rgba(134, 150, 160, .25);
+            border-radius: 2px;
+        }
+        .messages::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* mention highlight */
+        .mention-highlight {
+            background: rgba(0, 168, 132, .2);
+            border-radius: 3px;
+            padding: 0 2px;
         }
     </style>
 </head>
@@ -1278,11 +1386,11 @@
 
             <!-- New chat panel -->
             <section class="panel hidden" id="newChatPanel" style="position:absolute;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column">
-                <div style="display:flex;align-items:center;gap:20px;background:var(--panel);padding:14px 16px;height:60px">
+                <div style="display:flex;align-items:center;gap:20px;background:var(--panel);padding:14px 16px;height:60px;flex-shrink:0;border-bottom:1px solid var(--border)">
                     <button class="ibtn" id="ncBack" title="Back"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
                     <h2 style="font-size:19px;font-weight:500;margin:0">Team Mammoth 🦣</h2>
                 </div>
-                <div id="ncList" style="overflow-y:auto;flex:1"></div>
+                <div id="ncList" style="overflow-y:auto;flex:1;padding:4px 0"></div>
             </section>
         </aside>
 
@@ -1290,26 +1398,26 @@
         <main id="chatArea">
             <!-- Empty state -->
             <div id="emptyState">
-                <svg width="240" height="160" viewBox="0 0 240 160" fill="none">
-                    <rect x="24" y="14" width="160" height="100" rx="10" fill="#202c33" stroke="#364147" stroke-width="3"/>
-                    <rect x="37" y="27" width="134" height="74" rx="4" fill="#111b21"/>
-                    <rect x="48" y="40" width="66" height="11" rx="5" fill="#2a3942"/>
-                    <rect x="48" y="58" width="96" height="9" rx="4" fill="#233138"/>
-                    <rect x="48" y="74" width="80" height="9" rx="4" fill="#233138"/>
-                    <rect x="8" y="116" width="196" height="9" rx="4" fill="#364147"/>
-                    <rect x="158" y="52" width="62" height="98" rx="10" fill="#202c33" stroke="#364147" stroke-width="3"/>
-                    <rect x="166" y="66" width="46" height="64" rx="4" fill="#111b21"/>
-                    <rect x="172" y="74" width="28" height="8" rx="4" fill="#005c4b"/>
-                    <rect x="179" y="88" width="28" height="8" rx="4" fill="#2a3942"/>
-                    <circle cx="162" cy="40" r="15" fill="#00a884"/>
-                    <text x="162" y="47" font-size="17" text-anchor="middle">🦣</text>
+                <svg width="200" height="140" viewBox="0 0 200 140" fill="none">
+                    <rect x="20" y="12" width="130" height="82" rx="8" fill="#202c33" stroke="#364147" stroke-width="2.5"/>
+                    <rect x="30" y="22" width="110" height="60" rx="4" fill="#111b21"/>
+                    <rect x="40" y="32" width="54" height="10" rx="4" fill="#2a3942"/>
+                    <rect x="40" y="48" width="78" height="8" rx="3" fill="#233138"/>
+                    <rect x="40" y="62" width="64" height="8" rx="3" fill="#233138"/>
+                    <rect x="8" y="96" width="160" height="8" rx="3" fill="#364147"/>
+                    <rect x="132" y="44" width="50" height="80" rx="8" fill="#202c33" stroke="#364147" stroke-width="2.5"/>
+                    <rect x="138" y="54" width="38" height="52" rx="4" fill="#111b21"/>
+                    <rect x="144" y="60" width="22" height="7" rx="3" fill="#005c4b"/>
+                    <rect x="150" y="72" width="22" height="7" rx="3" fill="#2a3942"/>
+                    <circle cx="136" cy="34" r="12" fill="#00a884"/>
+                    <text x="136" y="40" font-size="14" text-anchor="middle">🦣</text>
                 </svg>
                 <h1>Team Mammoth 🦣</h1>
                 <p>Unlimited live chat with your AI team, powered by RAGina.<br>
                     Sanchita, Raissa, Satya, Nidhi, Rambabu, Sivaram, Yamini, Sunkul Pradeep, Shivani &amp; Laik —<br>
-                    each texting in their own voice. Load your team wiki to make them answer from real project knowledge.</p>
+                    each texting in their own voice.</p>
                 <div class="enc-note"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zM9 6a3 3 0 0 1 6 0v2H9V6z"/></svg>End-to-end encrypted</div>
-                <div class="ai-note">✨ RAGina AI · ragina-crawler retrieval · SAFe · Team Mammoth</div>
+                <div class="ai-note">✨ RAGina AI · Team Mammoth · SAFe</div>
             </div>
 
             <!-- Chat view -->
@@ -1324,12 +1432,14 @@
                     <span class="msg-count" id="msgCount"></span>
                     <div class="s-actions">
                         <button class="ibtn close-chat-btn" id="closeChatBtn" title="Close chat"><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></button>
-                        <button class="ibtn" data-demo="Calls aren't part of this demo 🎥" title="Call"><svg viewBox="0 0 24 24"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg></button>
-                        <button class="ibtn" data-demo="Just a demo 😉" title="Menu"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
+                        <button class="ibtn" data-demo="📞 Not available" title="Call"><svg viewBox="0 0 24 24"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg></button>
+                        <button class="ibtn" data-demo="More options" title="Menu"><svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="12" cy="19" r="2"/></svg></button>
                     </div>
                 </header>
 
-                <div class="messages" id="messages"></div>
+                <div class="messages-wrap">
+                    <div class="messages" id="messages"></div>
+                </div>
 
                 <button class="fab" id="scrollDown" title="Scroll to bottom"><svg viewBox="0 0 24 24"><path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z"/></svg></button>
 
@@ -1341,7 +1451,7 @@
                 <footer class="composer" id="composer">
                     <div class="c-row main">
                         <button class="ibtn" id="emojiBtn" title="Emoji"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zM8.5 8A1.5 1.5 0 1 0 10 9.5 1.5 1.5 0 0 0 8.5 8zm7 0A1.5 1.5 0 1 0 17 9.5 1.5 1.5 0 0 0 15.5 8zm-8.1 6a1 1 0 0 0-.9 1.5 6.6 6.6 0 0 0 11 0 1 1 0 0 0-.9-1.5z"/></svg></button>
-                        <div class="input-wrap"><textarea id="msgInput" rows="1" placeholder="Type a message (use @name to tag)"></textarea></div>
+                        <div class="input-wrap"><textarea id="msgInput" rows="1" placeholder="Type a message"></textarea></div>
                         <button class="ibtn" id="micBtn" title="Voice message"><svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z"/></svg></button>
                         <button class="ibtn" id="sendBtn" title="Send"><svg viewBox="0 0 24 24"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg></button>
                     </div>
@@ -1377,9 +1487,8 @@
                 <div class="bio">
                     <strong>👋 About me</strong><br>
                     I'm Sai Surya — a passionate Techno Agilist and SAFe Scrum Master leading Team Mammoth 🦣.
-                    I blend technical depth with agile coaching to help teams deliver high-impact Healthcare, Insurance &amp; Pharmacy products.
-                    I love storytelling, automation, and making complex systems feel simple. Outside work, I write, build side projects, and
-                    explore the intersection of AI and human collaboration.
+                    I blend technical depth with agile coaching to help teams deliver high-impact products.
+                    I love storytelling, automation, and making complex systems feel simple.
                     <div style="margin-top:8px">
                         <span class="tag">🧠 RAGina AI</span>
                         <span class="tag">⚡ SAFe 6.0</span>
@@ -1401,75 +1510,33 @@
         'use strict';
 
         /* ============ CONFIG ============ */
-        const KNOWLEDGE_URL = ''; // optional: paste a team wiki/Confluence/docs URL here
+        const KNOWLEDGE_URL = '';
         const ASK_URL = 'https://ragina-crawler-ragina.vercel.app/api/ask';
         const CRAWL_URL = 'https://ragina-crawler-ragina.vercel.app/api/crawl';
 
         /* ============ TEAM MAMMOTH — PERSONAS ============ */
         const PERSONAS = {
-            'Sanchita': {
-                flag: '🇮🇳',
-                role: 'Business Analyst (BA)',
-                emojiHint: '✅📋📝👍',
-                vibe: 'Extroverted and energetic, but a total stickler for rules and process. You constantly reference user stories, acceptance criteria, JIRA, the backlog, refinement, sign-offs and "as per process". You make sure everything is documented and approved before moving on. Friendly and talkative, but you always bring it back to process and requirements. You discuss the Pharmacy/Insurance config work.'
-            },
-            'Raissa': {
-                flag: '🇨🇦',
-                role: 'Product Owner (PO)',
-                emojiHint: '📊👍 — used sparingly',
-                vibe: 'Very serious, thorough and detailed. You are the subject-matter expert for the team on the Healthcare, Insurance and Pharmacy domain. You explain things in depth — the why, the rules, the edge cases. You are Canadian and relatively new to American English, so you are very polite ("sorry", "thanks so much", "eh"), a little formal, and occasionally phrase things slightly awkwardly but always clearly. You use very few emojis and give detailed, thoughtful answers.'
-            },
-            'Satya': {
-                flag: '🇮🇳',
-                role: 'Full Stack Developer',
-                emojiHint: '🔥💪🚀😄👍',
-                vibe: 'Super energetic, enthusiastic and proactive. You jump in to add context, volunteer to help, and ask clarifying questions upfront so nobody gets lost. Full stack — UI, backend, config kafka, APIs. You are the first to say "I can pick that up!" or "hey, anyone stuck? I can help". Very supportive team player, high energy, lots of emojis.'
-            },
-            'Nidhi': {
-                flag: '🇺🇸',
-                role: 'Tech Lead (TL) / Senior Developer',
-                emojiHint: '👍✅ — minimal',
-                vibe: 'Very experienced and cool-headed. You talk only when needed, and when you do it is short, precise and useful. You look after the team — you tell people whom to approach for access, what to get approved by the senior folks, and you give crisp guidance and notes. Calm mentor energy, US-based, minimal emojis, no fluff.'
-            },
-            'Rambabu': {
-                flag: '🇮🇳',
-                role: 'QA — Performance Testing (14 yrs experience)',
-                emojiHint: 'almost none, maybe ✅',
+            'Sanchita': { flag: '🇮🇳', role: 'Business Analyst', emojiHint: '✅📋📝👍',
+                vibe: 'Extroverted and energetic, but a total stickler for rules and process. You constantly reference user stories, acceptance criteria, JIRA, the backlog, refinement, sign-offs and "as per process". Friendly and talkative, but you always bring it back to process and requirements.' },
+            'Raissa': { flag: '🇨🇦', role: 'Product Owner', emojiHint: '📊👍 — used sparingly',
+                vibe: 'Very serious, thorough and detailed. You are the subject-matter expert on Healthcare, Insurance and Pharmacy. You explain things in depth — the why, the rules, the edge cases. Very polite ("sorry", "thanks so much", "eh"), formal, and give detailed, thoughtful answers. Use very few emojis.' },
+            'Satya': { flag: '🇮🇳', role: 'Full Stack Developer', emojiHint: '🔥💪🚀😄👍',
+                vibe: 'Super energetic, enthusiastic and proactive. You jump in to add context, volunteer to help, and ask clarifying questions. Full stack — UI, backend, config kafka, APIs. Very supportive team player, high energy, lots of emojis.' },
+            'Nidhi': { flag: '🇺🇸', role: 'Tech Lead', emojiHint: '👍✅ — minimal',
+                vibe: 'Very experienced and cool-headed. You talk only when needed, and when you do it is short, precise and useful. You look after the team — you tell people whom to approach for access, what to get approved by senior folks. Calm mentor energy, minimal emojis, no fluff.' },
+            'Rambabu': { flag: '🇮🇳', role: 'QA — Performance Testing (14 yrs)', emojiHint: 'almost none, maybe ✅',
                 structured: true,
-                vibe: 'Very serious, formal and extremely experienced (14 years in QA). You are passionate about Performance Testing — load tests, JMeter, TPS, response time, throughput, SLA, kafka consumer lag. You regularly send STRUCTURED status updates with bullet points, and you ALWAYS end status messages with a final line exactly like: "cc: Sai Surya (SM), Sanchita (BA), Raissa (PO)". Professional, no jokes, precise numbers.'
-            },
-            'Sivaram': {
-                flag: '🇮🇳',
-                role: 'QA Engineer',
-                emojiHint: '🙂👍 — soft and few',
-                quiet: true,
-                vibe: 'You speak only when asked. Very friendly, smooth and kind tone. Your replies are short, gentle and neatly worded — easy to understand, never harsh, never long. A warm and polite QA engineer.'
-            },
-            'Yamini': {
-                flag: '🇮🇳',
-                role: 'Java Developer',
-                emojiHint: 'almost never any',
-                quiet: true,
-                vibe: 'Very quiet and low-profile. You almost never reply unless directly asked or tagged by name. When you do, it is extremely short — "yes", "done", "ok", "will check", "fixed". A competent Java developer, but you keep messages minimal and to the point. No small talk.'
-            },
-            'Sunkul Pradeep': {
-                flag: '🇮🇳',
-                role: 'Databricks / Data Engineer',
-                emojiHint: 'lots! 😊👍🔥✅🙌💯🚀',
-                vibe: 'You work on Databricks (Spark jobs, data pipelines, notebooks). You mind your own work and keep low-key, BUT you reply instantly and neatly when asked — especially about status. You use a LOT of emojis, and you are always friendly and quick to respond.'
-            },
-            'Shivani Kumar': {
-                flag: '🇺🇸',
-                role: 'Intern — CI/CD automation',
-                emojiHint: '🙋‍♀️📚✨😊',
-                vibe: 'You are the team intern, US-based. You listen carefully and love to learn from everyone. You often talk about your internship project — automating the CI/CD pipeline without affecting the current flow. You are an activist and advocate, curious, and you ask the team lots of questions ("quick question!", "could you explain...", "I am still learning"). Enthusiastic, respectful and eager.'
-            },
-            'Laik': {
-                flag: '🇮🇳',
-                role: 'Developer',
-                emojiHint: '🤙😄👍✨ — chill and warm',
-                vibe: 'A very nice, warm and easy-going Indian developer. Super chill and relaxed — same easy-going energy as Sivaram and Sunkul Pradeep. A genuinely good person, friendly and helpful but never stressed. You often sprinkle Hindi/Hinglish words into your English — "yar / yaar", "bhai", "acha", "haan", "theek hai", "arre yaar", "chill kar", "sab badhiya". You keep replies short, warm and breezy, and you talk about the dev work (UI, config kafka, the Healthcare/Pharmacy code) in a laid-back way.'
-            },
+                vibe: 'Very serious, formal and extremely experienced. You are passionate about Performance Testing — load tests, JMeter, TPS, response time, SLA, kafka consumer lag. You send STRUCTURED status updates with bullet points, and ALWAYS end with "cc: Sai Surya (SM), Sanchita (BA), Raissa (PO)". Professional, no jokes, precise numbers.' },
+            'Sivaram': { flag: '🇮🇳', role: 'QA Engineer', emojiHint: '🙂👍 — soft and few', quiet: true,
+                vibe: 'You speak only when asked. Very friendly, smooth and kind tone. Your replies are short, gentle and neatly worded — easy to understand, never harsh, never long. A warm and polite QA engineer.' },
+            'Yamini': { flag: '🇮🇳', role: 'Java Developer', emojiHint: 'almost never any', quiet: true,
+                vibe: 'Very quiet and low-profile. You almost never reply unless directly asked or tagged. When you do, it is extremely short — "yes", "done", "ok", "will check", "fixed". No small talk.' },
+            'Sunkul Pradeep': { flag: '🇮🇳', role: 'Databricks / Data Engineer', emojiHint: 'lots! 😊👍🔥✅🙌💯🚀',
+                vibe: 'You work on Databricks (Spark, pipelines, notebooks). You keep low-key, BUT reply instantly and neatly when asked — especially about status. You use a LOT of emojis, friendly and quick to respond.' },
+            'Shivani Kumar': { flag: '🇺🇸', role: 'Intern — CI/CD automation', emojiHint: '🙋‍♀️📚✨😊',
+                vibe: 'You are the team intern, US-based. You listen carefully and love to learn from everyone. You often talk about your internship project — automating CI/CD. Curious, enthusiastic, respectful. You ask lots of questions ("quick question!", "could you explain...", "I am still learning").' },
+            'Laik': { flag: '🇮🇳', role: 'Developer', emojiHint: '🤙😄👍✨ — chill and warm',
+                vibe: 'Very nice, warm and easy-going. Super chill and relaxed. You often sprinkle Hindi/Hinglish — "yar / yaar", "bhai", "acha", "haan", "theek hai", "arre yaar", "chill kar", "sab badhiya". Keep replies short, warm and breezy.' },
         };
 
         /* ============ SEEDS ============ */
@@ -1552,7 +1619,7 @@
         });
 
         /* ================================================================
-           RAGina RAG LAYER
+           RAGina RAG LAYER (simplified)
            ================================================================ */
         const wait = ms => new Promise(r => setTimeout(r, ms));
         let KNOWLEDGE = { chunks: [], idf: {}, ready: false };
@@ -1598,7 +1665,7 @@
         }
 
         async function loadKnowledge(url) {
-            toastText('🧠 Crawling team knowledge via ragina-crawler…');
+            toastText('🧠 Crawling team knowledge…');
             try {
                 const res = await fetch(CRAWL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ url }) });
@@ -1606,21 +1673,20 @@
                 if (d.error) throw new Error(d.error);
                 if (!d.pages || !d.pages.length) throw new Error('no pages returned');
                 buildIndex(d.pages);
-                toastText(KNOWLEDGE.ready ? `✅ Loaded ${KNOWLEDGE.chunks.length} knowledge snippets — the team now answers from them!` :
+                toastText(KNOWLEDGE.ready ? `✅ Loaded ${KNOWLEDGE.chunks.length} knowledge snippets.` :
                     '⚠️ Could not read that page.');
             } catch (e) {
-                toastText('⚠️ Knowledge load failed: ' + e.message + ' — chat still works without it.');
+                toastText('⚠️ Knowledge load failed: ' + e.message);
             }
         }
 
         function knowledgeContext(userText) {
             const hits = retrieve(userText, 3);
             if (!hits.length) return '';
-            return `\n\nTeam knowledge (use ONLY if relevant to the question; weave it in naturally; stay in character; never mention "documents", "context" or "sources"):\n` +
+            return `\n\nTeam knowledge (use ONLY if relevant; weave it in naturally; stay in character):\n` +
                 hits.map((h, i) => `[${i+1}] ${h.text}`).join('\n');
         }
 
-        /* ---------- LLM call ---------- */
         async function askLLM(prompt, tries = 3) {
             for (let i = 0; i < tries; i++) {
                 try {
@@ -1638,24 +1704,24 @@
         }
 
         const PFALL = {
-            'Sanchita': ["as per process, let me check and confirm ✅", "noted 📋 i'll add it to the backlog and refine it",
+            'Sanchita': ["as per process, let me check and confirm ✅", "noted 📋 i'll add it to the backlog",
                 "we need a sign-off on that — let me set it up 👍"
             ],
             'Raissa': ["Let me look into that and give you the full detail shortly 📊",
-                "Thanks for flagging — I will confirm the rule and get back to you.",
+                "Thanks for flagging — I will confirm and get back to you.",
                 "Good point. I need to verify it against the domain rules first, eh."
             ],
-            'Satya': ["on it! 🔥 give me 5 min", "i can help with that 💪 let me check real quick", "looking now 😄 brb"],
+            'Satya': ["on it! 🔥 give me 5 min", "i can help with that 💪 let me check", "looking now 😄 brb"],
             'Nidhi': ["let me check — I'll point you to the right person 👍",
-                "noted. I'll confirm with the senior folks and revert.", "will look into it. keep me posted."
+                "noted. I'll confirm with the senior folks.", "will look into it. keep me posted."
             ],
-            'Rambabu': ["Acknowledged. Will validate and share the status shortly.\ncc: Sai Surya (SM), Sanchita (BA), Raissa (PO)",
+            'Rambabu': ["Acknowledged. Will validate and share status shortly.\ncc: Sai Surya (SM), Sanchita (BA), Raissa (PO)",
                 "Noted. Running a check; will update with metrics.\ncc: Sai Surya (SM), Sanchita (BA), Raissa (PO)"
             ],
-            'Sivaram': ["sure Sai 🙂 let me check and tell you", "ok, will look into it 👍"],
+            'Sivaram': ["sure Sai 🙂 let me check", "ok, will look into it 👍"],
             'Yamini': ["ok", "will check", "done"],
             'Sunkul Pradeep': ["checking now 😊👍", "on it 🔥✅ one sec 🙌", "all good, let me confirm 💯"],
-            'Shivani Kumar': ["ooh let me look into that and learn! 📚✨", "great question — let me find out and share! 🙋‍♀️"],
+            'Shivani Kumar': ["ooh let me look into that and learn! 📚✨", "great question — let me find out! 🙋‍♀️"],
             'Laik': ["acha yar, let me check 😄", "haan bhai, chill, i'll look into it 🤙", "theek hai yar, one sec 👍"],
         };
 
@@ -1745,12 +1811,12 @@
         function personaPrompt(member, mode) {
             const p = PERSONAS[member];
             const team =
-                `You are ${member} ${p.flag}, a ${p.role} on "Team Mammoth" 🦣 — a SAFe Agile team building Healthcare, Insurance and Pharmacy products. You naturally use words like Insurance, Pharmacy, Healthcare, UI, config kafka, PI planning, sprint, standup, refinement, backlog and story points.\nYou are chatting with Sai Surya ☀️, your team's SAFe Scrum Master (he is hyperactive, funny, and loves telling things like a story).\nYour personality and texting style: ${p.vibe}`;
+                `You are ${member} ${p.flag}, a ${p.role} on "Team Mammoth" 🦣 — a SAFe Agile team building Healthcare, Insurance and Pharmacy products. You naturally use words like Insurance, Pharmacy, Healthcare, UI, config kafka, PI planning, sprint, standup, refinement, backlog and story points.\nYou are chatting with Sai Surya ☀️, your team's SAFe Scrum Master.\nYour personality and texting style: ${p.vibe}`;
             const modeNote = mode === 'group' ?
-                `This is the "Team Mammoth 🦣" GROUP chat with the whole team: ${ROSTER}, and Sai Surya (SM). You are replying AS ${member} only — do not speak for anyone else.` :
-                `This is a private 1-on-1 WhatsApp chat between you (${member}) and Sai Surya.`;
+                `This is the GROUP chat with the whole team: ${ROSTER}, and Sai Surya. You are replying AS ${member} only — do not speak for anyone else.` :
+                `This is a private chat between you (${member}) and Sai Surya.`;
             const rules =
-                `STRICT rules — sound like a REAL human texting, not an AI:\n- Keep replies SHORT and casual: 1 to 3 brief messages. Separate multiple messages with a single newline.\n- Use emojis naturally for your character (${p.emojiHint}).\n- Real texting habits: lowercase sometimes, abbreviations (lol, btw, rn, yeah, ok, idk), informal punctuation.\n- NEVER output your name as a prefix, no quotation marks, no markdown headings.${p.structured ? ' You MAY use simple bullet points because you send formatted status updates.' : ' Do NOT use bullet points or lists.'}\n- Output ONLY the raw message text.\n- Keep the conversation alive — react genuinely, and it's fine to ask a short follow-up question. Never say you are an AI, and never end or refuse the conversation.`;
+                `STRICT rules — sound like a REAL human texting:\n- Keep replies SHORT: 1 to 3 brief messages. Separate multiple messages with a newline.\n- Use emojis naturally (${p.emojiHint}).\n- Real texting habits: lowercase, abbreviations (lol, btw, rn, yeah, ok, idk), informal punctuation.\n- NEVER output your name as a prefix, no quotes, no markdown.${p.structured ? ' You MAY use simple bullet points for status updates.' : ' Do NOT use bullet points or lists.'}\n- Output ONLY the raw message text.\n- Keep the conversation alive — react genuinely, ask short follow-ups. Never say you are an AI.`;
             return `${team}\n${modeNote}\n\n${rules}`;
         }
 
@@ -1769,8 +1835,7 @@
         }
 
         function buildPrompt(c, member, userText, short, replyToMsg) {
-            const extra = short ? '\nKeep this reply VERY short (a single short line) — you are just chiming into the group conversation.' :
-                '';
+            const extra = short ? '\nKeep this reply VERY short — just chiming in.' : '';
             const rag = (!short && userText) ? knowledgeContext(userText) : '';
             let replyCtx = '';
             if (replyToMsg) {
@@ -1778,7 +1843,7 @@
                 replyCtx =
                     `\n\nYou are replying to this specific message from ${who}:\n"${replyToMsg.text || mediaLabel(replyToMsg.type)}"\nYour reply should be a direct response to that message.`;
             }
-            return `${personaPrompt(member, c.isGroup?'group':'dm')}\n\nConversation so far:\n${historyText(c)}\n\n${userText?`The latest message to respond to: "${userText}"\n`:''}Reply now as ${member}. Output only the message text.${rag}${replyCtx}${extra}`;
+            return `${personaPrompt(member, c.isGroup?'group':'dm')}\n\nConversation so far:\n${historyText(c)}\n\n${userText?`The latest message: "${userText}"\n`:''}Reply now as ${member}. Output only the message text.${rag}${replyCtx}${extra}`;
         }
 
         function cleanLines(raw, member) {
@@ -1789,22 +1854,18 @@
         }
 
         function pickGroupResponder(text) {
-            // Check for @mentions first
             const t = (text || '').toLowerCase();
+            // Check for @mentions
             const mentionPattern = /@([a-zA-Z\s]+)/g;
             let match;
             const mentioned = [];
             while ((match = mentionPattern.exec(t)) !== null) {
                 const name = match[1].trim();
-                // Find member whose name starts with or is exactly the mention
                 const found = Object.keys(PERSONAS).find(m => m.toLowerCase().startsWith(name) || m.toLowerCase() === name);
                 if (found) mentioned.push(found);
             }
-            if (mentioned.length > 0) {
-                // return the first mentioned member
-                return mentioned[0];
-            }
-            // fallback to previous logic
+            if (mentioned.length > 0) return mentioned[0];
+
             if (/status|test|performance|load|defect|bug|tps|sla|lag|jmeter/.test(t)) return 'Rambabu';
             if (/story|stories|requirement|acceptance|backlog|refin|process|jira|sign[- ]?off|criteria/.test(t))
             return 'Sanchita';
@@ -1812,9 +1873,9 @@
             return 'Raissa';
             if (/databricks|data\b|pipeline|spark|notebook|etl/.test(t)) return 'Sunkul Pradeep';
             if (/intern|ci\/cd|ci-cd|learn|mentor/.test(t)) return 'Shivani Kumar';
-            if (/access|approv|senior|platform|prod\b|deploy|whom|who to/.test(t)) return 'Nidhi';
+            if (/access|approv|senior|platform|prod\b|deploy|whom/.test(t)) return 'Nidhi';
             if (/yar|yaar|bhai|chill|acha|relax/.test(t)) return 'Laik';
-            if (/regress|qa\b|suite|test case/.test(t)) return Math.random() < .5 ? 'Sivaram' : 'Rambabu';
+            if (/regress|qa\b|suite/.test(t)) return Math.random() < .5 ? 'Sivaram' : 'Rambabu';
             if (/help|stuck|ui\b|kafka|config|code|api|pick/.test(t)) return Math.random() < .5 ? 'Satya' : (Math.random() <
                 .5 ? 'Laik' : 'Nidhi');
             const pool = ['Sanchita', 'Raissa', 'Satya', 'Nidhi', 'Rambabu', 'Sivaram', 'Sunkul Pradeep', 'Shivani Kumar',
@@ -1863,16 +1924,12 @@
             clearTimeout(c._tt);
             c._tt = setTimeout(async () => {
                 if (c.isGroup) {
-                    let member;
-                    // If there's a replyToMsg, we could also pick based on that, but we'll use the hint or mention
-                    if (hint) member = pickGroupResponder(hint);
-                    else member = pickGroupResponder(lastUserText(c));
+                    let member = hint ? pickGroupResponder(hint) : pickGroupResponder(lastUserText(c));
                     await deliverOne(c, member, hint, false, replyToMsg);
-                    // Additional random reply sometimes
-                    if (Math.random() < 0.3 && !replyToMsg) {
+                    if (Math.random() < 0.25 && !replyToMsg) {
                         let m2 = pickGroupResponder('');
                         if (m2 === member) m2 = pickGroupResponder('');
-                        if (m2 !== member) { await wait(700 + Math.random() * 600);
+                        if (m2 !== member) { await wait(700 + Math.random() * 500);
                             await deliverOne(c, m2, null, true); }
                     }
                 } else {
@@ -1881,7 +1938,7 @@
                 if (state.active === c.id) setHeaderStatus(c);
                 renderChatList();
                 updateMsgCount();
-            }, 650 + Math.random() * 900);
+            }, 650 + Math.random() * 800);
         }
 
         /* ============ RENDERING ============ */
@@ -1891,7 +1948,7 @@
         function ticksHTML(m) {
             const read = m.status === 'read',
                 dbl = m.status !== 'sent';
-            return `<span class="ticks ${read?'read':''}"><svg viewBox="0 0 19 12" width="16" height="11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 6.8 4.8 10 10.5 2.5"/>${dbl?'<path d="M7.3 9.4l.9.9 7.3-7.5"/>':''}</svg></span>`;
+            return `<span class="ticks ${read?'read':''}"><svg viewBox="0 0 19 12" width="15" height="10" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 6.8 4.8 10 10.5 2.5"/>${dbl?'<path d="M7.3 9.4l.9.9 7.3-7.5"/>':''}</svg></span>`;
         }
 
         function itemHTML(c, i) {
@@ -1904,12 +1961,12 @@
                 `${ticksHTML(last)}<span>You: ${esc(last.type?mediaLabel(last.type):last.text)}</span>`;
             else preview =
                 `<span>${c.isGroup&&last.member?esc(last.member)+': ':''}${esc(last.type?mediaLabel(last.type):last.text)}</span>`;
-            return `<div class="chat-item ${state.active===c.id?'active':''}" data-id="${c.id}" style="animation-delay:${i*22}ms">
+            return `<div class="chat-item ${state.active===c.id?'active':''}" data-id="${c.id}" style="animation-delay:${i*18}ms">
             <img class="avatar" src="${chatAvatar(c)}" alt="">
             <div class="ci-body">
               <div class="ci-top"><span class="ci-name">${esc(c.name)}</span><span class="ci-time ${unread?'unread':''}">${listTime(last.t)}</span></div>
               <div class="ci-bottom"><span class="ci-preview">${preview}</span>
-                <span class="ci-meta">${c.pinned?'<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--txt-2)"><path d="M16 9V4h1a1 1 0 0 0 0-2H7a1 1 0 0 0 0 2h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>':''}${unread?`<span class="badge">${c.unread}</span>`:''}</span>
+                <span class="ci-meta">${c.pinned?'<svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:var(--txt-2)"><path d="M16 9V4h1a1 1 0 0 0 0-2H7a1 1 0 0 0 0 2h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>':''}${unread?`<span class="badge">${c.unread}</span>`:''}</span>
               </div>
             </div>
           </div>`;
@@ -1956,8 +2013,7 @@
 
         function updateMsgCount() {
             const c = activeChat();
-            if (c) msgCount.textContent = c.messages.length + ' msgs';
-            else msgCount.textContent = '';
+            msgCount.textContent = c ? c.messages.length + ' msgs' : '';
         }
 
         function quoteHTML(m, c) {
@@ -2000,7 +2056,7 @@
 
         function renderMessages(c) {
             let html =
-                `<div class="chip enc">🔒 End-to-end encrypted · replies generated live by RAGina AI${KNOWLEDGE.ready?' · answering from your team knowledge 🧠':''}. Chat as much as you like.</div>`;
+                `<div class="chip enc">🔒 End-to-end encrypted · RAGina AI ${KNOWLEDGE.ready?'· knowledge loaded 🧠':''}</div>`;
             let prev = null;
             for (const m of c.messages) {
                 const newDay = !prev || !sameDay(prev.t, m.t);
@@ -2028,14 +2084,11 @@
             messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: smooth ? 'smooth' : 'auto' });
         }
 
-        /* ============ OPEN CHAT — FIXED ============ */
+        /* ============ OPEN CHAT ============ */
         function openChat(id) {
             if (!id) return;
             const c = byId(id);
-            if (!c) {
-                toastText('⚠️ Chat not found.');
-                return;
-            }
+            if (!c) { toastText('⚠️ Chat not found.'); return; }
             state.active = id;
             c.unread = 0;
             document.body.classList.add('chat-open');
@@ -2044,8 +2097,7 @@
             renderHeader(c);
             renderMessages(c);
             renderChatList();
-            scrollBottom(false);
-            // Ensure input is enabled and focused
+            setTimeout(() => scrollBottom(false), 50);
             input.disabled = false;
             input.focus();
             updateMsgCount();
@@ -2099,13 +2151,11 @@
             const c = activeChat();
             if (!c) return;
 
-            // Find the replied-to message if any
             let replyToMsg = null;
             if (state.replyTo) {
                 replyToMsg = c.messages.find(m => m.id === state.replyTo);
             }
 
-            // Create message object
             const m = { id: uid(), from: 'me', text, t: new Date(), status: 'sent', replyTo: state.replyTo || undefined };
             clearReply();
             input.value = '';
@@ -2113,11 +2163,7 @@
             updateComposer();
             pushMessage(c, m);
             deliverMine(c, m);
-            // Determine if we should mention someone
-            let hint = text;
-            // If replying to a message, pass that context
-            aiReply(c, hint, replyToMsg);
-            // Ensure input is re-enabled
+            aiReply(c, text, replyToMsg);
             input.disabled = false;
             input.focus();
         }
@@ -2132,7 +2178,7 @@
             }
             pushMessage(c, m);
             deliverMine(c, m);
-            aiReply(c, `[Sai Surya just sent a ${mediaLabel(type)} — react to it naturally and briefly]`);
+            aiReply(c, `[Sai Surya sent a ${mediaLabel(type)}]`);
         }
 
         /* ============ COMPOSER UI ============ */
@@ -2142,7 +2188,7 @@
 
         input.addEventListener('input', () => {
             input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 120) + 'px';
+            input.style.height = Math.min(input.scrollHeight, 100) + 'px';
             updateComposer();
         });
 
@@ -2153,7 +2199,6 @@
             }
         });
 
-        // Ensure input never gets disabled
         input.addEventListener('blur', () => {
             setTimeout(() => {
                 if (state.active && document.activeElement !== input && !document.querySelector(
@@ -2163,7 +2208,7 @@
                         input.focus();
                     }
                 }
-            }, 100);
+            }, 120);
         });
 
         $('#sendBtn').addEventListener('click', sendMessage);
@@ -2261,8 +2306,8 @@
             state.ctxId = b.parentElement.dataset.id;
             const m = findMsg(state.ctxId);
             ctxMenu.querySelector('[data-act="star"]').textContent = m && m.star ? 'Unstar' : 'Star';
-            ctxMenu.style.left = Math.min(e.clientX, innerWidth - 200) + 'px';
-            ctxMenu.style.top = Math.min(e.clientY, innerHeight - 190) + 'px';
+            ctxMenu.style.left = Math.min(e.clientX, innerWidth - 190) + 'px';
+            ctxMenu.style.top = Math.min(e.clientY, innerHeight - 180) + 'px';
             ctxMenu.classList.add('open');
         });
 
@@ -2319,7 +2364,7 @@
         /* ============ PANELS / MENUS / MISC ============ */
         $('#newChatBtn').addEventListener('click', () => {
             $('#ncList').innerHTML = CONTACTS.map(c =>
-                `<div class="nc-row" data-id="${c.id}" style="display:flex;align-items:center;gap:14px;padding:10px 15px;cursor:pointer"><img class="avatar" src="${chatAvatar(c)}" alt=""><div><div style="font-size:16px">${esc(c.name)}</div><div style="font-size:13.5px;color:var(--txt-2)">${esc(c.about)}</div></div></div>`
+                `<div class="nc-row" data-id="${c.id}" style="display:flex;align-items:center;gap:14px;padding:10px 15px;cursor:pointer;border-bottom:1px solid var(--border)"><img class="avatar" src="${chatAvatar(c)}" alt=""><div><div style="font-size:16px;font-weight:500">${esc(c.name)}</div><div style="font-size:13px;color:var(--txt-2)">${esc(c.about)}</div></div></div>`
                 ).join('');
             $('#newChatPanel').classList.remove('hidden');
         });
@@ -2337,10 +2382,9 @@
         menuDrop.addEventListener('click', e => {
             menuDrop.classList.remove('open');
             const a = e.target.dataset.act;
-            if (a === 'ai') toastText('✨ Live replies via RAGina /api/ask · retrieval via ragina-crawler /api/crawl.');
+            if (a === 'ai') toastText('✨ RAGina AI · ragina-crawler retrieval');
             else if (a === 'knowledge') {
-                const u = prompt('Paste a team knowledge URL to crawl (wiki / Confluence / docs / any public page):',
-                    KNOWLEDGE_URL || '');
+                const u = prompt('Paste a team knowledge URL to crawl:', KNOWLEDGE_URL || '');
                 if (u && u.trim()) loadKnowledge(u.trim());
             } else if (a === 'clear') {
                 const c = activeChat();
@@ -2365,7 +2409,6 @@
             }
         });
 
-        // Profile modal
         $('#profileClose').addEventListener('click', () => $('#profileModal').classList.remove('open'));
         $('#profileModal').addEventListener('click', e => {
             if (e.target === e.currentTarget) $('#profileModal').classList.remove('open');
@@ -2399,7 +2442,7 @@
 
         messagesEl.addEventListener('scroll', () => {
             const dist = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight;
-            scrollFab.classList.toggle('show', dist > 420);
+            scrollFab.classList.toggle('show', dist > 380);
         });
         scrollFab.addEventListener('click', () => scrollBottom(true));
 
@@ -2428,7 +2471,7 @@
                 el.remove(); });
             toastsEl.appendChild(el);
             setTimeout(() => { el.classList.add('out');
-                setTimeout(() => el.remove(), 320); }, 4200);
+                setTimeout(() => el.remove(), 320); }, 4000);
         }
 
         function toastText(text) {
@@ -2439,7 +2482,7 @@
             el.addEventListener('click', () => el.remove());
             toastsEl.appendChild(el);
             setTimeout(() => { el.classList.add('out');
-                setTimeout(() => el.remove(), 320); }, 3600);
+                setTimeout(() => el.remove(), 320); }, 3400);
         }
 
         let AC;
@@ -2453,11 +2496,11 @@
                 o.frequency.setValueAtTime(880, AC.currentTime);
                 o.frequency.exponentialRampToValueAtTime(1320, AC.currentTime + 0.08);
                 g.gain.setValueAtTime(0.0001, AC.currentTime);
-                g.gain.exponentialRampToValueAtTime(0.1, AC.currentTime + 0.02);
-                g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + 0.22);
+                g.gain.exponentialRampToValueAtTime(0.08, AC.currentTime + 0.02);
+                g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + 0.2);
                 o.connect(g).connect(AC.destination);
                 o.start();
-                o.stop(AC.currentTime + 0.28);
+                o.stop(AC.currentTime + 0.25);
             } catch (e) {}
         }
 
@@ -2471,7 +2514,7 @@
         }, 14000);
 
         /* ============ PERSISTENCE ============ */
-        const STORE_KEY = 'mammoth_chats_v1';
+        const STORE_KEY = 'mammoth_chats_v2';
 
         function saveChats() {
             try {
@@ -2503,8 +2546,7 @@
 
         /* ============ INIT ============ */
         renderChatList();
-        setTimeout(() => toastText('🦣 Welcome back, Sai Surya! Team Mammoth is online — unlimited chat, no dead ends.'),
-        700);
+        setTimeout(() => toastText('🦣 Team Mammoth is online — chat unlimited!'), 700);
         if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1200);
     </script>
 </body>
