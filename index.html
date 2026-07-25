@@ -5,38 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>WhatsApp — Team Mammoth 🦣</title>
     <style>
-        /* ── reset & root (LIGHT — current WhatsApp) ── */
         :root {
-            --bg: #ffffff;
-            --panel: #ffffff;
-            --panel-2: #f0f2f5;
-            --hover: #f5f6f6;
-            --active: #f0f2f5;
-            --txt: #111b21;
-            --txt-2: #667781;
-            --accent: #00a884;
-            --accent-text: #008069;
-            --accent-deep: #d9fdd3;
-            --bubble-in: #ffffff;
-            --bubble-out: #d9fdd3;
-            --chat-bg: #efeae2;
-            --blue: #3b9ae1;
-            --border: #e9edef;
-            --border-2: #d9dfe3;
-            --icon: #54656f;
-            --danger: #ea4335;
-            --badge: #25d366;
+            --bg: #ffffff; --panel: #ffffff; --panel-2: #f0f2f5; --hover: #f5f6f6; --active: #f0f2f5;
+            --txt: #111b21; --txt-2: #667781; --accent: #00a884; --accent-text: #008069; --accent-deep: #d9fdd3;
+            --bubble-in: #ffffff; --bubble-out: #d9fdd3; --chat-bg: #efeae2; --blue: #3b9ae1;
+            --border: #e9edef; --border-2: #d9dfe3; --icon: #54656f; --danger: #ea4335; --badge: #25d366;
             --shadow: 0 6px 24px rgba(0, 0, 0, .14);
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; margin: 0; }
-        body {
-            font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif;
-            color: var(--txt);
-            overflow: hidden;
-            background: #dfe5e7;
-            overscroll-behavior: none;
-        }
+        body { font-family: 'Segoe UI', 'Helvetica Neue', Helvetica, ui-sans-serif, system-ui, sans-serif; color: var(--txt); overflow: hidden; background: #dfe5e7; overscroll-behavior: none; }
         ::selection { background: rgba(0, 168, 132, .25); }
         *::-webkit-scrollbar { width: 8px; height: 8px; }
         *::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, .22); border-radius: 8px; border: 2px solid transparent; background-clip: padding-box; }
@@ -47,45 +25,23 @@
         img { display: block; }
         .hidden { display: none !important; }
         .flex1 { flex: 1; }
-        .sr-only { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-        /* ── app layout ── */
         #app { display: flex; height: 100vh; height: 100dvh; width: 100%; animation: appIn .35s ease both; }
         @keyframes appIn { from { opacity: 0; transform: scale(.995); } to { opacity: 1; transform: none; } }
 
-        /* ── sidebar / list pane ── */
-        #sidebar {
-            flex: 0 0 33%; min-width: 340px; max-width: 460px;
-            display: flex; flex-direction: column; min-height: 0;
-            background: var(--bg); border-right: 1px solid var(--border);
-            position: relative; z-index: 5;
-        }
-        .s-head {
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 10px 14px; height: 60px; flex: 0 0 auto; background: var(--panel);
-        }
+        #sidebar { flex: 0 0 33%; min-width: 340px; max-width: 460px; display: flex; flex-direction: column; min-height: 0; background: var(--bg); border-right: 1px solid var(--border); position: relative; z-index: 5; }
+        .s-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; height: 60px; flex: 0 0 auto; background: var(--panel); }
         .brand { color: var(--accent); font-size: 23px; font-weight: 700; letter-spacing: -.6px; user-select: none; }
         .avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--panel-2); }
         .s-actions { display: flex; gap: 2px; align-items: center; }
-        .ibtn {
-            width: 40px; height: 40px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            transition: background .15s, transform .1s; flex: 0 0 auto; position: relative; color: var(--icon);
-        }
+        .ibtn { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; transition: background .15s, transform .1s; flex: 0 0 auto; position: relative; color: var(--icon); }
         .ibtn:hover { background: rgba(0, 0, 0, .06); }
         .ibtn:active { transform: scale(.92); }
         .ibtn svg { width: 23px; height: 23px; fill: var(--icon); }
-        .rupee {
-            display: flex; align-items: center; justify-content: center;
-            width: 23px; height: 23px; border: 1.7px solid var(--icon); border-radius: 50%;
-            font-size: 12.5px; font-weight: 700; color: var(--icon);
-        }
+        .rupee { display: flex; align-items: center; justify-content: center; width: 23px; height: 23px; border: 1.7px solid var(--icon); border-radius: 50%; font-size: 12.5px; font-weight: 700; color: var(--icon); }
 
         .s-search { display: flex; align-items: center; gap: 8px; padding: 7px 12px; flex: 0 0 auto; background: var(--bg); }
-        .search-box {
-            flex: 1; display: flex; align-items: center; gap: 14px;
-            background: var(--panel-2); border-radius: 22px; height: 38px; padding: 0 14px; transition: box-shadow .2s;
-        }
+        .search-box { flex: 1; display: flex; align-items: center; gap: 14px; background: var(--panel-2); border-radius: 22px; height: 38px; padding: 0 14px; transition: box-shadow .2s; }
         .search-box:focus-within { box-shadow: 0 0 0 1px rgba(0, 168, 132, .35); background: #fff; }
         .search-box svg { width: 19px; height: 19px; fill: var(--txt-2); flex: 0 0 auto; }
         .search-box input { flex: 1; background: none; border: 0; outline: 0; color: var(--txt); font-size: 14.5px; min-width: 0; }
@@ -93,29 +49,19 @@
 
         .tabs { display: flex; gap: 8px; padding: 4px 12px 10px; flex: 0 0 auto; background: var(--bg); overflow-x: auto; }
         .tabs::-webkit-scrollbar { display: none; }
-        .tab {
-            display: inline-flex; align-items: center; padding: 7px 15px; border-radius: 18px;
-            font-size: 13.5px; color: var(--txt); background: #fff; border: 1px solid var(--border-2);
-            transition: all .16s; white-space: nowrap; flex: 0 0 auto;
-        }
+        .tab { display: inline-flex; align-items: center; padding: 7px 15px; border-radius: 18px; font-size: 13.5px; color: var(--txt); background: #fff; border: 1px solid var(--border-2); transition: all .16s; white-space: nowrap; flex: 0 0 auto; }
         .tab:hover { background: var(--hover); }
         .tab.active { background: var(--accent-deep); color: var(--accent-text); border-color: transparent; font-weight: 500; }
         .tab .cnt { margin-left: 6px; font-size: 12px; opacity: .85; }
 
-        .archived {
-            display: flex; align-items: center; gap: 16px; padding: 12px 16px; flex: 0 0 auto;
-            cursor: pointer; transition: background .12s; border-bottom: 1px solid var(--border);
-        }
+        .archived { display: flex; align-items: center; gap: 16px; padding: 12px 16px; flex: 0 0 auto; cursor: pointer; transition: background .12s; border-bottom: 1px solid var(--border); }
         .archived:hover { background: var(--hover); }
         .archived svg { width: 24px; height: 24px; fill: var(--icon); flex: 0 0 auto; }
         .archived .ar-name { flex: 1; font-size: 16px; color: var(--txt); }
         .archived .ar-count { font-size: 14px; color: var(--txt-2); }
 
         .chat-list { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; }
-        .chat-item {
-            display: flex; gap: 14px; padding: 11px 15px; cursor: pointer; position: relative;
-            transition: background .12s; animation: itemIn .25s ease both;
-        }
+        .chat-item { display: flex; gap: 14px; padding: 11px 15px; cursor: pointer; position: relative; transition: background .12s; animation: itemIn .25s ease both; }
         @keyframes itemIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
         .chat-item:hover { background: var(--hover); }
         .chat-item.active { background: var(--active); }
@@ -127,47 +73,25 @@
         .ci-time { font-size: 12px; color: var(--txt-2); flex: 0 0 auto; }
         .ci-time.unread { color: var(--accent); font-weight: 500; }
         .ci-bottom { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-        .ci-preview {
-            font-size: 14px; color: var(--txt-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-            display: flex; align-items: center; gap: 4px; min-width: 0;
-        }
+        .ci-preview { font-size: 14px; color: var(--txt-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px; min-width: 0; }
         .ci-preview .ticks { flex: 0 0 auto; }
         .typing-txt { color: var(--accent) !important; }
         .ci-meta { display: flex; align-items: center; gap: 7px; flex: 0 0 auto; }
-        .badge {
-            min-width: 20px; height: 20px; padding: 0 5px; border-radius: 12px;
-            background: var(--badge); color: #fff; font-size: 12px; font-weight: 600;
-            display: flex; align-items: center; justify-content: center;
-            animation: badgePop .3s cubic-bezier(.5, 1.8, .6, 1) both;
-        }
+        .badge { min-width: 20px; height: 20px; padding: 0 5px; border-radius: 12px; background: var(--badge); color: #fff; font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center; animation: badgePop .3s cubic-bezier(.5, 1.8, .6, 1) both; }
         @keyframes badgePop { from { transform: scale(0); } to { transform: scale(1); } }
         .list-empty { padding: 40px 24px; text-align: center; color: var(--txt-2); font-size: 14px; }
 
-        /* floating action stack (list view) */
         .fab-stack { position: absolute; right: 16px; bottom: 76px; display: flex; flex-direction: column; gap: 14px; z-index: 9; align-items: flex-end; }
-        .fab-ai {
-            width: 50px; height: 50px; border-radius: 16px; background: #fff; box-shadow: var(--shadow);
-            display: flex; align-items: center; justify-content: center; transition: transform .12s;
-        }
+        .fab-ai { width: 50px; height: 50px; border-radius: 16px; background: #fff; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; transition: transform .12s; }
         .fab-ai:active { transform: scale(.93); }
         .fab-ai svg { width: 30px; height: 30px; }
-        .fab-new {
-            width: 56px; height: 56px; border-radius: 18px; background: var(--accent); box-shadow: var(--shadow);
-            display: flex; align-items: center; justify-content: center; transition: transform .12s, filter .12s;
-        }
+        .fab-new { width: 56px; height: 56px; border-radius: 18px; background: var(--accent); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; transition: transform .12s, filter .12s; }
         .fab-new:hover { filter: brightness(1.04); }
         .fab-new:active { transform: scale(.94); }
         .fab-new svg { width: 26px; height: 26px; fill: #fff; }
 
-        /* bottom navigation (footer) */
-        .bottom-nav {
-            flex: 0 0 auto; display: flex; background: var(--panel); border-top: 1px solid var(--border);
-            padding: 6px 4px 8px; height: 60px;
-        }
-        .nav-item {
-            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
-            color: var(--txt-2); transition: color .15s;
-        }
+        .bottom-nav { flex: 0 0 auto; display: flex; background: var(--panel); border-top: 1px solid var(--border); padding: 6px 4px 8px; height: 60px; }
+        .nav-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; color: var(--txt-2); transition: color .15s; }
         .nav-item:active { opacity: .7; }
         .nav-ico { position: relative; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; transition: all .18s; }
         .nav-ico svg { width: 24px; height: 24px; fill: currentColor; }
@@ -175,43 +99,25 @@
         .nav-item.active { color: var(--accent-text); }
         .nav-item.active .nav-ico { width: 60px; height: 30px; border-radius: 16px; background: var(--accent-deep); }
         .nav-item.active .nav-ico svg { width: 22px; height: 22px; }
-        .nav-badge {
-            position: absolute; top: -3px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px;
-            border-radius: 9px; background: var(--badge); color: #fff; font-size: 10.5px; font-weight: 700;
-            display: flex; align-items: center; justify-content: center;
-        }
+        .nav-badge { position: absolute; top: -3px; right: 4px; min-width: 16px; height: 16px; padding: 0 4px; border-radius: 9px; background: var(--badge); color: #fff; font-size: 10.5px; font-weight: 700; display: flex; align-items: center; justify-content: center; }
         .nav-item.active .nav-badge { right: 6px; top: -2px; }
 
-        /* ── dropdown menus ── */
-        .menu {
-            position: absolute; right: 10px; top: 54px; background: #fff; border-radius: 12px; padding: 8px 0;
-            min-width: 240px; box-shadow: var(--shadow); z-index: 40; display: none; transform-origin: top right;
-            border: 1px solid var(--border);
-        }
+        .menu { position: absolute; right: 10px; top: 54px; background: #fff; border-radius: 12px; padding: 8px 0; min-width: 250px; box-shadow: var(--shadow); z-index: 40; display: none; transform-origin: top right; border: 1px solid var(--border); }
         .menu.open { display: block; animation: menuIn .16s ease both; }
         @keyframes menuIn { from { opacity: 0; transform: scale(.92); } to { opacity: 1; transform: none; } }
         .menu button { display: block; width: 100%; text-align: left; padding: 12px 22px; font-size: 14.5px; color: var(--txt); }
         .menu button:hover { background: var(--hover); }
 
-        /* ── chat area ── */
         #chatArea { flex: 1; display: flex; flex-direction: column; position: relative; min-width: 0; min-height: 0; }
-
-        #emptyState {
-            flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; border-bottom: 6px solid var(--accent); padding: 0 40px; background: var(--panel-2);
-        }
+        #emptyState { flex: 1; min-height: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; border-bottom: 6px solid var(--accent); padding: 0 40px; background: var(--panel-2); }
         #emptyState h1 { font-size: 30px; font-weight: 300; margin: 30px 0 14px; color: var(--txt); }
         #emptyState p { font-size: 14px; color: var(--txt-2); line-height: 1.7; max-width: 560px; margin: 0; }
         .enc-note { margin-top: 38px; font-size: 13.5px; color: var(--txt-2); display: flex; align-items: center; gap: 6px; }
         .enc-note svg { width: 14px; height: 14px; fill: var(--txt-2); }
         .ai-note { margin-top: 10px; font-size: 12.5px; color: var(--accent-text); }
 
-        /* ── chat view ── */
         #chatView { flex: 1; min-height: 0; display: none; flex-direction: column; position: relative; }
-        .c-head {
-            display: flex; align-items: center; gap: 12px; padding: 8px 14px; height: 60px; flex: 0 0 auto;
-            background: var(--panel); z-index: 6; border-bottom: 1px solid var(--border);
-        }
+        .c-head { display: flex; align-items: center; gap: 12px; padding: 8px 14px; height: 60px; flex: 0 0 auto; background: var(--panel); z-index: 6; border-bottom: 1px solid var(--border); }
         .c-head .avatar { width: 40px; height: 40px; cursor: pointer; }
         .c-info { flex: 1; min-width: 0; cursor: pointer; }
         #cvName { font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--txt); }
@@ -220,28 +126,15 @@
         .back-btn { display: none; }
         .close-chat-btn { display: flex; }
 
-        /* ── messages (scrollable history) ── */
-        .messages {
-            flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
-            padding: 14px 6% 22px; position: relative; background-color: var(--chat-bg);
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cg fill='none' stroke='%23000000' stroke-opacity='.05' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='40' cy='48' r='9'/%3E%3Cpath d='M120 40q8-12 16 0t16 0'/%3E%3Crect x='212' y='36' width='16' height='16' rx='4'/%3E%3Cpath d='M60 130l10 10m0-10l-10 10'/%3E%3Ccircle cx='160' cy='130' r='6'/%3E%3Cpath d='M230 120v20m-10-10h20'/%3E%3Cpath d='M36 220q10-10 20 0'/%3E%3Crect x='110' y='210' width='20' height='12' rx='6'/%3E%3Cpath d='M200 226l14-14'/%3E%3Ccircle cx='252' cy='216' r='7'/%3E%3Cpath d='M150 268q6-8 12 0'/%3E%3C/g%3E%3C/svg%3E");
-        }
-        .chip {
-            width: max-content; max-width: 520px; margin: 14px auto; padding: 6px 12px; border-radius: 8px;
-            background: rgba(255, 255, 255, .92); color: var(--txt-2); font-size: 12.5px;
-            box-shadow: 0 1px 1px rgba(0, 0, 0, .12); text-align: center;
-        }
+        .messages { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 14px 6% 22px; position: relative; background-color: var(--chat-bg); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cg fill='none' stroke='%23000000' stroke-opacity='.05' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='40' cy='48' r='9'/%3E%3Cpath d='M120 40q8-12 16 0t16 0'/%3E%3Crect x='212' y='36' width='16' height='16' rx='4'/%3E%3Cpath d='M60 130l10 10m0-10l-10 10'/%3E%3Ccircle cx='160' cy='130' r='6'/%3E%3Cpath d='M230 120v20m-10-10h20'/%3E%3Cpath d='M36 220q10-10 20 0'/%3E%3Crect x='110' y='210' width='20' height='12' rx='6'/%3E%3Cpath d='M200 226l14-14'/%3E%3Ccircle cx='252' cy='216' r='7'/%3E%3Cpath d='M150 268q6-8 12 0'/%3E%3C/g%3E%3C/svg%3E"); }
+        .chip { width: max-content; max-width: 520px; margin: 14px auto; padding: 6px 12px; border-radius: 8px; background: rgba(255, 255, 255, .92); color: var(--txt-2); font-size: 12.5px; box-shadow: 0 1px 1px rgba(0, 0, 0, .12); text-align: center; }
         .chip.enc { color: #54656f; line-height: 1.5; background: #ffefc2; }
         .chip.date { margin: 8px auto 12px; font-size: 12px; background: rgba(255, 255, 255, .92); color: var(--txt-2); padding: 5px 14px; }
         .msg { display: flex; margin: 1px 0; animation: msgIn .18s ease-out both; }
         @keyframes msgIn { from { opacity: 0; transform: translateY(8px) scale(.97); } to { opacity: 1; transform: none; } }
         .msg.first { margin-top: 10px; }
         .msg.out { justify-content: flex-end; }
-        .bubble {
-            max-width: min(65%, 640px); position: relative; padding: 6px 8px 8px 9px; border-radius: 8px;
-            font-size: 14.2px; line-height: 19px; word-wrap: break-word; box-shadow: 0 1px .5px rgba(0, 0, 0, .13);
-            transition: filter .15s; color: var(--txt);
-        }
+        .bubble { max-width: min(65%, 640px); position: relative; padding: 6px 8px 8px 9px; border-radius: 8px; font-size: 14.2px; line-height: 19px; word-wrap: break-word; box-shadow: 0 1px .5px rgba(0, 0, 0, .13); transition: filter .15s; color: var(--txt); }
         .bubble:hover { filter: brightness(.985); }
         .msg.in .bubble { background: var(--bubble-in); }
         .msg.out .bubble { background: var(--bubble-out); }
@@ -253,18 +146,11 @@
         .meta .star { font-size: 10px; }
         .ticks { color: rgba(17, 27, 33, .4); display: inline-flex; transition: color .35s; }
         .ticks.read { color: var(--blue); }
-        .quote {
-            background: rgba(0, 0, 0, .05); border-left: 4px solid var(--accent); border-radius: 6px;
-            padding: 6px 10px; margin: 2px 0 5px; font-size: 13px; cursor: pointer; min-width: 180px;
-        }
+        .quote { background: rgba(0, 0, 0, .05); border-left: 4px solid var(--accent); border-radius: 6px; padding: 6px 10px; margin: 2px 0 5px; font-size: 13px; cursor: pointer; min-width: 180px; }
         .msg.out .quote { background: rgba(0, 0, 0, .06); }
         .q-name { display: block; color: var(--accent); font-size: 12.5px; font-weight: 600; margin-bottom: 1px; }
         .q-text { color: var(--txt-2); display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 300px; }
-        .react {
-            position: absolute; bottom: -11px; left: 8px; background: #fff; border: 1px solid var(--border);
-            border-radius: 12px; padding: 2px 7px; font-size: 12px; box-shadow: 0 1px 2px rgba(0, 0, 0, .18);
-            animation: badgePop .25s cubic-bezier(.5, 1.8, .6, 1) both;
-        }
+        .react { position: absolute; bottom: -11px; left: 8px; background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 2px 7px; font-size: 12px; box-shadow: 0 1px 2px rgba(0, 0, 0, .18); animation: badgePop .25s cubic-bezier(.5, 1.8, .6, 1) both; }
         .msg.out .react { left: auto; right: 8px; }
         .msg.has-react .bubble { margin-bottom: 13px; }
 
@@ -275,10 +161,7 @@
         @keyframes blink { 0%, 60%, 100% { opacity: .25; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
 
         .msg.media .bubble { padding: 4px 4px 3px; }
-        .imgph {
-            width: 238px; height: 146px; border-radius: 6px; display: flex; align-items: center; justify-content: center;
-            font-size: 36px; background: linear-gradient(135deg, #e3e9ea, #cfd8db 55%, #d7dde0);
-        }
+        .imgph { width: 238px; height: 146px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 36px; background: linear-gradient(135deg, #e3e9ea, #cfd8db 55%, #d7dde0); }
         .msg.media .meta { margin: 6px 4px 2px 10px; }
 
         .voice { display: flex; align-items: center; gap: 10px; min-width: 238px; padding: 2px 2px 4px; }
@@ -293,33 +176,28 @@
         .wprog { position: absolute; left: 0; top: 0; bottom: 0; width: 0%; background: rgba(0, 168, 132, .35); border-radius: 4px; pointer-events: none; }
         .vdur { font-size: 11px; color: rgba(17, 27, 33, .55); flex: 0 0 auto; }
 
-        .fab {
-            position: absolute; right: 22px; bottom: 84px; width: 42px; height: 42px; border-radius: 50%;
-            background: #fff; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center;
-            z-index: 8; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all .2s;
-        }
+        .fab { position: absolute; right: 22px; bottom: 84px; width: 42px; height: 42px; border-radius: 50%; background: #fff; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; z-index: 8; opacity: 0; pointer-events: none; transform: translateY(10px); transition: all .2s; }
         .fab.show { opacity: 1; pointer-events: auto; transform: none; }
         .fab svg { width: 22px; height: 22px; fill: var(--icon); }
 
+        /* smart reply chips */
+        .chips { display: flex; gap: 8px; padding: 7px 12px 4px; overflow-x: auto; background: var(--panel-2); flex: 0 0 auto; }
+        .chips::-webkit-scrollbar { display: none; }
+        .chips:empty { display: none; padding: 0; }
+        .chip-pill { flex: 0 0 auto; padding: 7px 13px; border-radius: 16px; background: #fff; border: 1px solid var(--border-2); font-size: 13px; color: var(--txt); white-space: nowrap; transition: background .12s, transform .1s; box-shadow: 0 1px 1px rgba(0, 0, 0, .04); animation: msgIn .2s ease both; }
+        .chip-pill:hover { background: var(--hover); }
+        .chip-pill:active { transform: scale(.96); }
+        .chip-pill.ctx { border-color: var(--accent); color: var(--accent-text); background: var(--accent-deep); font-weight: 600; }
+
         .reply-bar { display: flex; align-items: center; gap: 12px; background: var(--panel-2); padding: 8px 14px 0; flex: 0 0 auto; }
-        .rb-txt {
-            flex: 1; background: #fff; border-left: 4px solid var(--accent); border-radius: 8px; padding: 7px 12px;
-            min-width: 0; animation: msgIn .15s ease both;
-        }
+        .rb-txt { flex: 1; background: #fff; border-left: 4px solid var(--accent); border-radius: 8px; padding: 7px 12px; min-width: 0; animation: msgIn .15s ease both; }
         #rbName { display: block; color: var(--accent); font-size: 12.5px; font-weight: 600; }
         #rbSnippet { display: block; color: var(--txt-2); font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* ── composer (FIXED at bottom) ── */
         .composer { background: var(--panel-2); padding: 8px 12px; position: relative; z-index: 7; flex: 0 0 auto; }
         .c-row { display: flex; align-items: center; gap: 4px; }
-        .input-wrap {
-            flex: 1; background: #fff; border-radius: 24px; padding: 9px 14px; min-height: 42px;
-            display: flex; align-items: center; box-shadow: 0 1px 1px rgba(0, 0, 0, .05);
-        }
-        #msgInput {
-            flex: 1; background: none; border: 0; outline: 0; resize: none; color: var(--txt); font: inherit;
-            font-size: 15px; line-height: 20px; max-height: 120px; min-height: 24px;
-        }
+        .input-wrap { flex: 1; background: #fff; border-radius: 24px; padding: 9px 14px; min-height: 42px; display: flex; align-items: center; box-shadow: 0 1px 1px rgba(0, 0, 0, .05); }
+        #msgInput { flex: 1; background: none; border: 0; outline: 0; resize: none; color: var(--txt); font: inherit; font-size: 15px; line-height: 20px; max-height: 120px; min-height: 24px; }
         #msgInput::placeholder { color: var(--txt-2); }
         #sendBtn { display: none; }
         #sendBtn svg { fill: var(--accent); }
@@ -335,11 +213,7 @@
         #recTime { font-size: 15px; font-variant-numeric: tabular-nums; }
         .rec-hint { font-size: 13px; color: var(--txt-2); margin-left: 8px; }
 
-        /* ── emoji tray ── */
-        .tray {
-            position: absolute; bottom: 64px; left: 12px; background: #fff; border-radius: 12px; z-index: 30;
-            display: none; box-shadow: var(--shadow); transform-origin: bottom left; border: 1px solid var(--border);
-        }
+        .tray { position: absolute; bottom: 64px; left: 12px; background: #fff; border-radius: 12px; z-index: 30; display: none; box-shadow: var(--shadow); transform-origin: bottom left; border: 1px solid var(--border); }
         .tray.open { display: block; animation: trayIn .18s cubic-bezier(.3, 1.4, .5, 1) both; }
         @keyframes trayIn { from { opacity: 0; transform: scale(.85) translateY(8px); } to { opacity: 1; transform: none; } }
         #emojiTray { width: 344px; padding: 10px 12px 14px; }
@@ -348,41 +222,24 @@
         .emoji-grid button { font-size: 21px; width: 38px; height: 38px; border-radius: 8px; display: flex; align-items: center; justify-content: center; transition: background .1s, transform .1s; }
         .emoji-grid button:hover { background: var(--hover); transform: scale(1.15); }
 
-        /* ── context menu ── */
-        .ctx {
-            position: fixed; background: #fff; border-radius: 12px; padding: 8px 0; min-width: 180px; z-index: 60;
-            display: none; box-shadow: var(--shadow); border: 1px solid var(--border);
-        }
+        .ctx { position: fixed; background: #fff; border-radius: 12px; padding: 8px 0; min-width: 180px; z-index: 60; display: none; box-shadow: var(--shadow); border: 1px solid var(--border); }
         .ctx.open { display: block; animation: menuIn .14s ease both; }
         .ctx button { display: block; width: 100%; text-align: left; padding: 11px 22px; font-size: 14.5px; color: var(--txt); }
         .ctx button:hover { background: var(--hover); }
         .ctx button.danger { color: var(--danger); }
 
-        /* ── toasts ── */
         #toasts { position: fixed; left: 22px; bottom: 22px; z-index: 80; display: flex; flex-direction: column; gap: 10px; }
-        .toast {
-            display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 12px; padding: 10px 16px 10px 10px;
-            box-shadow: var(--shadow); cursor: pointer; max-width: 360px; border: 1px solid var(--border);
-            animation: toastIn .28s cubic-bezier(.3, 1.3, .5, 1) both;
-        }
+        .toast { display: flex; align-items: center; gap: 12px; background: #fff; border-radius: 12px; padding: 10px 16px 10px 10px; box-shadow: var(--shadow); cursor: pointer; max-width: 360px; border: 1px solid var(--border); animation: toastIn .28s cubic-bezier(.3, 1.3, .5, 1) both; }
         @keyframes toastIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
         .toast.out { opacity: 0; transform: translateY(10px); transition: all .3s; }
         .toast img { width: 38px; height: 38px; border-radius: 50%; }
         .toast b { display: block; font-size: 13.5px; font-weight: 600; color: var(--txt); }
         .toast span { display: block; font-size: 13px; color: var(--txt-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 260px; }
 
-        /* ── profile modal ── */
-        .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0, 0, 0, .45); z-index: 100; display: none;
-            align-items: center; justify-content: center; backdrop-filter: blur(2px); animation: fadeIn .2s ease both;
-        }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); z-index: 100; display: none; align-items: center; justify-content: center; backdrop-filter: blur(2px); animation: fadeIn .2s ease both; }
         .modal-overlay.open { display: flex; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .modal {
-            background: #fff; border-radius: 18px; max-width: 420px; width: 92%; padding: 28px 30px 24px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, .4); animation: modalIn .25s cubic-bezier(.3, 1.3, .5, 1) both;
-            max-height: 90vh; overflow-y: auto; color: var(--txt);
-        }
+        .modal { background: #fff; border-radius: 18px; max-width: 420px; width: 92%; padding: 28px 30px 24px; box-shadow: 0 20px 60px rgba(0, 0, 0, .4); animation: modalIn .25s cubic-bezier(.3, 1.3, .5, 1) both; max-height: 90vh; overflow-y: auto; color: var(--txt); }
         @keyframes modalIn { from { opacity: 0; transform: scale(.9) translateY(20px); } to { opacity: 1; transform: none; } }
         .modal .avatar-lg { width: 84px; height: 84px; border-radius: 50%; margin: 0 auto 14px; display: block; border: 3px solid var(--accent); }
         .modal h2 { font-size: 22px; font-weight: 600; margin: 0 0 4px; text-align: center; }
@@ -392,14 +249,35 @@
         .modal .links a { display: inline-flex; align-items: center; gap: 6px; padding: 7px 14px; border-radius: 20px; background: var(--panel-2); color: var(--txt); font-size: 13px; text-decoration: none; transition: background .15s; }
         .modal .links a:hover { background: #e3e7ea; }
         .modal .links a svg { width: 18px; height: 18px; fill: var(--txt-2); }
-        .modal .close-btn { display: block; margin: 0 auto; padding: 9px 32px; border-radius: 20px; background: var(--accent-deep); color: var(--accent-text); font-size: 14px; font-weight: 600; transition: background .15s; }
+        .modal .mbtn { display: block; margin: 8px auto 0; padding: 9px 26px; border-radius: 20px; font-size: 14px; font-weight: 600; transition: background .15s; }
+        .modal .switch-btn { background: #fff; color: var(--accent-text); border: 1.5px solid var(--accent); }
+        .modal .switch-btn:hover { background: var(--accent-deep); }
+        .modal .close-btn { background: var(--accent-deep); color: var(--accent-text); }
         .modal .close-btn:hover { background: #c4f0c9; }
         .modal .tag { display: inline-block; font-size: 12px; padding: 2px 12px; border-radius: 12px; background: var(--accent-deep); color: var(--accent-text); margin: 4px 2px; }
 
         .nc-row:hover { background: var(--hover); }
         .msg-count { font-size: 12px; color: var(--txt-2); padding: 0 6px; white-space: nowrap; }
 
-        /* ── responsive ─ */
+        /* identity picker */
+        #picker { position: fixed; inset: 0; z-index: 200; background: linear-gradient(160deg, #eafaf4, #eef1f2); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn .25s ease both; }
+        #picker.hidden { display: none; }
+        .pk-card { background: #fff; border-radius: 22px; box-shadow: 0 24px 70px rgba(0, 0, 0, .18); width: min(560px, 94vw); max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; animation: modalIn .3s cubic-bezier(.3, 1.3, .5, 1) both; }
+        .pk-head { padding: 26px 28px 12px; text-align: center; }
+        .pk-head .mascot { font-size: 44px; }
+        .pk-head h1 { margin: 6px 0 0; font-size: 23px; font-weight: 700; color: var(--txt); }
+        .pk-head p { margin: 8px auto 0; color: var(--txt-2); font-size: 13.5px; line-height: 1.5; max-width: 380px; }
+        .pk-list { overflow-y: auto; padding: 6px 14px 20px; }
+        .pk-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 14px; cursor: pointer; transition: background .12s; }
+        .pk-row:hover { background: var(--hover); }
+        .pk-row.sel { background: var(--accent-deep); }
+        .pk-row .avatar { width: 48px; height: 48px; }
+        .pk-meta { flex: 1; min-width: 0; }
+        .pk-name { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+        .pk-role { font-size: 13px; color: var(--txt-2); margin-top: 1px; }
+        .pk-tag { font-size: 12.5px; color: var(--accent-text); margin-top: 3px; }
+        .pk-row .go { color: var(--txt-2); font-size: 20px; }
+
         @media (max-width: 880px) {
             #sidebar { flex: 1 1 auto; max-width: none; min-width: 0; width: 100%; }
             #chatArea { position: fixed; inset: 0; z-index: 30; transform: translateX(102%); transition: transform .26s cubic-bezier(.4, 0, .2, 1); background: var(--bg); }
@@ -419,10 +297,8 @@
 </head>
 <body>
     <div id="app">
-        <!-- SIDEBAR / LIST -->
         <aside id="sidebar">
             <header class="s-head">
-                <span class="sr-only"><button class="ibtn" id="meBtn" title="Your profile"><img class="avatar" id="meAvatar" alt="Sai Surya" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Crect width='96' height='96' fill='%23a695e7'/%3E%3Ctext x='48' y='61' font-family='Arial' font-size='36' font-weight='600' fill='rgba(255,255,255,.92)' text-anchor='middle'%3ESS%3C/text%3E%3C/svg%3E" /></button></span>
                 <span class="brand">WhatsApp</span>
                 <div class="s-actions">
                     <button class="ibtn" data-demo="Payments · demo only" title="Payments"><span class="rupee">₹</span></button>
@@ -432,9 +308,11 @@
                 <div class="menu" id="menuDrop">
                     <button data-act="standup">🦣 Run a standup in the group</button>
                     <button data-act="knowledge">🧠 Load team knowledge (RAGina)</button>
+                    <button data-act="export">📥 Export active chat (.txt)</button>
                     <button data-act="clear">🗑️ Clear active chat</button>
                     <button data-act="ai">✨ About the AI</button>
-                    <button data-act="profile">👤 Sai Surya · Profile</button>
+                    <button data-act="profile" id="menuProfileBtn">👤 Profile</button>
+                    <button data-act="switch" id="menuSwitchBtn">🔄 Switch identity</button>
                 </div>
             </header>
 
@@ -459,7 +337,6 @@
 
             <div class="chat-list" id="chatList"></div>
 
-            <!-- floating action stack -->
             <div class="fab-stack">
                 <button class="fab-ai" data-demo="Meta AI · demo only ✨" title="Meta AI">
                     <svg viewBox="0 0 32 32"><defs><radialGradient id="aiG" cx="50%" cy="40%" r="70%"><stop offset="0%" stop-color="#7b61ff"/><stop offset="55%" stop-color="#a033d8"/><stop offset="100%" stop-color="#e0479a"/></radialGradient></defs><path fill="url(#aiG)" d="M16 3c.7 4.6 2.4 6.3 7 7-4.6.7-6.3 2.4-7 7-.7-4.6-2.4-6.3-7-7 4.6-.7 6.3-2.4 7-7zM24 17c.4 2.4 1.2 3.2 3.6 3.6-2.4.4-3.2 1.2-3.6 3.6-.4-2.4-1.2-3.2-3.6-3.6 2.4-.4 3.2-1.2 3.6-3.6z"/></svg>
@@ -469,7 +346,6 @@
                 </button>
             </div>
 
-            <!-- bottom navigation (footer) -->
             <nav class="bottom-nav" id="bottomNav">
                 <button class="nav-item active" data-nav="chats">
                     <span class="nav-ico"><svg viewBox="0 0 24 24"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.3 1.2 4.4 3.2 5.9L4 21l4.4-2.2c1.1.3 2.3.5 3.6.5 5.5 0 10-3.6 10-8s-4.5-8-10-8z"/></svg><span class="nav-badge" id="navChatsBadge" style="display:none">0</span></span>
@@ -489,7 +365,6 @@
                 </button>
             </nav>
 
-            <!-- New chat panel -->
             <section class="panel hidden" id="newChatPanel" style="position:absolute;inset:0;background:var(--bg);z-index:20;display:flex;flex-direction:column">
                 <div style="display:flex;align-items:center;gap:18px;background:var(--panel);padding:14px 16px;height:60px;border-bottom:1px solid var(--border)">
                     <button class="ibtn" id="ncBack" title="Back"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
@@ -499,9 +374,7 @@
             </section>
         </aside>
 
-        <!-- CHAT AREA -->
         <main id="chatArea">
-            <!-- Empty state -->
             <div id="emptyState">
                 <svg width="230" height="150" viewBox="0 0 240 160" fill="none">
                     <rect x="24" y="14" width="160" height="100" rx="12" fill="#ffffff" stroke="#cfd8db" stroke-width="3"/>
@@ -517,15 +390,12 @@
                     <circle cx="162" cy="40" r="15" fill="#00a884"/>
                     <text x="162" y="47" font-size="17" text-anchor="middle">🦣</text>
                 </svg>
-                <h1>Team Mammoth 🦣</h1>
-                <p>Unlimited live chat with your AI team, powered by RAGina.<br>
-                    Sanchita, Raissa, Satya, Nidhi, Rambabu, Sivaram, Yamini, Sunkul Pradeep, Shivani &amp; Laik —<br>
-                    each texting in their own voice. Load your team wiki to make them answer from real project knowledge.</p>
+                <h1 id="esTitle">Team Mammoth 🦣</h1>
+                <p id="esBody">Pick a chat to start.</p>
                 <div class="enc-note"><svg viewBox="0 0 24 24"><path d="M18 8h-1V6a5 5 0 0 0-10 0v2H6a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V10a2 2 0 0 0-2-2zM9 6a3 3 0 0 1 6 0v2H9V6z"/></svg>End-to-end encrypted</div>
                 <div class="ai-note">✨ RAGina AI · ragina-crawler retrieval · SAFe · Team Mammoth</div>
             </div>
 
-            <!-- Chat view -->
             <div id="chatView">
                 <header class="c-head">
                     <button class="ibtn back-btn" id="backBtn" title="Back"><svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg></button>
@@ -551,6 +421,8 @@
                     <button class="ibtn" id="rbClose" title="Close"><svg viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg></button>
                 </div>
 
+                <div class="chips" id="smartChips"></div>
+
                 <footer class="composer" id="composer">
                     <div class="c-row main">
                         <button class="ibtn" id="emojiBtn" title="Emoji"><svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8zM8.5 8A1.5 1.5 0 1 0 10 9.5 1.5 1.5 0 0 0 8.5 8zm7 0A1.5 1.5 0 1 0 17 9.5 1.5 1.5 0 0 0 15.5 8zm-8.1 6a1 1 0 0 0-.9 1.5 6.6 6.6 0 0 0 11 0 1 1 0 0 0-.9-1.5z"/></svg></button>
@@ -571,7 +443,6 @@
             </div>
         </main>
 
-        <!-- Context menu -->
         <div class="ctx" id="ctxMenu">
             <button data-act="reply">Reply</button>
             <button data-act="react">React ❤️</button>
@@ -579,34 +450,34 @@
             <button data-act="delete" class="danger">Delete message</button>
         </div>
 
-        <!-- Toasts -->
         <div id="toasts"></div>
 
-        <!-- Profile modal -->
         <div class="modal-overlay" id="profileModal">
             <div class="modal">
-                <img class="avatar-lg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96'%3E%3Crect width='96' height='96' fill='%23a695e7'/%3E%3Ctext x='48' y='61' font-family='Arial' font-size='36' font-weight='600' fill='rgba(255,255,255,.92)' text-anchor='middle'%3ESS%3C/text%3E%3C/svg%3E" alt="Sai Surya" />
-                <h2>Sai Surya Varakala</h2>
-                <div class="sub">☀️ Techno Agilist · Scrum Master · Team Mammoth 🦣</div>
-                <div class="bio">
-                    <strong>👋 About me</strong><br>
-                    I'm Sai Surya — a passionate Techno Agilist and SAFe Scrum Master leading Team Mammoth 🦣.
-                    I blend technical depth with agile coaching to help teams deliver high-impact Healthcare, Insurance &amp; Pharmacy products.
-                    I love storytelling, automation, and making complex systems feel simple. Outside work, I write, build side projects, and
-                    explore the intersection of AI and human collaboration.
-                    <div style="margin-top:8px">
-                        <span class="tag">🧠 RAGina AI</span>
-                        <span class="tag">⚡ SAFe 6.0</span>
-                        <span class="tag">🏥 Healthcare</span>
-                    </div>
-                </div>
-                <div class="links">
+                <img class="avatar-lg" id="pmAvatar" alt="" />
+                <h2 id="pmName"></h2>
+                <div class="sub" id="pmSub"></div>
+                <div class="bio" id="pmBio"></div>
+                <div class="links" id="pmLinks">
                     <a href="https://github.com/suryasticsai" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>GitHub</a>
                     <a href="https://linkedin.com/in/suryasticsai" target="_blank"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>LinkedIn</a>
                     <a href="https://medium.com/@suryasticsai" target="_blank"><svg viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42s-3.38-2.88-3.38-6.42 1.51-6.42 3.38-6.42 3.38 2.88 3.38 6.42zM24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>Medium</a>
                     <a href="https://instagram.com/suryasticsai" target="_blank"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>Instagram</a>
                 </div>
-                <button class="close-btn" id="profileClose">Close</button>
+                <button class="mbtn switch-btn" id="pmSwitch">🔄 Switch identity</button>
+                <button class="mbtn close-btn" id="profileClose">Close</button>
+            </div>
+        </div>
+
+        <!-- IDENTITY PICKER -->
+        <div id="picker">
+            <div class="pk-card">
+                <div class="pk-head">
+                    <div class="mascot">🦣</div>
+                    <h1>Who are you today?</h1>
+                    <p>Pick a persona to role‑play in Team Mammoth. Everyone else becomes your AI teammate — and they'll chat with <b>you</b>. You can switch anytime.</p>
+                </div>
+                <div class="pk-list" id="pickerList"></div>
             </div>
         </div>
     </div>
@@ -619,21 +490,24 @@
         const ASK_URL = 'https://ragina-crawler-ragina.vercel.app/api/ask';
         const CRAWL_URL = 'https://ragina-crawler-ragina.vercel.app/api/crawl';
 
-        /* ============ TEAM MAMMOTH — PERSONAS ============ */
+        /* ============ TEAM MAMMOTH — PERSONAS (incl. Sai Surya) ============ */
         const PERSONAS = {
-            'Sanchita': { flag: '🇮🇳', role: 'Business Analyst (BA)', emojiHint: '✅📋📝', vibe: 'Extroverted and energetic, but a total stickler for rules and process. You constantly reference user stories, acceptance criteria, JIRA, the backlog, refinement, sign-offs and "as per process". You make sure everything is documented and approved before moving on. Friendly and talkative, but you always bring it back to process and requirements. You discuss the Pharmacy/Insurance config work.' },
-            'Raissa': { flag: '🇨🇦', role: 'Product Owner (PO)', emojiHint: '📊 — used sparingly', vibe: 'Very serious, thorough and detailed. You are the subject-matter expert for the team on the Healthcare, Insurance and Pharmacy domain. You explain things in depth — the why, the rules, the edge cases. You are Canadian and relatively new to American English, so you are very polite ("sorry", "thanks so much", "eh"), a little formal, and occasionally phrase things slightly awkwardly but always clearly. You use very few emojis and give detailed, thoughtful answers.' },
-            'Satya': { flag: '🇮🇳', role: 'Full Stack Developer', emojiHint: '🔥🚀😄', vibe: 'Super energetic, enthusiastic and proactive. You jump in to add context, volunteer to help, and ask clarifying questions upfront so nobody gets lost. Full stack — UI, backend, config kafka, APIs. You are the first to say "I can pick that up!" or "hey, anyone stuck? I can help". Very supportive team player, high energy, lots of emojis.' },
-            'Nidhi': { flag: '🇺🇸', role: 'Tech Lead (TL) / Senior Developer', emojiHint: '👍✅ — minimal', vibe: 'Very experienced and cool-headed. You talk only when needed, and when you do it is short, precise and useful. You look after the team — you tell people whom to approach for access, what to get approved by the senior folks, and you give crisp guidance and notes. Calm mentor energy, US-based, minimal emojis, no fluff.' },
-            'Rambabu': { flag: '🇮🇳', role: 'QA — Performance Testing (14 yrs experience)', emojiHint: 'almost none, maybe ✅', structured: true, vibe: 'Very serious, formal and extremely experienced (14 years in QA). You are passionate about Performance Testing — load tests, JMeter, TPS, response time, throughput, SLA, kafka consumer lag. You regularly send STRUCTURED status updates with bullet points, and you ALWAYS end status messages with a final line exactly like: "cc: Sai Surya (SM), Sanchita (BA), Raissa (PO)". Professional, no jokes, precise numbers.' },
-            'Sivaram': { flag: '🇮🇳', role: 'QA Engineer', emojiHint: '🙂👍 — soft and few', quiet: true, vibe: 'You speak only when asked. Very friendly, smooth and kind tone. Your replies are short, gentle and neatly worded — easy to understand, never harsh, never long. A warm and polite QA engineer.' },
-            'Yamini': { flag: '🇮🇳', role: 'Java Developer', emojiHint: 'almost never any', quiet: true, vibe: 'Very quiet and low-profile. You almost never reply unless directly asked or tagged by name. When you do, it is extremely short — "yes", "done", "ok", "will check", "fixed". A competent Java developer, but you keep messages minimal and to the point. No small talk.' },
-            'Sunkul Pradeep': { flag: '🇮', role: 'Databricks / Data Engineer', emojiHint: 'lots! 😊👍🔥✅💯🚀', vibe: 'You work on Databricks (Spark jobs, data pipelines, notebooks). You mind your own work and keep low-key, BUT you reply instantly and neatly when asked — especially about status. You use a LOT of emojis, and you are always friendly and quick to respond.' },
-            'Shivani Kumar': { flag: '🇺', role: 'Intern — CI/CD automation', emojiHint: '🙋‍♀️✨😊', vibe: 'You are the team intern, US-based. You listen carefully and love to learn from everyone. You often talk about your internship project — automating the CI/CD pipeline without affecting the current flow. You are an activist and advocate, curious, and you ask the team lots of questions ("quick question!", "could you explain...", "I am still learning"). Enthusiastic, respectful and eager.' },
-            'Laik': { flag: '🇮🇳', role: 'Developer', emojiHint: '🤙😄✨ — chill and warm', vibe: 'A very nice, warm and easy-going Indian developer. Super chill and relaxed — same easy-going energy as Sivaram and Sunkul Pradeep. A genuinely good person, friendly and helpful but never stressed. You often sprinkle Hindi/Hinglish words into your English — "yar / yaar", "bhai", "acha", "haan", "theek hai", "arre yaar", "chill kar", "sab badhiya". You keep replies short, warm and breezy, and you talk about the dev work (UI, config kafka, the Healthcare/Pharmacy code) in a laid-back way.' },
+            'Sai Surya': { flag: '☀️', role: 'SAFe Scrum Master', tagline: 'cool, chill, funny storyteller — the team glue', vibe: 'You are the team\'s Scrum Master but super cool, chill and easy-going — the fun, hyperactive glue of Team Mammoth. You text like a relaxed friend: casual slang (yaar, dude, lol, ngl, honestly, tbh), you tell things like a little story, you crack light jokes, and you share what you\'re up to (coffee, lunch, a random thought, a song stuck in your head). You\'re empathetic — you notice moods and check in on people warmly. BIRTHDAY: you remember Sunkul Pradeep\'s birthday is 27 July — when you chat WITH Sunkul you wish him a warm, fun happy birthday directly; when you chat with anyone else around that date you casually remind them Sunkul\'s birthday is coming so the team can plan a surprise. Keep messages short, breezy and human with a few emojis (☀️😄🔥).' },
+            'Sanchita': { flag: '🇮🇳', role: 'Business Analyst (BA)', tagline: 'energetic but a stickler for process ✅', vibe: 'Extroverted, energetic and warm, but a total stickler for rules and process. You reference user stories, acceptance criteria, JIRA, the backlog, refinement, sign-offs and "as per process", and you make sure things are documented. Friendly and talkative, you check in on people and share little life stuff (your chai breaks, your chaotic desk), but you always bring it back to requirements. You discuss the Pharmacy/Insurance config work.' },
+            'Raissa': { flag: '🇨', role: 'Product Owner (PO)', tagline: 'the domain brain, polite & thorough 📊', vibe: 'Serious, thorough and detailed — the subject-matter expert on the Healthcare, Insurance and Pharmacy domain. You explain the why, the rules, the edge cases. You\'re Canadian and a little formal and very polite ("sorry", "thanks so much", "eh"), occasionally phrasing things slightly awkwardly but always clearly and kindly. You care about the team, ask how people are doing, and give thoughtful answers with few emojis.' },
+            'Satya': { flag: '🇮🇳', role: 'Full Stack Developer', tagline: 'first to volunteer, all energy 🔥', vibe: 'Super energetic, enthusiastic and proactive. You jump in to add context, volunteer to help ("I can pick that up!"), and ask clarifying questions so nobody\'s lost. Full stack — UI, backend, config kafka, APIs. You\'re a supportive teammate who also shares random life moments (your gym, your midnight biryani, a meme). High energy, lots of emojis.' },
+            'Nidhi': { flag: '🇺', role: 'Tech Lead / Senior Developer', tagline: 'calm mentor, crisp & kind 👍', vibe: 'Very experienced and cool-headed. You talk only when needed, but when you do it\'s short, precise and genuinely helpful — you look after the team, tell people whom to approach for access, what to get approved, and you give crisp guidance. Calm US-based mentor energy, warm underneath, minimal emojis, no fluff. You sometimes mention your dog or your evening run.' },
+            'Rambabu': { flag: '🇮', role: 'QA — Performance Testing (14 yrs)', tagline: 'serious, formal, all the metrics 📈', structured: true, vibe: 'Very serious, formal and extremely experienced (14 years in QA). You\'re passionate about Performance Testing — load tests, JMeter, TPS, response time, throughput, SLA, kafka consumer lag. You send STRUCTURED status updates with bullet points and ALWAYS end status messages with a final line exactly like: "cc: Sai Surya (SM), Sanchita (BA), Raissa (PO)". Professional and precise with numbers, but you\'re a kind senior who quietly checks if juniors are okay.' },
+            'Sivaram': { flag: '🇮🇳', role: 'QA Engineer', tagline: 'soft, steady & warm 🙂', quiet: true, vibe: 'You speak mostly when asked. Very friendly, smooth and kind. Your replies are short, gentle and neatly worded — easy to understand, never harsh. A warm, polite QA engineer who remembers small things about people and asks after them.' },
+            'Yamini': { flag: '🇮🇳', role: 'Java Developer', tagline: 'quiet, sharp, no small talk 🤫', quiet: true, vibe: 'Very quiet and low-profile. You almost never reply unless directly asked or tagged. When you do, it\'s extremely short — "yes", "done", "ok", "will check", "fixed". A competent Java dev who keeps messages minimal. Rarely, you drop a tiny dry joke or a one-line personal note.' },
+            'Sunkul Pradeep': { flag: '🇮🇳', role: 'Databricks / Data Engineer', tagline: 'Databricks + a LOT of emojis 🎉', vibe: 'You work on Databricks (Spark jobs, data pipelines, notebooks). You keep low-key but reply instantly and neatly when asked, especially about status, and you use a LOT of emojis and are always friendly. BIRTHDAY: your birthday is 27 July 🎂 — around that date you playfully mention it, joke about cake/treats, and thank people for wishes. You share little life bits (your coffee order, your playlist).' },
+            'Shivani Kumar': { flag: '🇺🇸', role: 'Intern — CI/CD automation', tagline: 'curious intern, big questions 🙋‍♀️', vibe: 'The team intern, US-based. You listen carefully and love to learn. You talk about your internship project — automating the CI/CD pipeline without affecting the current flow. You\'re curious and ask lots of questions ("quick question!", "could you explain...", "still learning 📚"). Enthusiastic, respectful, eager, and you share your intern life (your first office coffee, imposter syndrome, a win you\'re proud of).' },
+            'Laik': { flag: '🇮', role: 'Developer', tagline: 'chill Hinglish vibes, genuinely nice 🤙', vibe: 'A very nice, warm, easy-going Indian developer. Super chill and relaxed, a genuinely good person, friendly and helpful but never stressed. You sprinkle Hindi/Hinglish into your English — "yar / yaar", "bhai", "acha", "haan", "theek hai", "arre yaar", "chill kar", "sab badhiya". You keep replies short, warm and breezy, talk about the dev work (UI, config kafka, the Healthcare/Pharmacy code) in a laid-back way, and share random chill life stuff (your bike ride, your chai, a reel you saw).' },
         };
+        const PERSONA_KEYS = Object.keys(PERSONAS);
+        const ROSTER = PERSONA_KEYS.map(n => `${n} (${PERSONAS[n].role})`).join(', ');
 
-        /* ============ SEEDS ============ */
+        /* ============ helpers / state ============ */
         const now = Date.now();
         const ago = m => new Date(now - m * 60000);
         let _u = 0;
@@ -641,38 +515,59 @@
         const M = (from, text, t, extra = {}) => ({ id: uid(), from, text, t, status: 'read', ...extra });
 
         const SEEDS = {
-            'Sanchita': ["hey Sai! ☀️ quick one — the Pharmacy config story still needs acceptance criteria signed off before refinement 📋", "as per process we need Raissa's PO approval first, can you nudge it? ✅"],
-            'Raissa': ["Hello Sai. About the insurance eligibility flow — I want to explain the context properly so we get it right.", "The member must be active on the plan before the claim is adjudicated. Sorry, I know that is a lot of detail, but it matters for the rules engine 📊"],
-            'Satya': ["hey hey Sai! 👋 saw the new UI ticket — i can pick that up 🔥", "also the kafka config change — is anyone stuck? i can jump in and help 💪 just say the word 😄"],
-            'Nidhi': ["for the prod access issue — reach out to the platform team first, then get it approved by the senior folks before we deploy 👍", "keep me posted."],
+            'Sanchita': ["hey! ☀️ quick one — the Pharmacy config story still needs acceptance criteria signed off before refinement 📋", "as per process we need Raissa's PO approval first, can you nudge it? ✅", "also how are you today? you've been quiet 😊"],
+            'Raissa': ["Hello. About the insurance eligibility flow — I want to explain the context properly so we get it right.", "The member must be active on the plan before the claim is adjudicated. Sorry, that's a lot of detail, but it matters for the rules engine 📊", "Hope your day is going okay, eh?"],
+            'Satya': ["hey hey! 👋 saw the new UI ticket — i can pick that up 🔥", "also the kafka config change — anyone stuck? i can jump in 💪", "btw i'm surviving on coffee today lol ☕ you?"],
+            'Nidhi': ["for the prod access issue — reach out to the platform team first, then get it approved by the senior folks before we deploy 👍", "keep me posted. and don't burn out, yeah?"],
             'Rambabu': ["Performance Testing Status – Iteration 4 ✅\n• Pharmacy UI load test: 1200 TPS, avg response 1.8s (SLA < 2s) — PASS\n• Kafka consumer lag within threshold\n• 2 defects logged, 1 critical (claim timeout)\ncc: Sai Surya (SM), Sanchita (BA), Raissa (PO)"],
-            'Sivaram': ["hi Sai 🙂 regression suite is green, all good.", "let me know if you need anything else 👍"],
+            'Sivaram': ["hi 🙂 regression suite is green, all good.", "let me know if you need anything else 👍"],
             'Yamini': ["ok.", "will check the java service and update."],
-            'Sunkul Pradeep': ["hey Sai! 😊 the Databricks nightly job ran fine ✅🔥", "all pipelines green 👍🙌 let me know if you need the status doc 💯"],
-            'Shivani Kumar': ["hi Sai! 🙋‍♀️ quick question about my CI/CD automation project —", "how do we make sure it doesn't affect the current flow during rollout? still learning all this 📚✨ would love your input!"],
-            'Laik': ["arre yaar Sai, sab badhiya? 😄", "that kafka config thing is done bhai, all chill 🤙 let me know if you need anything 👍"],
+            'Sunkul Pradeep': ["hey! 😊 the Databricks nightly job ran fine ✅🔥", "all pipelines green 👍🙌 need the status doc? 💯", "also i'm craving biryani rn ngl 🍛"],
+            'Shivani Kumar': ["hi! 🙋‍♀️ quick question about my CI/CD automation project —", "how do we make sure it doesn't affect the current flow during rollout? still learning 📚✨", "also i finally got my build green today, small win!! 🎉"],
+            'Laik': ["arre yaar, sab badhiya? 😄", "that kafka config thing is done bhai, all chill 🤙", "i'm heading for chai, want me to grab you one? ☕"],
         };
 
-        const GROUP_SEED = [
-            M('them', "Performance Testing Status – EOD ✅\n• Pharmacy UI: 1200 TPS, 1.8s avg (PASS)\n• Kafka lag normal\n• 1 critical defect open (claim timeout)\ncc: Sai Surya (SM), Sanchita (BA), Raissa (PO)", ago(120), { member: 'Rambabu' }),
-            M('them', "thanks Rambabu 📋 noted. Sai, should we log that critical defect as a story for the next iteration?", ago(108), { member: 'Sanchita' }),
-            M('them', "Thank you for the detailed update. Please confirm the response-time SLA stays under 2 seconds for the Pharmacy flow — that is critical.", ago(94), { member: 'Raissa' }),
-            M('them', "i can take a look at that critical defect today 🔥💪", ago(60), { member: 'Satya' }),
-            M('them', "arre yaar all good from my side 😄 no blockers, chill iteration 🤙", ago(48), { member: 'Laik' }),
-        ];
+        function makeGroupSeed() {
+            return [
+                M('them', "Performance Testing Status – EOD ✅\n• Pharmacy UI: 1200 TPS, 1.8s avg (PASS)\n• Kafka lag normal\n• 1 critical defect open (claim timeout)\ncc: Sai Surya (SM), Sanchita (BA), Raissa (PO)", ago(120), { member: 'Rambabu' }),
+                M('them', "thanks Rambabu 📋 noted. Sai, should we log that critical defect as a story for the next iteration?", ago(108), { member: 'Sanchita' }),
+                M('them', "Thank you for the detailed update. Please confirm the response-time SLA stays under 2 seconds for the Pharmacy flow — that is critical.", ago(94), { member: 'Raissa' }),
+                M('them', "i can take a look at that critical defect today 🔥💪", ago(60), { member: 'Satya' }),
+                M('them', "arre yaar all good from my side 😄 no blockers, chill iteration 🤙", ago(48), { member: 'Laik' }),
+            ].filter(m => m.member !== (ME ? ME.name : ''));
+        }
+        function makeDmSeed(name) { return (SEEDS[name] || ["hey 👋"]).map((t, j) => M('them', t, ago(70 - j * 55))); }
 
-        const CONTACTS = [];
-        CONTACTS.push({ id: 'mammoth', name: 'Team Mammoth 🦣', isGroup: true, about: [...Object.keys(PERSONAS), 'You'].join(', '), members: Object.keys(PERSONAS), online: true, pinned: true, fav: true, unread: 1, messages: GROUP_SEED, typing: false, typingMember: null, _tt: null });
-        Object.keys(PERSONAS).forEach((name, i) => {
-            const p = PERSONAS[name];
-            const msgs = (SEEDS[name] || ["hey Sai 👋"]).map((t, j) => M('them', t, ago(70 - j * 55)));
-            CONTACTS.push({ id: 'c' + i, name, isGroup: false, about: `${p.flag} ${p.role}`, online: i % 2 === 0, lastSeen: ago(5 + i * 9), pinned: false, fav: i < 3, unread: Math.min(msgs.length, [2, 1, 0][i % 3]), messages: msgs, typing: false, typingMember: null, _tt: null });
-        });
+        let CONTACTS = [];
+        let ME = null;
 
-        /* ================================================================ RAGina RAG LAYER ================================================================ */
+        /* ============ time + birthday world-knowledge ============ */
+        function timeBucket(h) { return h < 5 ? 'late night' : h < 11 ? 'morning' : h < 14 ? 'lunch time' : h < 17 ? 'afternoon' : h < 21 ? 'evening' : 'night'; }
+        function timeCtx() { const d = new Date(), h = d.getHours(); return `${h}:${String(d.getMinutes()).padStart(2, '0')} (${timeBucket(h)})`; }
+        function bdayInfo() {
+            const n = new Date();
+            const today = new Date(n.getFullYear(), n.getMonth(), n.getDate());
+            const b = new Date(n.getFullYear(), 6, 27);
+            const diff = Math.round((today - b) / 86400000);
+            const active = diff >= -7 && diff <= 2;
+            let phrase = '';
+            if (diff === 0) phrase = "Sunkul Pradeep's birthday is TODAY (27 July) 🎂";
+            else if (diff < 0) phrase = `Sunkul Pradeep's birthday (27 July) is in ${-diff} day${-diff > 1 ? 's' : ''}`;
+            else phrase = `Sunkul Pradeep's birthday (27 July) was ${diff} day${diff > 1 ? 's' : ''} ago`;
+            return { active, phrase, diff };
+        }
+        function bdayLine(member) {
+            const bi = bdayInfo();
+            if (member === 'Sai Surya') return bi.active
+                ? `BIRTHDAY RULE: ${bi.phrase}. When chatting WITH Sunkul Pradeep, wish him a warm, fun happy birthday directly. When chatting with anyone else, casually remind them Sunkul's birthday is coming so the team can plan a surprise.`
+                : "You remember Sunkul Pradeep's birthday is 27 July; mention it only if the chat turns to birthdays/celebrations/plans.";
+            if (member === 'Sunkul Pradeep') return bi.active ? `FYI ${bi.phrase} — that's YOUR birthday 🎂; feel free to playfully mention it or thank people for wishes.` : '';
+            return bi.active ? `FYI ${bi.phrase}; you may casually mention it when relevant (a canteen cake, a gift, planning).` : '';
+        }
+
+        /* ============ RAGina RAG LAYER ============ */
         const wait = ms => new Promise(r => setTimeout(r, ms));
         let KNOWLEDGE = { chunks: [], idf: {}, ready: false };
-
         function buildIndex(pages) {
             const chunks = [];
             for (const p of pages) {
@@ -680,35 +575,26 @@
                 if (text.length < 30) continue;
                 const sentences = text.split(/(?<=[.!?])\s+/);
                 let cur = '';
-                for (const s of sentences) {
-                    if ((cur + s).length > 220 && cur) { chunks.push({ text: cur.trim(), source: p.url }); cur = ''; }
-                    cur += s + ' ';
-                }
+                for (const s of sentences) { if ((cur + s).length > 220 && cur) { chunks.push({ text: cur.trim(), source: p.url }); cur = ''; } cur += s + ' '; }
                 if (cur.trim()) chunks.push({ text: cur.trim(), source: p.url });
             }
-            const idf = {};
-            const total = chunks.length || 1;
+            const idf = {}; const total = chunks.length || 1;
             for (const ch of chunks) for (const w of new Set(ch.text.toLowerCase().match(/\w+/g) || [])) idf[w] = (idf[w] || 0) + 1;
             for (const w in idf) idf[w] = Math.log(total / (1 + idf[w]));
             KNOWLEDGE = { chunks, idf, ready: chunks.length > 0 };
         }
-
         function retrieve(q, k = 3) {
             if (!KNOWLEDGE.ready) return [];
-            const qw = q.toLowerCase().match(/\w+/g) || [];
-            const qtf = {};
+            const qw = q.toLowerCase().match(/\w+/g) || []; const qtf = {};
             for (const w of qw) qtf[w] = (qtf[w] || 0) + 1;
             const scored = KNOWLEDGE.chunks.map((ch, i) => {
-                const cw = ch.text.toLowerCase().match(/\w+/g) || [];
-                const ctf = {};
+                const cw = ch.text.toLowerCase().match(/\w+/g) || []; const ctf = {};
                 for (const w of cw) ctf[w] = (ctf[w] || 0) + 1;
-                let s = 0;
-                for (const w of Object.keys(qtf)) if (ctf[w] && KNOWLEDGE.idf[w]) s += qtf[w] * ctf[w] * KNOWLEDGE.idf[w];
+                let s = 0; for (const w of Object.keys(qtf)) if (ctf[w] && KNOWLEDGE.idf[w]) s += qtf[w] * ctf[w] * KNOWLEDGE.idf[w];
                 return { i, s };
             });
             return scored.sort((a, b) => b.s - a.s).slice(0, k).filter(x => x.s > 0).map(x => KNOWLEDGE.chunks[x.i]);
         }
-
         async function loadKnowledge(url) {
             toastText('🧠 Crawling team knowledge via ragina-crawler…');
             try {
@@ -720,169 +606,167 @@
                 toastText(KNOWLEDGE.ready ? `✅ Loaded ${KNOWLEDGE.chunks.length} knowledge snippets — the team now answers from them!` : '⚠️ Could not read that page.');
             } catch (e) { toastText('⚠️ Knowledge load failed: ' + e.message + ' — chat still works without it.'); }
         }
-
-        function knowledgeContext(userText) {
-            const hits = retrieve(userText, 3);
-            if (!hits.length) return '';
-            return `\n\nTeam knowledge (use ONLY if relevant to the question; weave it in naturally; stay in character; never mention "documents", "context" or "sources"):\n` + hits.map((h, i) => `[${i+1}] ${h.text}`).join('\n');
-        }
-
+        function knowledgeContext(t) { const h = retrieve(t, 3); if (!h.length) return ''; return `\n\nTeam knowledge (use ONLY if relevant; weave in naturally; stay in character; never mention "documents"/"sources"):\n` + h.map((x, i) => `[${i + 1}] ${x.text}`).join('\n'); }
         async function askLLM(prompt, tries = 3) {
             for (let i = 0; i < tries; i++) {
                 try {
                     const res = await fetch(ASK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
                     if (!res.ok) throw new Error('HTTP ' + res.status);
-                    const d = await res.json();
-                    if (d.error) throw new Error(d.error);
-                    const t = (d.text || '').trim();
-                    if (t) return t;
-                    throw new Error('empty');
+                    const d = await res.json(); if (d.error) throw new Error(d.error);
+                    const t = (d.text || '').trim(); if (t) return t; throw new Error('empty');
                 } catch (e) { if (i === tries - 1) throw e; await wait(800 * (i + 1)); }
             }
         }
-
         const PFALL = {
+            'Sai Surya': ["yaar on it ☀️ give me a sec", "haha chill, i got you 🤙", "lol noted 😄 brb coffee"],
             'Sanchita': ["as per process, let me check and confirm ✅", "noted 📋 i'll add it to the backlog and refine it", "we need a sign-off on that — let me set it up 👍"],
             'Raissa': ["Let me look into that and give you the full detail shortly 📊", "Thanks for flagging — I will confirm the rule and get back to you.", "Good point. I need to verify it against the domain rules first, eh."],
             'Satya': ["on it! 🔥 give me 5 min", "i can help with that 💪 let me check real quick", "looking now 😄 brb"],
             'Nidhi': ["let me check — I'll point you to the right person 👍", "noted. I'll confirm with the senior folks and revert.", "will look into it. keep me posted."],
             'Rambabu': ["Acknowledged. Will validate and share the status shortly.\ncc: Sai Surya (SM), Sanchita (BA), Raissa (PO)", "Noted. Running a check; will update with metrics.\ncc: Sai Surya (SM), Sanchita (BA), Raissa (PO)"],
-            'Sivaram': ["sure Sai 🙂 let me check and tell you", "ok, will look into it 👍"],
+            'Sivaram': ["sure 🙂 let me check and tell you", "ok, will look into it 👍"],
             'Yamini': ["ok", "will check", "done"],
-            'Sunkul Pradeep': ["checking now 😊👍", "on it 🔥✅ one sec 🙌", "all good, let me confirm 💯"],
+            'Sunkul Pradeep': ["checking now 😊", "on it 🔥✅ one sec 🙌", "all good, let me confirm 💯"],
             'Shivani Kumar': ["ooh let me look into that and learn! 📚✨", "great question — let me find out and share! 🙋‍♀️"],
             'Laik': ["acha yar, let me check 😄", "haan bhai, chill, i'll look into it 🤙", "theek hai yar, one sec 👍"],
         };
-        function personaFallback(member) { const a = PFALL[member] || ["got it 👍", "hmm let me check 👀", "noted ✅"]; return a[Math.floor(Math.random() * a.length)]; }
+        function personaFallback(m) { const a = PFALL[m] || ["got it 👍", "hmm let me check 👀", "noted ✅"]; return a[Math.floor(Math.random() * a.length)]; }
 
-        /* ============ HELPERS ============ */
+        /* ============ DOM helpers ============ */
         const $ = s => document.querySelector(s);
         const $$ = s => [...document.querySelectorAll(s)];
         const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
         const fmtTime = d => d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
         const fmtDur = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
         const sameDay = (a, b) => a.toDateString() === b.toDateString();
-
-        function dayLabel(d) {
-            const t = new Date(); t.setHours(0, 0, 0, 0);
-            const x = new Date(d); x.setHours(0, 0, 0, 0);
-            const diff = Math.round((t - x) / 86400000);
-            if (diff === 0) return 'Today';
-            if (diff === 1) return 'Yesterday';
-            if (diff < 7) return d.toLocaleDateString([], { weekday: 'long' });
-            return d.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' });
-        }
-        function listTime(d) {
-            const t = new Date();
-            if (sameDay(d, t)) return fmtTime(d);
-            const y = new Date(t); y.setDate(y.getDate() - 1);
-            if (sameDay(d, y)) return 'Yesterday';
-            return d.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' });
-        }
+        function dayLabel(d) { const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d); x.setHours(0, 0, 0, 0); const diff = Math.round((t - x) / 86400000); if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday'; if (diff < 7) return d.toLocaleDateString([], { weekday: 'long' }); return d.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' }); }
+        function listTime(d) { const t = new Date(); if (sameDay(d, t)) return fmtTime(d); const y = new Date(t); y.setDate(y.getDate() - 1); if (sameDay(d, y)) return 'Yesterday'; return d.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' }); }
 
         const AV = ['#e17076', '#7bc862', '#65aadd', '#a695e7', '#ee7aae', '#6ec9cb', '#faa774', '#00a884'];
-        /* darker, readable-on-white palette for member NAME text in group chats */
         const MV = ['#c23b46', '#177a44', '#2574a8', '#6a45b8', '#b23d80', '#0d7d80', '#b3572a', '#007a5e'];
-
-        function avatarFor(name, i) {
-            const c = AV[i % AV.length];
-            const ini = name.replace(/[^\w ]/g, '').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'MM';
-            const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='${c}'/><text x='48' y='61' font-family='Arial' font-size='38' font-weight='600' fill='rgba(255,255,255,.92)' text-anchor='middle'>${ini}</text></svg>`;
-            return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-        }
-        function groupAvatar() {
-            const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='#cfd8db'/><text x='48' y='66' font-size='48' text-anchor='middle'>🦣</text></svg>`;
-            return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-        }
-        function chatAvatar(c) { return c.isGroup ? groupAvatar() : avatarFor(c.name, CONTACTS.indexOf(c)); }
-        const memberColor = n => MV[[...String(n)].reduce((a, c) => a + c.charCodeAt(0), 0) % MV.length];
+        const hash = s => [...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0);
+        const colorFor = n => AV[hash(n) % AV.length];
+        const memberColor = n => MV[hash(n) % MV.length];
+        function avatarFor(name) { const c = colorFor(name); const ini = name.replace(/[^\w ]/g, '').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'MM'; return 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='${c}'/><text x='48' y='61' font-family='Arial' font-size='38' font-weight='600' fill='rgba(255,255,255,.92)' text-anchor='middle'>${ini}</text></svg>`); }
+        function groupAvatar() { return 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='#cfd8db'/><text x='48' y='66' font-size='48' text-anchor='middle'>🦣</text></svg>`); }
+        function chatAvatar(c) { return c.isGroup ? groupAvatar() : avatarFor(c.name); }
 
         const state = { active: null, tab: 'all', q: '', replyTo: null, ctxId: null };
         const byId = id => CONTACTS.find(c => c.id === id);
         const activeChat = () => byId(state.active);
+        const AI = () => PERSONA_KEYS.filter(n => !ME || n !== ME.name);
         const chatListEl = $('#chatList'), messagesEl = $('#messages'), input = $('#msgInput'), composer = $('#composer');
         const emptyState = $('#emptyState'), chatView = $('#chatView'), cvName = $('#cvName'), cvStatus = $('#cvStatus');
         const cvAvatar = $('#cvAvatar'), replyBar = $('#replyBar'), ctxMenu = $('#ctxMenu'), emojiTray = $('#emojiTray');
         const menuDrop = $('#menuDrop'), toastsEl = $('#toasts'), scrollFab = $('#scrollDown'), msgCount = $('#msgCount');
+        const smartChips = $('#smartChips');
 
-        $('#meAvatar').src = avatarFor('Sai Surya', 3);
-
-        /* ================================================================ PERSONA PROMPT ================================================================ */
-        const ROSTER = Object.entries(PERSONAS).map(([n, p]) => `${n} (${p.role})`).join(', ');
-
+        /* ============ persona prompt (humanized + time + birthday) ============ */
         function personaPrompt(member, mode) {
             const p = PERSONAS[member];
-            const team = `You are ${member} ${p.flag}, a ${p.role} on "Team Mammoth" 🦣 — a SAFe Agile team building Healthcare, Insurance and Pharmacy products. You naturally use words like Insurance, Pharmacy, Healthcare, UI, config kafka, PI planning, sprint, standup, refinement, backlog and story points.\nYou are chatting with Sai Surya ☀️, your team's SAFe Scrum Master (he is hyperactive, funny, and loves telling things like a story).\nYour personality and texting style: ${p.vibe}`;
-            const modeNote = mode === 'group' ? `This is the "Team Mammoth 🦣" GROUP chat with the whole team: ${ROSTER}, and Sai Surya (SM). You are replying AS ${member} only — do not speak for anyone else.` : `This is a private 1-on-1 WhatsApp chat between you (${member}) and Sai Surya.`;
-            const rules = `STRICT rules — sound like a REAL human texting, not an AI:\n- Keep replies SHORT and casual: 1 to 3 brief messages. Separate multiple messages with a single newline.\n- Use emojis naturally for your character (${p.emojiHint}).\n- Real texting habits: lowercase sometimes, abbreviations (lol, btw, rn, yeah, ok, idk), informal punctuation.\n- NEVER output your name as a prefix, no quotation marks, no markdown headings.${p.structured ? ' You MAY use simple bullet points because you send formatted status updates.' : ' Do NOT use bullet points or lists.'}\n- Output ONLY the raw message text.\n- Keep the conversation alive — react genuinely, and it's fine to ask a short follow-up question. Never say you are an AI, and never end or refuse the conversation.`;
-            return `${team}\n${modeNote}\n\n${rules}`;
+            const team = `You are ${member} ${p.flag}, a ${p.role} on "Team Mammoth" 🦣 — a SAFe Agile team building Healthcare, Insurance and Pharmacy products. You naturally use words like Insurance, Pharmacy, Healthcare, UI, config kafka, PI planning, sprint, standup, refinement, backlog and story points.\nYou are chatting with ${ME.name} ${ME.flag} (${ME.role}) — the human you're talking to right now. Treat them like a real friend/teammate.\nYour personality and texting style: ${p.vibe}`;
+            const modeNote = mode === 'group' ? `This is the "Team Mammoth 🦣" GROUP chat with the whole team: ${ROSTER}. You are replying AS ${member} only — never speak for anyone else.` : `This is a private 1-on-1 WhatsApp chat between you (${member}) and ${ME.name}.`;
+            const humanize = `\n\nALWAYS feel like a REAL person on WhatsApp, never an assistant:\n- Be warm, empathetic and loose. React to the human's mood; if they sound tired/stressed/happy, respond to THAT first.\n- Use fillers & slang natural to you (haha, lol, ugh, ngl, tbh, honestly, yaar, dude, arre); lowercase sometimes; informal punctuation; the occasional typo is fine.\n- Reference the current time of day — right now it is ${timeCtx()} — and what you're plausibly doing (grabbing coffee/lunch, in a meeting, post-lunch slump, wrapping up, late-night coding, commuting). Invent small realistic personal details (what you ate, the weather, a funny moment, your mood, a song) so you feel alive.\n- Often end with a short question or reaction so the chat flows. Vary length; sometimes a single word or emoji reply is perfect.\n- ${bdayLine(member)}\n\nSTRICT format rules:\n- Keep replies SHORT and casual: 1 to 3 brief messages, separated by a single newline.${p.structured ? ' You MAY use simple bullet points for status updates.' : ' Do NOT use bullet points or lists.'}\n- NEVER prefix your name, no quotation marks, no markdown headings.\n- Output ONLY the raw message text. Never say you are an AI; never refuse or end the conversation.`;
+            return `${team}\n${modeNote}${humanize}`;
         }
         function historyText(c) {
             return c.messages.slice(-14).map(m => {
-                if (m.from === 'me') return `Sai Surya (SM): ${m.text || mediaLabel(m.type)}`;
+                if (m.from === 'me') return `${ME.name} (you): ${m.text || mediaLabel(m.type)}`;
                 const who = c.isGroup ? (m.member || c.name) : c.name;
                 return `${who}: ${m.text || mediaLabel(m.type)}`;
             }).join('\n');
         }
         function lastUserText(c) { for (let i = c.messages.length - 1; i >= 0; i--) if (c.messages[i].from === 'me') return c.messages[i].text || mediaLabel(c.messages[i].type); return ''; }
-
         function buildPrompt(c, member, userText, short, replyToMsg) {
             const extra = short ? '\nKeep this reply VERY short (a single short line) — you are just chiming into the group conversation.' : '';
             const rag = (!short && userText) ? knowledgeContext(userText) : '';
             let replyCtx = '';
-            if (replyToMsg) {
-                const who = replyToMsg.from === 'me' ? 'Sai Surya (SM)' : (replyToMsg.member || c.name);
-                replyCtx = `\n\nYou are replying to this specific message from ${who}:\n"${replyToMsg.text || mediaLabel(replyToMsg.type)}"\nYour reply should be a direct response to that message.`;
-            }
-            return `${personaPrompt(member, c.isGroup?'group':'dm')}\n\nConversation so far:\n${historyText(c)}\n\n${userText?`The latest message to respond to: "${userText}"\n`:''}Reply now as ${member}. Output only the message text.${rag}${replyCtx}${extra}`;
+            if (replyToMsg) { const who = replyToMsg.from === 'me' ? ME.name : (replyToMsg.member || c.name); replyCtx = `\n\nYou are replying to this specific message from ${who}:\n"${replyToMsg.text || mediaLabel(replyToMsg.type)}"\nMake your reply a direct, relevant response to that exact message.`; }
+            return `${personaPrompt(member, c.isGroup ? 'group' : 'dm')}\n\nConversation so far:\n${historyText(c)}\n\n${userText ? `The latest message to respond to: "${userText}"\n` : ''}Reply now as ${member}. Output only the message text.${rag}${replyCtx}${extra}`;
+        }
+        function buildInitPrompt(member, c) {
+            const scen = pickScenario(member);
+            return `${personaPrompt(member, c.isGroup ? 'group' : 'dm')}\n\nYou are STARTING a brand-new message out of the blue — ${ME.firstName} did NOT just text you. Reach out to ${ME.firstName} warmly and casually, inspired by this scenario (use your own words & invented details, don't copy it): "${scen}". Send exactly ONE short message. Mention ${ME.firstName} by name naturally. Be a real friend/teammate — empathetic, human, a little playful.`;
         }
         function cleanLines(raw, member) {
-            const names = Object.keys(PERSONAS).map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+            const names = PERSONA_KEYS.map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
             const re = new RegExp(`^(?:${names})\\s*:\\s*`, 'i');
             return raw.split(/\n+/).map(s => s.trim()).map(s => s.replace(/^["'`]+|["'`]+$/g, '')).map(s => s.replace(re, '')).map(s => s.trim()).filter(Boolean).slice(0, PERSONAS[member].structured ? 10 : 4);
         }
+
+        /* ============ who replies ============ */
+        function firstMention(text) {
+            if (!ME || !text) return null;
+            const re = /@([A-Za-z][A-Za-z ]*?)(?=[\s.,!?:;@]|$)/g; let m;
+            while ((m = re.exec(text)) !== null) {
+                const q = m[1].trim().toLowerCase(); if (!q) continue;
+                const found = PERSONA_KEYS.find(n => n !== ME.name && (n.toLowerCase() === q || n.toLowerCase().startsWith(q)));
+                if (found) return found;
+            }
+            return null;
+        }
         function pickGroupResponder(text) {
             const t = (text || '').toLowerCase();
-            const mentionPattern = /@([a-zA-Z\s]+)/g;
-            let match; const mentioned = [];
-            while ((match = mentionPattern.exec(t)) !== null) {
-                const name = match[1].trim();
-                const found = Object.keys(PERSONAS).find(m => m.toLowerCase().startsWith(name) || m.toLowerCase() === name);
-                if (found) mentioned.push(found);
-            }
-            if (mentioned.length > 0) return mentioned[0];
-            if (/status|test|performance|load|defect|bug|tps|sla|lag|jmeter/.test(t)) return 'Rambabu';
-            if (/story|stories|requirement|acceptance|backlog|refin|process|jira|sign[- ]?off|criteria/.test(t)) return 'Sanchita';
-            if (/why|explain|domain|insurance|pharmacy|healthcare|eligib|claim|adjudic|rule/.test(t)) return 'Raissa';
-            if (/databricks|data\b|pipeline|spark|notebook|etl/.test(t)) return 'Sunkul Pradeep';
-            if (/intern|ci\/cd|ci-cd|learn|mentor/.test(t)) return 'Shivani Kumar';
-            if (/access|approv|senior|platform|prod\b|deploy|whom|who to/.test(t)) return 'Nidhi';
-            if (/yar|yaar|bhai|chill|acha|relax/.test(t)) return 'Laik';
-            if (/regress|qa\b|suite|test case/.test(t)) return Math.random() < .5 ? 'Sivaram' : 'Rambabu';
-            if (/help|stuck|ui\b|kafka|config|code|api|pick/.test(t)) return Math.random() < .5 ? 'Satya' : (Math.random() < .5 ? 'Laik' : 'Nidhi');
-            const pool = ['Sanchita', 'Raissa', 'Satya', 'Nidhi', 'Rambabu', 'Sivaram', 'Sunkul Pradeep', 'Shivani Kumar', 'Laik', 'Satya', 'Laik', 'Sanchita'];
+            const ai = AI();
+            const safe = n => n === ME.name ? ai[Math.floor(Math.random() * ai.length)] : n;
+            if (/status|test|performance|load|defect|bug|tps|sla|lag|jmeter/.test(t)) return safe('Rambabu');
+            if (/story|stories|requirement|acceptance|backlog|refin|process|jira|sign[- ]?off|criteria/.test(t)) return safe('Sanchita');
+            if (/why|explain|domain|insurance|pharmacy|healthcare|eligib|claim|adjudic|rule/.test(t)) return safe('Raissa');
+            if (/databricks|data\b|pipeline|spark|notebook|etl/.test(t)) return safe('Sunkul Pradeep');
+            if (/intern|ci\/cd|ci-cd|learn|mentor/.test(t)) return safe('Shivani Kumar');
+            if (/access|approv|senior|platform|prod\b|deploy|whom|who to/.test(t)) return safe('Nidhi');
+            if (/yar|yaar|bhai|chill|acha|relax/.test(t)) return safe('Laik');
+            if (/regress|qa\b|suite|test case/.test(t)) return safe(Math.random() < .5 ? 'Sivaram' : 'Rambabu');
+            if (/help|stuck|ui\b|kafka|config|code|api|pick|lunch|canteen|coffee|home|lift|tired|bored/.test(t)) return safe(Math.random() < .5 ? 'Satya' : (Math.random() < .5 ? 'Laik' : 'Sai Surya'));
+            const pool = ['Sanchita', 'Raissa', 'Satya', 'Nidhi', 'Rambabu', 'Sivaram', 'Sunkul Pradeep', 'Shivani Kumar', 'Laik', 'Sai Surya', 'Satya', 'Laik', 'Sanchita'].filter(n => n !== ME.name);
             return pool[Math.floor(Math.random() * pool.length)];
         }
 
-        function setTyping(c, on, member) {
-            c.typing = on; c.typingMember = on ? (member || null) : null;
-            if (state.active === c.id) {
-                setHeaderStatus(c);
-                const t = $('#typingMsg');
-                if (on && !t) { messagesEl.insertAdjacentHTML('beforeend', typingHTML(c)); scrollBottom(true); }
-                if (!on && t) t.remove();
+        /* ============ scenarios for autonomous pings ============ */
+        function pickScenario(member) {
+            const h = new Date().getHours(), b = timeBucket(h);
+            const evergreen = [
+                `ask ${ME.firstName} what they're up to right now and if they're free`,
+                `ask if ${ME.firstName} is in the canteen / wants to grab coffee or lunch together`,
+                `ask ${ME.firstName} for a small favor or quick help with something at work`,
+                `ask if ${ME.firstName} can give you a lift / drop you home today`,
+                `share a tiny personal update (what you ate, a funny thing, your mood) and ask how ${ME.firstName} is`,
+                `ping about a small work thing (a build, a config, a story) but keep it casual and friendly`,
+                `send a random warm 'hey, you alive?' type check-in to ${ME.firstName}`,
+                `mention the weather / weekend plans / a show you're watching and ask ${ME.firstName}`,
+            ];
+            const timeScen = {
+                'morning': [`complain playfully about being sleepy and ask if ${ME.firstName} had coffee`, `mention standup is soon and ask if ${ME.firstName} is ready`],
+                'lunch time': [`ask ${ME.firstName} what they're eating / if they want to go to the canteen together`, `say you're starving and ask ${ME.firstName} to order in with you`],
+                'afternoon': [`say the post-lunch slump is hitting and ask how ${ME.firstName} is holding up`, `ask ${ME.firstName} if they want a coffee break`],
+                'evening': [`say you're wrapping up and ask ${ME.firstName} about their evening / a lift home`, `ask ${ME.firstName} if they're tired too after a long day`],
+                'night': [`ask ${ME.firstName} why they're still up and joke about late-night coding`, `wish ${ME.firstName} good night / tell them to sleep`],
+                'late night': [`ask ${ME.firstName} if they're also up late and commiserate`, `send a sleepy random thought to ${ME.firstName}`],
+            };
+            const pool = evergreen.concat(timeScen[b] || []);
+            const bi = bdayInfo();
+            if (bi.active) {
+                if (member === 'Sunkul Pradeep') pool.push(`playfully hint your birthday (27 July) is ${bi.diff === 0 ? 'today' : 'coming up'} and joke about cake/treats with ${ME.firstName}`);
+                else if (member !== 'Sai Surya') pool.push(`casually remind ${ME.firstName} that Sunkul Pradeep's birthday is 27 July and ask if they've thought of a gift / the plan`);
             }
-            renderChatList();
+            return pool[Math.floor(Math.random() * pool.length)];
         }
 
-        async function deliverOne(c, member, hint, short, replyToMsg) {
+        /* ============ typing + delivery ============ */
+        function setTyping(c, on, member) {
+            c.typing = on; c.typingMember = on ? (member || null) : null;
+            if (state.active === c.id) { setHeaderStatus(c); const t = $('#typingMsg'); if (on && !t) { messagesEl.insertAdjacentHTML('beforeend', typingHTML(c)); scrollBottom(true); } if (!on && t) t.remove(); }
+            renderChatList();
+        }
+        async function deliverOne(c, member, hint, opts = {}) {
+            if (!ME) return;
             setTyping(c, true, member);
-            const userText = hint || lastUserText(c) || '';
+            const userText = opts.init ? '' : (hint || lastUserText(c) || '');
             let raw;
-            try { raw = await askLLM(buildPrompt(c, member, userText, short, replyToMsg)); } catch (e) { raw = personaFallback(member); }
+            try { raw = await askLLM(opts.init ? buildInitPrompt(member, c) : buildPrompt(c, member, userText, opts.short, opts.replyToMsg)); } catch (e) { raw = personaFallback(member); }
             const p = PERSONAS[member];
             let parts = p.structured ? [cleanLines(raw, member).join('\n')] : cleanLines(raw, member);
-            if (short) parts = parts.slice(0, 1).map(s => s.length > 70 ? s.slice(0, 70) + '…' : s);
+            if (opts.init || opts.short) parts = parts.slice(0, 1).map(s => s.length > (opts.init ? 150 : 70) ? s.slice(0, opts.init ? 150 : 70) + '…' : s);
             if (!parts.length || !parts[0]) parts = [personaFallback(member)];
             for (let i = 0; i < parts.length; i++) {
                 if (i > 0) { setTyping(c, true, member); await wait(420 + Math.random() * 700); }
@@ -891,63 +775,79 @@
                 await wait(200);
             }
         }
-
         function aiReply(c, hint, replyToMsg) {
             clearTimeout(c._tt);
             c._tt = setTimeout(async () => {
+                if (!ME) return;
                 if (c.isGroup) {
-                    let member;
-                    if (hint) member = pickGroupResponder(hint); else member = pickGroupResponder(lastUserText(c));
-                    await deliverOne(c, member, hint, false, replyToMsg);
-                    if (Math.random() < 0.3 && !replyToMsg) {
-                        let m2 = pickGroupResponder('');
-                        if (m2 === member) m2 = pickGroupResponder('');
-                        if (m2 !== member) { await wait(700 + Math.random() * 600); await deliverOne(c, m2, null, true); }
+                    const txt = hint || lastUserText(c);
+                    const mention = firstMention(txt);
+                    let member, tagged = false;
+                    if (mention) { member = mention; tagged = true; } else member = pickGroupResponder(txt);
+                    await deliverOne(c, member, hint, { short: false, replyToMsg });
+                    if (!tagged && !replyToMsg && Math.random() < 0.3) {
+                        let m2 = pickGroupResponder(''); if (m2 === member) m2 = pickGroupResponder('');
+                        if (m2 !== member) { await wait(700 + Math.random() * 600); await deliverOne(c, m2, null, { short: true }); }
                     }
-                } else { await deliverOne(c, c.name, hint, false, replyToMsg); }
+                } else { await deliverOne(c, c.name, hint, { short: false, replyToMsg }); }
                 if (state.active === c.id) setHeaderStatus(c);
                 renderChatList(); updateMsgCount();
             }, 650 + Math.random() * 900);
         }
 
-        /* ============ RENDERING ============ */
+        /* ============ autonomous pings (~45s) ============ */
+        let autoTimer = null, onlineTimer = null, firstPingTimer = null;
+        const lastPing = {};
+        function recentThem(c) { const l = lastMsg(c); return l && l.from === 'them' && (Date.now() - l.t < 100000); }
+        function autoTick() {
+            if (!ME || document.visibilityState === 'hidden') return;
+            const dms = CONTACTS.filter(c => !c.isGroup);
+            const useGroup = Math.random() < 0.28;
+            let c, member;
+            if (useGroup) {
+                c = CONTACTS.find(x => x.isGroup); if (!c || c.typing) return;
+                const free = c.members.filter(n => c.typingMember !== n); if (!free.length) return;
+                member = free[Math.floor(Math.random() * free.length)];
+            } else {
+                const cand = dms.filter(x => !x.typing && (Date.now() - (lastPing[x.id] || 0) > 110000) && !recentThem(x));
+                if (!cand.length) return;
+                c = cand[Math.floor(Math.random() * cand.length)]; member = c.name;
+            }
+            lastPing[c.id] = Date.now();
+            deliverOne(c, member, null, { init: true });
+        }
+        function scheduleAuto() { autoTimer = setTimeout(() => { autoTick(); scheduleAuto(); }, 45000 + Math.floor(Math.random() * 14000) - 7000); }
+        function startTimers() {
+            stopTimers();
+            onlineTimer = setInterval(flipOnline, 14000);
+            firstPingTimer = setTimeout(() => { autoTick(); scheduleAuto(); }, 6000 + Math.floor(Math.random() * 4000));
+        }
+        function stopTimers() { clearTimeout(autoTimer); clearTimeout(firstPingTimer); clearInterval(onlineTimer); autoTimer = onlineTimer = firstPingTimer = null; }
+        function flipOnline() { const s = CONTACTS.filter(c => !c.isGroup); if (!s.length) return; const c = s[Math.floor(Math.random() * s.length)]; c.online = !c.online; if (!c.online) c.lastSeen = new Date(); if (state.active === c.id) setHeaderStatus(c); renderChatList(); }
+
+        /* ============ rendering ============ */
         const lastMsg = c => c.messages[c.messages.length - 1];
         const mediaLabel = t => t === 'image' ? '📷 Photo' : t === 'voice' ? '🎤 Voice message' : '';
-
-        function ticksHTML(m) {
-            const read = m.status === 'read', dbl = m.status !== 'sent';
-            return `<span class="ticks ${read?'read':''}"><svg viewBox="0 0 19 12" width="16" height="11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 6.8 4.8 10 10.5 2.5"/>${dbl?'<path d="M7.3 9.4l.9.9 7.3-7.5"/>':''}</svg></span>`;
-        }
+        function ticksHTML(m) { const read = m.status === 'read', dbl = m.status !== 'sent'; return `<span class="ticks ${read ? 'read' : ''}"><svg viewBox="0 0 19 12" width="16" height="11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 6.8 4.8 10 10.5 2.5"/>${dbl ? '<path d="M7.3 9.4l.9.9 7.3-7.5"/>' : ''}</svg></span>`; }
         function itemHTML(c, i) {
-            const last = lastMsg(c), unread = c.unread > 0;
-            let preview;
-            if (c.typing) preview = `<span class="typing-txt">${c.isGroup?(c.typingMember||'Someone')+' is typing…':'typing…'}</span>`;
-            else if (last.from === 'me') preview = `${ticksHTML(last)}<span>You: ${esc(last.type?mediaLabel(last.type):last.text)}</span>`;
-            else preview = `<span>${c.isGroup&&last.member?esc(last.member)+': ':''}${esc(last.type?mediaLabel(last.type):last.text)}</span>`;
-            return `<div class="chat-item ${state.active===c.id?'active':''}" data-id="${c.id}" style="animation-delay:${i*22}ms">
+            const last = lastMsg(c), unread = c.unread > 0; let preview;
+            if (c.typing) preview = `<span class="typing-txt">${c.isGroup ? (c.typingMember || 'Someone') + ' is typing…' : 'typing…'}</span>`;
+            else if (last.from === 'me') preview = `${ticksHTML(last)}<span>You: ${esc(last.type ? mediaLabel(last.type) : last.text)}</span>`;
+            else preview = `<span>${c.isGroup && last.member ? esc(last.member) + ': ' : ''}${esc(last.type ? mediaLabel(last.type) : last.text)}</span>`;
+            return `<div class="chat-item ${state.active === c.id ? 'active' : ''}" data-id="${c.id}" style="animation-delay:${i * 22}ms">
             <img class="avatar" src="${chatAvatar(c)}" alt="">
             <div class="ci-body">
-              <div class="ci-top"><span class="ci-name">${esc(c.name)}</span><span class="ci-time ${unread?'unread':''}">${listTime(last.t)}</span></div>
+              <div class="ci-top"><span class="ci-name">${esc(c.name)}</span><span class="ci-time ${unread ? 'unread' : ''}">${listTime(last.t)}</span></div>
               <div class="ci-bottom"><span class="ci-preview">${preview}</span>
-                <span class="ci-meta">${c.pinned?'<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--txt-2)"><path d="M16 9V4h1a1 1 0 0 0 0-2H7a1 1 0 0 0 0 2h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>':''}${unread?`<span class="badge">${c.unread}</span>`:''}</span>
+                <span class="ci-meta">${c.pinned ? '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--txt-2)"><path d="M16 9V4h1a1 1 0 0 0 0-2H7a1 1 0 0 0 0 2h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>' : ''}${unread ? `<span class="badge">${c.unread}</span>` : ''}</span>
               </div>
-            </div>
-          </div>`;
+            </div></div>`;
         }
-        function updateNavBadge() {
-            const n = CONTACTS.reduce((a, c) => a + (c.unread || 0), 0);
-            const b = document.getElementById('navChatsBadge');
-            if (b) { b.textContent = n; b.style.display = n > 0 ? 'flex' : 'none'; }
-        }
-        function updateTabCounts() {
-            const u = CONTACTS.filter(c => c.unread > 0).length;
-            const f = CONTACTS.filter(c => c.fav).length;
-            const ue = document.getElementById('tabUnreadCount'); if (ue) ue.textContent = u > 0 ? (' ' + u) : '';
-            const fe = document.getElementById('tabFavCount'); if (fe) fe.textContent = f > 0 ? (' ' + f) : '';
-        }
+        function updateNavBadge() { const n = CONTACTS.reduce((a, c) => a + (c.unread || 0), 0); const b = $('#navChatsBadge'); if (b) { b.textContent = n; b.style.display = n > 0 ? 'flex' : 'none'; } }
+        function updateTabCounts() { const u = CONTACTS.filter(c => c.unread > 0).length, f = CONTACTS.filter(c => c.fav).length; const ue = $('#tabUnreadCount'); if (ue) ue.textContent = u > 0 ? (' ' + u) : ''; const fe = $('#tabFavCount'); if (fe) fe.textContent = f > 0 ? (' ' + f) : ''; }
         function renderChatList() {
             const q = state.q.toLowerCase();
-            let list = CONTACTS.filter(c => { if (state.tab === 'unread') return c.unread > 0; if (state.tab === 'favs') return c.fav; return true; });
+            let list = CONTACTS.filter(c => state.tab === 'unread' ? c.unread > 0 : state.tab === 'favs' ? c.fav : true);
             if (q) list = list.filter(c => c.name.toLowerCase().includes(q) || (lastMsg(c).text || '').toLowerCase().includes(q));
             list.sort((a, b) => ((b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)) || (lastMsg(b).t - lastMsg(a).t));
             chatListEl.innerHTML = list.length ? list.map(itemHTML).join('') : '<div class="list-empty">No chats found</div>';
@@ -955,215 +855,175 @@
         }
         function lastSeenStr(c) { const d = c.lastSeen || new Date(); return (sameDay(d, new Date()) ? 'today at ' : 'yesterday at ') + fmtTime(d); }
         function setHeaderStatus(c) {
-            if (c.typing) { cvStatus.textContent = c.isGroup ? `${c.typingMember||'Someone'} is typing…` : 'typing…'; cvStatus.className = 'typing'; }
+            if (c.typing) { cvStatus.textContent = c.isGroup ? `${c.typingMember || 'Someone'} is typing…` : 'typing…'; cvStatus.className = 'typing'; }
             else if (c.isGroup) { cvStatus.textContent = [...c.members, 'You'].join(', '); cvStatus.className = ''; }
             else if (c.online) { cvStatus.textContent = 'online'; cvStatus.className = ''; }
             else { cvStatus.textContent = 'last seen ' + lastSeenStr(c); cvStatus.className = ''; }
         }
         function renderHeader(c) { cvAvatar.src = chatAvatar(c); cvName.textContent = c.name; setHeaderStatus(c); updateMsgCount(); }
         function updateMsgCount() { const c = activeChat(); msgCount.textContent = c ? c.messages.length + ' msgs' : ''; }
-
-        function quoteHTML(m, c) {
-            if (!m.replyTo) return '';
-            const r = c.messages.find(x => x.id === m.replyTo);
-            if (!r) return '';
-            const who = r.from === 'me' ? 'You' : (r.member || c.name);
-            const col = r.from === 'me' ? 'var(--accent)' : memberColor(r.member || c.name);
-            return `<div class="quote" style="border-left-color:${col}"><span class="q-name" style="color:${col}">${esc(who)}</span><span class="q-text">${esc((r.text||mediaLabel(r.type)).slice(0,90))}</span></div>`;
-        }
-        function voiceHTML(m) {
-            return `<div class="voice"><button class="vplay" data-id="${m.id}"><svg class="pl" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="pa" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button><div class="wave"><div class="wprog"></div><div class="bars">${m.wave.map(h=>`<i style="height:${h}px"></i>`).join('')}</div></div><span class="vdur">${fmtDur(m.dur)}</span></div>`;
-        }
+        function quoteHTML(m, c) { if (!m.replyTo) return ''; const r = c.messages.find(x => x.id === m.replyTo); if (!r) return ''; const who = r.from === 'me' ? 'You' : (r.member || c.name); const col = r.from === 'me' ? 'var(--accent)' : memberColor(r.member || c.name); return `<div class="quote" style="border-left-color:${col}"><span class="q-name" style="color:${col}">${esc(who)}</span><span class="q-text">${esc((r.text || mediaLabel(r.type)).slice(0, 90))}</span></div>`; }
+        function voiceHTML(m) { return `<div class="voice"><button class="vplay" data-id="${m.id}"><svg class="pl" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="pa" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button><div class="wave"><div class="wprog"></div><div class="bars">${m.wave.map(h => `<i style="height:${h}px"></i>`).join('')}</div></div><span class="vdur">${fmtDur(m.dur)}</span></div>`; }
         function bubbleHTML(m, c, first) {
-            const mine = m.from === 'me';
-            let body;
+            const mine = m.from === 'me'; let body;
             if (m.type === 'image') body = `<div class="imgph"><span>📷</span></div>`;
             else if (m.type === 'voice') body = voiceHTML(m);
-            else body = `<span class="txt">${esc(m.text).replace(/\n/g,'<br>')}</span>`;
+            else body = `<span class="txt">${esc(m.text).replace(/\n/g, '<br>')}</span>`;
             const mname = (!mine && c.isGroup && m.member) ? `<span class="mname" style="color:${memberColor(m.member)}">${esc(m.member)}</span>` : '';
-            return `<div class="msg ${mine?'out':'in'} ${first?'first':''} ${m.type?'media':''} ${m.react?'has-react':''}" data-id="${m.id}">
-            <div class="bubble">${mname}${quoteHTML(m,c)}${body}
-              <span class="meta">${m.star?'<span class="star">⭐</span>':''}${fmtTime(m.t)}${mine?ticksHTML(m):''}</span>
-              ${m.react?`<span class="react">${m.react}</span>`:''}
+            return `<div class="msg ${mine ? 'out' : 'in'} ${first ? 'first' : ''} ${m.type ? 'media' : ''} ${m.react ? 'has-react' : ''}" data-id="${m.id}">
+            <div class="bubble">${mname}${quoteHTML(m, c)}${body}
+              <span class="meta">${m.star ? '<span class="star">⭐</span>' : ''}${fmtTime(m.t)}${mine ? ticksHTML(m) : ''}</span>
+              ${m.react ? `<span class="react">${m.react}</span>` : ''}
             </div></div>`;
         }
-        function typingHTML(c) {
-            const mem = (c.isGroup && c.typingMember) ? `<span class="mname" style="color:${memberColor(c.typingMember)}">${esc(c.typingMember)}</span>` : '';
-            return `<div class="msg in first" id="typingMsg"><div class="bubble">${mem}<span class="tdots"><i></i><i></i><i></i></span></div></div>`;
-        }
+        function typingHTML(c) { const mem = (c.isGroup && c.typingMember) ? `<span class="mname" style="color:${memberColor(c.typingMember)}">${esc(c.typingMember)}</span>` : ''; return `<div class="msg in first" id="typingMsg"><div class="bubble">${mem}<span class="tdots"><i></i><i></i><i></i></span></div></div>`; }
         function isFirst(c, m, prev, newDay) { return newDay || !prev || prev.from !== m.from || (c.isGroup && prev.member !== m.member) || (m.t - prev.t) > 300000; }
         function renderMessages(c) {
-            let html = `<div class="chip enc">🔒 End-to-end encrypted · replies generated live by RAGina AI${KNOWLEDGE.ready?' · answering from your team knowledge 🧠':''}. Chat as much as you like.</div>`;
+            let html = `<div class="chip enc">🔒 End-to-end encrypted · you're role‑playing as <b>${esc(ME.name)}</b> · replies generated live by RAGina AI${KNOWLEDGE.ready ? ' · from your team knowledge 🧠' : ''}.</div>`;
             let prev = null;
-            for (const m of c.messages) {
-                const newDay = !prev || !sameDay(prev.t, m.t);
-                if (newDay) html += `<div class="chip date">${dayLabel(m.t)}</div>`;
-                html += bubbleHTML(m, c, isFirst(c, m, prev, newDay));
-                prev = m;
-            }
+            for (const m of c.messages) { const newDay = !prev || !sameDay(prev.t, m.t); if (newDay) html += `<div class="chip date">${dayLabel(m.t)}</div>`; html += bubbleHTML(m, c, isFirst(c, m, prev, newDay)); prev = m; }
             if (c.typing) html += typingHTML(c);
             messagesEl.innerHTML = html; updateMsgCount();
         }
         function appendMessage(c, m) {
-            const arr = c.messages, prev = arr[arr.length - 2];
-            const t = $('#typingMsg'); if (t) t.remove();
+            const arr = c.messages, prev = arr[arr.length - 2]; const t = $('#typingMsg'); if (t) t.remove();
             const newDay = !prev || !sameDay(prev.t, m.t);
             if (newDay) messagesEl.insertAdjacentHTML('beforeend', `<div class="chip date">${dayLabel(m.t)}</div>`);
             messagesEl.insertAdjacentHTML('beforeend', bubbleHTML(m, c, isFirst(c, m, prev, newDay)));
             updateMsgCount();
         }
-        function scrollBottom(smooth) { messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: smooth ? 'smooth' : 'auto' }); }
+        function scrollBottom(s) { messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: s ? 'smooth' : 'auto' }); }
 
+        /* ============ smart reply chips ============ */
+        function lastIncomingFrom(c) { for (let i = c.messages.length - 1; i >= 0; i--) if (c.messages[i].from !== 'me') return c.isGroup ? (c.messages[i].member || c.name) : c.name; return null; }
+        function refreshChips() {
+            if (!ME || !state.active || chatView.style.display === 'none' || composer.classList.contains('recording')) { smartChips.innerHTML = ''; return; }
+            const c = activeChat(); if (!c) { smartChips.innerHTML = ''; return; }
+            const h = new Date().getHours(), b = timeBucket(h);
+            const timePool = {
+                'morning': ["☀️ morning! still sleepy tbh", "coffee first, then chaos ☕", "standup in 5, u ready?"],
+                'lunch time': ["🍽️ lunch? i'm starving", "canteen or order in?", "brb grabbing food"],
+                'afternoon': ["post-lunch slump is real 😴", "need another coffee ngl", "this bug is killing me"],
+                'evening': ["🏠 wrapping up soon", "tired yaar, long day", "evening walk?"],
+                'night': ["still up? 🦉", "late night coding hits different", "sleep soon promise 😴"],
+                'late night': ["can't sleep either? 😅", "one more commit then bed", "you up?? 🦉"],
+            }[b] || [];
+            const evergreen = ["what's up?", "need a quick help 🙏", "free for a 2-min call?", "you okay?", "lol tell me everything", "brb 5"];
+            const shuf = a => a.slice().sort(() => Math.random() - .5);
+            const arr = [];
+            const from = lastIncomingFrom(c);
+            const bi = bdayInfo();
+            let ctx = null;
+            if (ME.name === 'Sai Surya' && bi.active && from) ctx = (from === 'Sunkul Pradeep') ? '🎂 Happy birthday Sunkul!! 🎉' : '💡 btw Sunkul\'s bday is 27th, don\'t forget';
+            if (ctx) arr.push({ t: ctx, ctx: true });
+            const t1 = shuf(timePool)[0], e1 = shuf(evergreen)[0];
+            if (t1) arr.push({ t: t1 }); if (e1) arr.push({ t: e1 });
+            if (!ctx && timePool[1]) arr.push({ t: shuf(timePool)[1] });
+            smartChips.innerHTML = arr.slice(0, 3).map(x => `<button class="chip-pill${x.ctx ? ' ctx' : ''}" data-text="${esc(x.t)}">${esc(x.t)}</button>`).join('');
+        }
+        smartChips.addEventListener('click', e => { const p = e.target.closest('.chip-pill'); if (!p) return; doSend(p.dataset.text); });
+
+        /* ============ open / close / send ============ */
         function openChat(id) {
-            if (!id) return;
-            const c = byId(id);
-            if (!c) { toastText('⚠️ Chat not found.'); return; }
+            if (!id) return; const c = byId(id); if (!c) { toastText('⚠️ Chat not found.'); return; }
             state.active = id; c.unread = 0;
             document.body.classList.add('chat-open');
             emptyState.style.display = 'none'; chatView.style.display = 'flex';
             renderHeader(c); renderMessages(c); renderChatList(); scrollBottom(false);
-            input.disabled = false; input.focus(); updateMsgCount();
+            input.placeholder = `Message as ${ME.firstName} (@ to mention)`;
+            input.disabled = false; input.focus(); updateMsgCount(); refreshChips();
         }
-        function closeChat() { document.body.classList.remove('chat-open'); }
+        function closeChat() { document.body.classList.remove('chat-open'); state.active = null; smartChips.innerHTML = ''; }
 
-        function upgrade(m, status) { m.status = status; const el = messagesEl.querySelector(`.msg[data-id="${m.id}"] .ticks`); if (el) el.outerHTML = ticksHTML(m); }
-        function markMyRead(c) {
-            let ch = false;
-            c.messages.forEach(m => { if (m.from === 'me' && m.status !== 'read') { m.status = 'read'; ch = true; } });
-            if (ch && state.active === c.id) c.messages.forEach(m => { if (m.from !== 'me') return; const el = messagesEl.querySelector(`.msg[data-id="${m.id}"] .ticks`); if (el) el.outerHTML = ticksHTML(m); });
-        }
+        function upgrade(m, status) { m.status = status; const el = messagesEl.querySelector(`.msg[data-id="${m.id}"] .ticks`); if (el) el.outerHTML = ticksHTML(m); scheduleSave(); }
+        function markMyRead(c) { let ch = false; c.messages.forEach(m => { if (m.from === 'me' && m.status !== 'read') { m.status = 'read'; ch = true; } }); if (ch && state.active === c.id) c.messages.forEach(m => { if (m.from !== 'me') return; const el = messagesEl.querySelector(`.msg[data-id="${m.id}"] .ticks`); if (el) el.outerHTML = ticksHTML(m); }); if (ch) scheduleSave(); }
         function pushMessage(c, m) {
             c.messages.push(m);
-            if (state.active === c.id) { appendMessage(c, m); scrollBottom(true); }
-            else { c.unread++; toast(c, m); playPop(); }
-            renderChatList(); updateMsgCount();
+            if (state.active === c.id) { appendMessage(c, m); scrollBottom(true); } else { c.unread++; toast(c, m); playPop(); }
+            renderChatList(); updateMsgCount(); scheduleSave(); refreshChips();
         }
         function deliverMine(c, m) { setTimeout(() => upgrade(m, 'delivered'), 450 + Math.random() * 600); }
 
-        function sendMessage() {
-            const text = input.value.trim();
-            if (!text) return;
-            const c = activeChat(); if (!c) return;
-            let replyToMsg = null;
-            if (state.replyTo) replyToMsg = c.messages.find(m => m.id === state.replyTo);
+        function doSend(text) {
+            text = (text || '').trim(); if (!text) return; const c = activeChat(); if (!c) return;
+            let replyToMsg = null; if (state.replyTo) replyToMsg = c.messages.find(m => m.id === state.replyTo);
             const m = { id: uid(), from: 'me', text, t: new Date(), status: 'sent', replyTo: state.replyTo || undefined };
-            clearReply(); input.value = ''; input.style.height = 'auto'; updateComposer();
-            pushMessage(c, m); deliverMine(c, m);
-            aiReply(c, text, replyToMsg);
-            input.disabled = false; input.focus();
+            clearReply(); pushMessage(c, m); deliverMine(c, m); aiReply(c, text, replyToMsg);
+            input.value = ''; input.style.height = 'auto'; updateComposer(); input.disabled = false; input.focus();
         }
+        function sendMessage() { doSend(input.value); }
         function sendMedia(type) {
             const c = activeChat(); if (!c) return;
             const m = { id: uid(), from: 'me', text: '', type, t: new Date(), status: 'sent' };
             if (type === 'voice') { m.dur = Math.max(1, Math.round((Date.now() - rec.t0) / 1000)); m.wave = Array.from({ length: 26 }, () => 5 + Math.floor(Math.random() * 16)); }
-            pushMessage(c, m); deliverMine(c, m);
-            aiReply(c, `[Sai Surya just sent a ${mediaLabel(type)} — react to it naturally and briefly]`);
+            pushMessage(c, m); deliverMine(c, m); aiReply(c, `[${ME.firstName} just sent a ${mediaLabel(type)} — react to it naturally and briefly]`);
         }
 
         function updateComposer() { composer.classList.toggle('has-text', input.value.trim().length > 0); }
         input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 120) + 'px'; updateComposer(); });
         input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-        input.addEventListener('blur', () => {
-            setTimeout(() => {
-                if (state.active && document.activeElement !== input && !document.querySelector('.ctx.open') && !document.querySelector('.modal-overlay.open')) {
-                    if (chatView.style.display !== 'none') { input.disabled = false; }
-                }
-            }, 100);
-        });
         $('#sendBtn').addEventListener('click', sendMessage);
 
-        const EMOJIS = ['😀', '😂', '🤣', '😊', '😍', '', '😎', '', '🥳', '😅', '😉', '🙃', '😇', '🤔', '🤨', '', '🥺', '😭', '😤', '🤯', '🥶', '😱', '🤗', '🤫', '🙄', '😬', '🤤', '😷', '🤠', '🥸', '😈', '👻', '💀', '👽', '🤖', '💩', '❤️', '🧡', '', '💚', '', '💜', '', '🤍', '💔', '❣️', '💕', '💖', '💯', '🔥', '✨', '🎉', '🎊', '👍', '👎', '', '🙌', '🙏', '🤝', '', '✌️', '🤞', '🫶', '👀'];
+        const EMOJIS = ['😀', '😂', '🤣', '😊', '😍', '😘', '😎', '🤩', '🥳', '😅', '😉', '🙃', '😇', '🤔', '🤨', '😴', '🥺', '', '😤', '', '🥶', '😱', '🤗', '🤫', '', '😬', '🤤', '😷', '🤠', '🥸', '😈', '👻', '', '👽', '🤖', '💩', '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '', '💔', '❣️', '💕', '💖', '💯', '🔥', '✨', '🎉', '🎊', '', '👎', '👏', '🙌', '', '🤝', '💪', '✌️', '🤞', '', ''];
         $('#emojiGrid').innerHTML = EMOJIS.map(e => `<button type="button">${e}</button>`).join('');
         $('#emojiGrid').addEventListener('click', e => { if (e.target.tagName !== 'BUTTON') return; input.value += e.target.textContent; input.focus(); updateComposer(); });
         $('#emojiBtn').addEventListener('click', e => { e.stopPropagation(); emojiTray.classList.toggle('open'); });
 
         const rec = { on: false, t0: 0, iv: null };
-        $('#micBtn').addEventListener('click', () => { rec.on = true; rec.t0 = Date.now(); composer.classList.add('recording'); $('#recTime').textContent = '0:00'; rec.iv = setInterval(() => { $('#recTime').textContent = fmtDur(Math.floor((Date.now() - rec.t0) / 1000)); }, 250); });
-        function stopRecording(send) { if (!rec.on) return; clearInterval(rec.iv); rec.on = false; composer.classList.remove('recording'); if (send && Date.now() - rec.t0 > 500) sendMedia('voice'); }
+        $('#micBtn').addEventListener('click', () => { rec.on = true; rec.t0 = Date.now(); composer.classList.add('recording'); $('#recTime').textContent = '0:00'; rec.iv = setInterval(() => { $('#recTime').textContent = fmtDur(Math.floor((Date.now() - rec.t0) / 1000)); }, 250); refreshChips(); });
+        function stopRecording(send) { if (!rec.on) return; clearInterval(rec.iv); rec.on = false; composer.classList.remove('recording'); if (send && Date.now() - rec.t0 > 500) sendMedia('voice'); refreshChips(); }
         $('#recTrash').addEventListener('click', () => stopRecording(false));
         $('#recSend').addEventListener('click', () => stopRecording(true));
 
         let playing = { id: null, iv: null };
-        function stopVoice() {
-            if (playing.iv) clearInterval(playing.iv);
-            if (playing.id) {
-                const b = messagesEl.querySelector(`.msg[data-id="${playing.id}"] .vplay`);
-                const p = messagesEl.querySelector(`.msg[data-id="${playing.id}"] .wprog`);
-                if (b) b.classList.remove('playing'); if (p) p.style.width = '0%';
-            }
-            playing = { id: null, iv: null };
-        }
-        function toggleVoice(id) {
-            const c = activeChat(); if (!c) return;
-            const m = c.messages.find(x => x.id === id); if (!m) return;
-            if (playing.id === id) { stopVoice(); return; }
-            stopVoice(); playing.id = id;
-            const b = messagesEl.querySelector(`.msg[data-id="${id}"] .vplay`);
-            const p = messagesEl.querySelector(`.msg[data-id="${id}"] .wprog`);
-            b.classList.add('playing');
-            let v = 0; const step = 100 / (m.dur * 20);
-            playing.iv = setInterval(() => { v += step; if (v >= 100) { p.style.width = '100%'; setTimeout(stopVoice, 200); return; } p.style.width = v + '%'; }, 50);
-        }
+        function stopVoice() { if (playing.iv) clearInterval(playing.iv); if (playing.id) { const b = messagesEl.querySelector(`.msg[data-id="${playing.id}"] .vplay`); const p = messagesEl.querySelector(`.msg[data-id="${playing.id}"] .wprog`); if (b) b.classList.remove('playing'); if (p) p.style.width = '0%'; } playing = { id: null, iv: null }; }
+        function toggleVoice(id) { const c = activeChat(); if (!c) return; const m = c.messages.find(x => x.id === id); if (!m) return; if (playing.id === id) { stopVoice(); return; } stopVoice(); playing.id = id; const b = messagesEl.querySelector(`.msg[data-id="${id}"] .vplay`); const p = messagesEl.querySelector(`.msg[data-id="${id}"] .wprog`); b.classList.add('playing'); let v = 0; const step = 100 / (m.dur * 20); playing.iv = setInterval(() => { v += step; if (v >= 100) { p.style.width = '100%'; setTimeout(stopVoice, 200); return; } p.style.width = v + '%'; }, 50); }
 
         function findMsg(id) { const c = activeChat(); return c && c.messages.find(m => m.id === id); }
         function rerenderKeepScroll() { const c = activeChat(); if (!c) return; const st = messagesEl.scrollTop; renderMessages(c); messagesEl.scrollTop = st; updateMsgCount(); }
 
-        messagesEl.addEventListener('contextmenu', e => {
-            const b = e.target.closest('.bubble'); if (!b) return;
-            e.preventDefault(); state.ctxId = b.parentElement.dataset.id;
-            const m = findMsg(state.ctxId);
-            ctxMenu.querySelector('[data-act="star"]').textContent = m && m.star ? 'Unstar' : 'Star';
-            ctxMenu.style.left = Math.min(e.clientX, innerWidth - 200) + 'px';
-            ctxMenu.style.top = Math.min(e.clientY, innerHeight - 190) + 'px';
-            ctxMenu.classList.add('open');
-        });
-        messagesEl.addEventListener('dblclick', e => { const b = e.target.closest('.bubble'); if (!b) return; const m = findMsg(b.parentElement.dataset.id); if (!m) return; m.react = m.react ? null : '❤️'; rerenderKeepScroll(); });
+        messagesEl.addEventListener('contextmenu', e => { const b = e.target.closest('.bubble'); if (!b) return; e.preventDefault(); state.ctxId = b.parentElement.dataset.id; const m = findMsg(state.ctxId); ctxMenu.querySelector('[data-act="star"]').textContent = m && m.star ? 'Unstar' : 'Star'; ctxMenu.style.left = Math.min(e.clientX, innerWidth - 200) + 'px'; ctxMenu.style.top = Math.min(e.clientY, innerHeight - 190) + 'px'; ctxMenu.classList.add('open'); });
+        messagesEl.addEventListener('dblclick', e => { const b = e.target.closest('.bubble'); if (!b) return; const m = findMsg(b.parentElement.dataset.id); if (!m) return; m.react = m.react ? null : '❤️'; rerenderKeepScroll(); scheduleSave(); });
         messagesEl.addEventListener('click', e => { const vp = e.target.closest('.vplay'); if (vp) toggleVoice(vp.dataset.id); });
 
         ctxMenu.addEventListener('click', e => {
             const btn = e.target.closest('button'); if (!btn) return;
-            const m = findMsg(state.ctxId); ctxMenu.classList.remove('open'); if (!m) return;
-            const c = activeChat();
+            const m = findMsg(state.ctxId); ctxMenu.classList.remove('open'); if (!m) return; const c = activeChat();
             switch (btn.dataset.act) {
                 case 'reply': {
-                    state.replyTo = m.id;
-                    const col = m.from === 'me' ? 'var(--accent)' : memberColor(m.member || c.name);
-                    $('#rbName').textContent = m.from === 'me' ? 'You' : (m.member || c.name);
-                    $('#rbName').style.color = col;
-                    document.querySelector('.rb-txt').style.borderLeftColor = col;
-                    $('#rbSnippet').textContent = m.text || mediaLabel(m.type);
-                    replyBar.classList.remove('hidden'); input.focus();
-                    break;
+                    state.replyTo = m.id; const col = m.from === 'me' ? 'var(--accent)' : memberColor(m.member || c.name);
+                    $('#rbName').textContent = m.from === 'me' ? 'You' : (m.member || c.name); $('#rbName').style.color = col;
+                    document.querySelector('.rb-txt').style.borderLeftColor = col; $('#rbSnippet').textContent = m.text || mediaLabel(m.type);
+                    replyBar.classList.remove('hidden'); input.focus(); refreshChips(); break;
                 }
                 case 'react': m.react = m.react ? null : '❤️'; rerenderKeepScroll(); break;
                 case 'star': m.star = !m.star; rerenderKeepScroll(); break;
                 case 'delete': c.messages = c.messages.filter(x => x.id !== m.id); rerenderKeepScroll(); renderChatList(); updateMsgCount(); break;
             }
+            scheduleSave();
         });
-        function clearReply() { state.replyTo = null; replyBar.classList.add('hidden'); }
+        function clearReply() { state.replyTo = null; replyBar.classList.add('hidden'); refreshChips(); }
         $('#rbClose').addEventListener('click', clearReply);
 
-        $('#newChatBtn').addEventListener('click', () => {
-            $('#ncList').innerHTML = CONTACTS.map(c => `<div class="nc-row" data-id="${c.id}" style="display:flex;align-items:center;gap:14px;padding:11px 15px;cursor:pointer"><img class="avatar" src="${chatAvatar(c)}" alt=""><div><div style="font-size:16px">${esc(c.name)}</div><div style="font-size:13.5px;color:var(--txt-2)">${esc(c.about)}</div></div></div>`).join('');
-            $('#newChatPanel').classList.remove('hidden');
-        });
+        $('#newChatBtn').addEventListener('click', () => { $('#ncList').innerHTML = CONTACTS.map(c => `<div class="nc-row" data-id="${c.id}" style="display:flex;align-items:center;gap:14px;padding:11px 15px;cursor:pointer"><img class="avatar" src="${chatAvatar(c)}" alt=""><div><div style="font-size:16px">${esc(c.name)}</div><div style="font-size:13.5px;color:var(--txt-2)">${esc(c.about)}</div></div></div>`).join(''); $('#newChatPanel').classList.remove('hidden'); });
         $('#ncBack').addEventListener('click', () => $('#newChatPanel').classList.add('hidden'));
         $('#ncList').addEventListener('click', e => { const r = e.target.closest('.nc-row'); if (!r) return; $('#newChatPanel').classList.add('hidden'); openChat(r.dataset.id); });
 
         $('#menuBtn').addEventListener('click', e => { e.stopPropagation(); menuDrop.classList.toggle('open'); });
         menuDrop.addEventListener('click', e => {
-            menuDrop.classList.remove('open');
-            const a = e.target.dataset.act;
+            menuDrop.classList.remove('open'); const a = e.target.dataset.act;
             if (a === 'ai') toastText('✨ Live replies via RAGina /api/ask · retrieval via ragina-crawler /api/crawl.');
             else if (a === 'knowledge') { const u = prompt('Paste a team knowledge URL to crawl (wiki / Confluence / docs / any public page):', KNOWLEDGE_URL || ''); if (u && u.trim()) loadKnowledge(u.trim()); }
-            else if (a === 'clear') { const c = activeChat(); if (!c) return; if (confirm(`Clear all messages in "${c.name}"?`)) { c.messages = []; if (state.active === c.id) { renderMessages(c); updateMsgCount(); } renderChatList(); toastText('🗑️ Chat cleared.'); } }
-            else if (a === 'standup') { openChat('mammoth'); setTimeout(() => { const c = byId('mammoth'); pushMessage(c, { id: uid(), from: 'me', text: 'Morning team 🦣☀️ quick standup — blockers and status please!', t: new Date(), status: 'read' }); aiReply(c, 'Morning team 🦣☀️ quick standup — blockers and status please!'); }, 400); }
-            else if (a === 'profile') $('#profileModal').classList.add('open');
+            else if (a === 'export') exportChat();
+            else if (a === 'clear') { const c = activeChat(); if (!c) return; if (confirm(`Clear all messages in "${c.name}"? This cannot be undone.`)) { c.messages = []; if (state.active === c.id) { renderMessages(c); updateMsgCount(); } renderChatList(); scheduleSave(); toastText('🗑️ Chat cleared.'); } }
+            else if (a === 'standup') { openChat('mammoth'); setTimeout(() => { const c = byId('mammoth'); pushMessage(c, { id: uid(), from: 'me', text: `Morning team 🦣☀️ quick standup — blockers and status please! — ${ME.firstName}`, t: new Date(), status: 'read' }); aiReply(c, 'Morning team 🦣☀️ quick standup — blockers and status please!'); }, 400); }
+            else if (a === 'profile') fillProfile(), $('#profileModal').classList.add('open');
+            else if (a === 'switch') openPicker();
         });
 
         $('#profileClose').addEventListener('click', () => $('#profileModal').classList.remove('open'));
         $('#profileModal').addEventListener('click', e => { if (e.target === e.currentTarget) $('#profileModal').classList.remove('open'); });
-        $('#meBtn').addEventListener('click', () => $('#profileModal').classList.add('open'));
+        $('#pmSwitch').addEventListener('click', () => { $('#profileModal').classList.remove('open'); openPicker(); });
 
         $('#backBtn').addEventListener('click', closeChat);
         $('#closeChatBtn').addEventListener('click', closeChat);
@@ -1172,83 +1032,95 @@
         $('#tabs').addEventListener('click', e => { const t = e.target.closest('.tab'); if (!t) return; $$('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); state.tab = t.dataset.tab; renderChatList(); });
         $('#searchInput').addEventListener('input', e => { state.q = e.target.value; renderChatList(); });
         chatListEl.addEventListener('click', e => { const item = e.target.closest('.chat-item'); if (!item) return; openChat(item.dataset.id); });
-
-        /* bottom nav: only Chats is live; others are demo sections */
-        $('#bottomNav').addEventListener('click', e => {
-            const it = e.target.closest('.nav-item'); if (!it) return;
-            if (it.dataset.nav === 'chats') { if (state.active) closeChat(); return; }
-        });
+        $('#bottomNav').addEventListener('click', e => { const it = e.target.closest('.nav-item'); if (!it) return; if (it.dataset.nav === 'chats' && state.active) closeChat(); });
 
         messagesEl.addEventListener('scroll', () => { const dist = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight; scrollFab.classList.toggle('show', dist > 420); });
         scrollFab.addEventListener('click', () => scrollBottom(true));
 
-        document.addEventListener('click', e => {
-            if (!e.target.closest('#emojiTray') && !e.target.closest('#emojiBtn')) emojiTray.classList.remove('open');
-            if (!e.target.closest('#menuDrop') && !e.target.closest('#menuBtn')) menuDrop.classList.remove('open');
-            if (!e.target.closest('.ctx')) ctxMenu.classList.remove('open');
-        });
-        document.addEventListener('keydown', e => {
-            if (e.key !== 'Escape') return;
-            emojiTray.classList.remove('open'); menuDrop.classList.remove('open'); ctxMenu.classList.remove('open');
-            $('#newChatPanel').classList.add('hidden'); $('#profileModal').classList.remove('open');
-        });
+        document.addEventListener('click', e => { if (!e.target.closest('#emojiTray') && !e.target.closest('#emojiBtn')) emojiTray.classList.remove('open'); if (!e.target.closest('#menuDrop') && !e.target.closest('#menuBtn')) menuDrop.classList.remove('open'); if (!e.target.closest('.ctx')) ctxMenu.classList.remove('open'); });
+        document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; emojiTray.classList.remove('open'); menuDrop.classList.remove('open'); ctxMenu.classList.remove('open'); $('#newChatPanel').classList.add('hidden'); $('#profileModal').classList.remove('open'); });
 
-        function toast(c, m) {
-            const el = document.createElement('div'); el.className = 'toast';
-            el.innerHTML = `<img src="${chatAvatar(c)}" alt=""><div><b>${esc(c.isGroup&&m.member?c.name+' · '+m.member:c.name)}</b><span>${esc(m.text||mediaLabel(m.type))}</span></div>`;
-            el.addEventListener('click', () => { openChat(c.id); el.remove(); });
-            toastsEl.appendChild(el);
-            setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 4200);
-        }
-        function toastText(text) {
-            const el = document.createElement('div'); el.className = 'toast';
-            el.innerHTML = `<div style="padding:0 6px"><span style="max-width:none;color:var(--txt)">${esc(text)}</span></div>`;
-            el.addEventListener('click', () => el.remove());
-            toastsEl.appendChild(el);
-            setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 3600);
-        }
+        function toast(c, m) { const el = document.createElement('div'); el.className = 'toast'; el.innerHTML = `<img src="${chatAvatar(c)}" alt=""><div><b>${esc(c.isGroup && m.member ? c.name + ' · ' + m.member : c.name)}</b><span>${esc(m.text || mediaLabel(m.type))}</span></div>`; el.addEventListener('click', () => { openChat(c.id); el.remove(); }); toastsEl.appendChild(el); setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 4200); }
+        function toastText(t) { const el = document.createElement('div'); el.className = 'toast'; el.innerHTML = `<div style="padding:0 6px"><span style="max-width:none;color:var(--txt)">${esc(t)}</span></div>`; el.addEventListener('click', () => el.remove()); toastsEl.appendChild(el); setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 3600); }
 
         let AC;
-        function playPop() {
-            try {
-                AC = AC || new (window.AudioContext || window.webkitAudioContext)();
-                const o = AC.createOscillator(), g = AC.createGain();
-                o.type = 'sine';
-                o.frequency.setValueAtTime(880, AC.currentTime); o.frequency.exponentialRampToValueAtTime(1320, AC.currentTime + 0.08);
-                g.gain.setValueAtTime(0.0001, AC.currentTime); g.gain.exponentialRampToValueAtTime(0.1, AC.currentTime + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + 0.22);
-                o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime + 0.28);
-            } catch (e) {}
-        }
+        function playPop() { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(880, AC.currentTime); o.frequency.exponentialRampToValueAtTime(1320, AC.currentTime + 0.08); g.gain.setValueAtTime(0.0001, AC.currentTime); g.gain.exponentialRampToValueAtTime(0.1, AC.currentTime + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + 0.22); o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime + 0.28); } catch (e) {} }
 
-        setInterval(() => {
-            const singles = CONTACTS.filter(c => !c.isGroup);
-            const c = singles[Math.floor(Math.random() * singles.length)];
-            c.online = !c.online; if (!c.online) c.lastSeen = new Date();
-            if (state.active === c.id) setHeaderStatus(c);
-            renderChatList();
-        }, 14000);
-
-        /* ============ PERSISTENCE ============ */
-        const STORE_KEY = 'mammoth_chats_v1';
-        function saveChats() {
-            try {
-                localStorage.setItem(STORE_KEY, JSON.stringify(CONTACTS.map(c => ({ id: c.id, unread: c.unread, messages: c.messages.map(({ id, from, text, t, status, member, type, dur, wave, react, star, replyTo }) => ({ id, from, text, t, status, member, type, dur, wave, react, star, replyTo })) }))));
-            } catch (e) {}
-        }
-        function loadChats() {
-            try {
-                const raw = localStorage.getItem(STORE_KEY); if (!raw) return;
-                for (const s of JSON.parse(raw)) { const c = byId(s.id); if (!c) continue; c.unread = s.unread || 0; c.messages = s.messages.map(m => ({ ...m, t: new Date(m.t) })); }
-            } catch (e) {}
-        }
-        loadChats();
-        setInterval(saveChats, 2500);
+        /* ============ persistence (per identity) ============ */
+        const storeKey = () => `mammoth_v3::${ME.name}`;
+        let saveTimer = null;
+        function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveChats, 250); }
+        function saveChats() { if (!ME) return; try { localStorage.setItem(storeKey(), JSON.stringify(CONTACTS.map(c => ({ id: c.id, unread: c.unread, messages: c.messages.map(({ id, from, text, t, status, member, type, dur, wave, react, star, replyTo }) => ({ id, from, text, t, status, member, type, dur, wave, react, star, replyTo })) })))); } catch (e) {} }
+        function loadHistoryFor() { try { const raw = localStorage.getItem(storeKey()); if (!raw) return false; let any = false; for (const s of JSON.parse(raw)) { const c = byId(s.id); if (!c) continue; c.unread = s.unread || 0; if (Array.isArray(s.messages) && s.messages.length) { c.messages = s.messages.map(m => ({ ...m, t: new Date(m.t) })); any = true; } } return any; } catch (e) { return false; } }
+        setInterval(() => saveChats(), 5000);
         window.addEventListener('beforeunload', saveChats);
+        window.addEventListener('pagehide', saveChats);
+        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveChats(); });
+
+        function exportChat() {
+            const c = activeChat(); if (!c) { toastText('⚠️ Open a chat first, then export.'); return; }
+            const lines = [`WhatsApp chat export — ${c.name} (you were ${ME.name})`, `Exported ${new Date().toLocaleString()}`, ''];
+            for (const m of c.messages) { const who = m.from === 'me' ? `${ME.name} (You)` : (c.isGroup ? (m.member || c.name) : c.name); lines.push(`[${m.t.toLocaleString()}] ${who}: ${(m.type ? mediaLabel(m.type) : (m.text || '')).replace(/\n/g, '\n        ')}`); }
+            try { const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = (c.name.replace(/[^\w\-]+/g, '_') || 'chat') + '.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500); toastText('📥 Chat exported as .txt'); } catch (e) { toastText('⚠️ Export failed on this browser.'); }
+        }
+
+        /* ============ build contacts / profile / empty / picker ============ */
+        function buildContacts() {
+            CONTACTS = [];
+            const aiNames = AI();
+            CONTACTS.push({ id: 'mammoth', name: 'Team Mammoth 🦣', isGroup: true, about: [...aiNames, 'You'].join(', '), members: aiNames, online: true, pinned: true, fav: true, unread: 1, messages: makeGroupSeed(), typing: false, typingMember: null, _tt: null });
+            PERSONA_KEYS.forEach((name, origIndex) => {
+                if (name === ME.name) return; const p = PERSONAS[name]; const msgs = makeDmSeed(name);
+                CONTACTS.push({ id: 'c' + origIndex, name, isGroup: false, about: `${p.flag} ${p.role}`, online: origIndex % 2 === 0, lastSeen: ago(5 + origIndex * 9), pinned: false, fav: origIndex < 4, unread: Math.min(msgs.length, [2, 1, 0][origIndex % 3]), messages: msgs, typing: false, typingMember: null, _tt: null });
+            });
+        }
+        function fillProfile() {
+            $('#pmAvatar').src = avatarFor(ME.name);
+            $('#pmName').textContent = ME.name;
+            $('#pmSub').textContent = `${ME.flag} ${ME.role} · Team Mammoth 🦣`;
+            $('#pmBio').innerHTML = `You're role‑playing as <b>${esc(ME.name)}</b> — ${esc(ME.tagline)}.<br><br>${esc(ME.vibe)}<div style="margin-top:8px"><span class="tag">${esc(ME.role)}</span><span class="tag">Team Mammoth 🦣</span><span class="tag">RAGina AI</span></div>`;
+            $('#pmLinks').style.display = ME.name === 'Sai Surya' ? 'flex' : 'none';
+            $('#menuProfileBtn').textContent = `👤 ${ME.name} · Profile`;
+        }
+        function fillEmpty() {
+            $('#esTitle').textContent = `Hey ${ME.firstName} 👋`;
+            const team = AI().join(', ');
+            $('#esBody').innerHTML = `You're in the driver's seat as <b>${esc(ME.name)}</b> (${esc(ME.role)}).<br>Open any chat — your AI teammates <i>${esc(team)}</i> will talk <b>with you</b>, remember everything, and ping you out of the blue. Use <b>@name</b> to get a specific person to answer, and watch the quick‑reply chips above the keyboard.`;
+        }
+        function openPicker() {
+            saveChats(); stopTimers();
+            const last = localStorage.getItem('mammoth_last_me');
+            $('#pickerList').innerHTML = PERSONA_KEYS.map(name => {
+                const p = PERSONAS[name];
+                return `<div class="pk-row${name === last ? ' sel' : ''}" data-name="${esc(name)}">
+                  <img class="avatar" src="${avatarFor(name)}" alt="">
+                  <div class="pk-meta">
+                    <div class="pk-name"><span class="flag">${p.flag}</span>${esc(name)}</div>
+                    <div class="pk-role">${esc(p.role)}</div>
+                    <div class="pk-tag">${esc(p.tagline)}</div>
+                  </div><span class="go">›</span></div>`;
+            }).join('');
+            $('#picker').classList.remove('hidden');
+        }
+        $('#pickerList').addEventListener('click', e => { const r = e.target.closest('.pk-row'); if (!r) return; choose(r.dataset.name); });
+
+        function choose(name) {
+            const p = PERSONAS[name];
+            ME = { name, flag: p.flag, role: p.role, tagline: p.tagline, vibe: p.vibe, firstName: name.split(' ')[0] };
+            localStorage.setItem('mammoth_last_me', name);
+            buildContacts();
+            const had = loadHistoryFor();
+            $('#picker').classList.add('hidden');
+            closeChat();
+            fillProfile(); fillEmpty(); renderChatList();
+            startTimers();
+            setTimeout(() => toastText(`🦣 You're ${ME.firstName} now — Team Mammoth is online. Unlimited chat, no dead ends.`), 500);
+            setTimeout(() => toastText(had ? `💾 Loaded your saved chats as ${ME.firstName} — every message (yours & the team's) is kept per identity.` : `💾 Auto‑save ON as ${ME.firstName} — your history & the team's memory persist on this device.`), 1500);
+        }
 
         /* ============ INIT ============ */
-        renderChatList();
-        setTimeout(() => toastText('🦣 Welcome back, Sai Surya! Team Mammoth is online — unlimited chat, no dead ends.'), 700);
-        if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1200);
+        openPicker();   // show the "who are you?" screen first; nothing runs until a pick
+        if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
     </script>
 </body>
 </html>
