@@ -1,6 +1,6 @@
 <div align="center">
   <img src="https://img.icons8.com/color/96/000000/whatsapp--v1.png" alt="WhatsApp Logo" width="80" />
-  <h1>📱 My Team </h1>
+  <h1>📱 My Team On WhatsApp </h1>
   <p><strong>A fully functional WhatsApp‑style chat interface with AI‑powered team members</strong></p>
 
   <p>
