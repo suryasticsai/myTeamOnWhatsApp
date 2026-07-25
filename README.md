@@ -19,7 +19,7 @@
 
 ## ✨ Overview
 
-**Mammoth – CW RUN** is a realistic, single‑page WhatsApp‑style chat application that brings your team’s conversations to life. It comes pre‑loaded with a complete history from a real PI Planning group (Mammoth – CW RUN) and uses **RAGina** to generate context‑aware, persona‑driven replies from each team member.
+**MyTeamOnWhtasApp** is a realistic, single‑page WhatsApp‑style chat application that brings your team’s conversations to life. It comes pre‑loaded with a complete history from a real PI Planning group (Mammoth – CW RUN) and uses **RAGina** to generate context‑aware, persona‑driven replies from each team member.
 
 With features like @mentions, reply threading, reactions, voice messages, and persistent storage, this project demonstrates how AI can seamlessly integrate into familiar communication tools.
 
