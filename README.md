@@ -1,8 +1,14 @@
 <div align="center">
   <img src="https://img.icons8.com/color/96/000000/whatsapp--v1.png" alt="WhatsApp Logo" width="80" />
-  <h1>📱 My Team On WhatsApp </h1>
+  <h1>📱 My Team On WhatsApp</h1>
   <p><strong>A fully functional WhatsApp‑style chat interface with AI‑powered team members</strong></p>
-https://suryasticsai.github.io/myTeamOnWhatsApp
+
+  <p>
+    <a href="https://suryasticsai.github.io/myTeamOnWhatsApp" target="_blank">
+      <strong>🔗 Live Demo</strong>
+    </a>
+  </p>
+
   <p>
     <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
     <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
@@ -19,7 +25,7 @@ https://suryasticsai.github.io/myTeamOnWhatsApp
 
 ## ✨ Overview
 
-**MyTeamOnWhtasApp** is a realistic, single‑page WhatsApp‑style chat application that brings your team’s conversations to life. It comes pre‑loaded with a complete history from a real Team Real group and uses **RAGina** to generate context‑aware, persona‑driven replies from each team member.
+**My Team On WhatsApp** is a realistic, single‑page WhatsApp‑style chat application that brings your team’s conversations to life. It comes pre‑loaded with a complete history from a real Team group and uses **RAGina** to generate context‑aware, persona‑driven replies from each team member.
 
 With features like @mentions, reply threading, reactions, voice messages, and persistent storage, this project demonstrates how AI can seamlessly integrate into familiar communication tools.
 
@@ -29,7 +35,7 @@ With features like @mentions, reply threading, reactions, voice messages, and pe
 
 | Feature | Description |
 |---------|-------------|
-| **📜 Full chat history** | Pre‑populated with real messages from the My Team group (July 2026). |
+| **📜 Full chat history** | Pre‑populated with real messages from the Team group (July 2026). |
 | **🧠 AI‑powered replies** | Each team member (Sanchita, Sivaram, Sunkul, Yamini, Laik) has a distinct personality and responds accordingly. |
 | **@mentions** | Type `@` followed by a name to tag a specific member – they will reply within seconds. |
 | **💬 Reply threading** | Right‑click any message to reply directly, with a quote card appearing above the input. |
@@ -37,7 +43,7 @@ With features like @mentions, reply threading, reactions, voice messages, and pe
 | **🎤 Voice messages** | Record and send short voice clips (simulated waveform). |
 | **📱 Fully responsive** | Works flawlessly on both desktop and mobile devices. |
 | **💾 Persistent storage** | All messages are saved in `localStorage` – your conversations survive page refreshes. |
-| **🔒 End‑to‑end encryption** | Not real encryption, but the UI mimics WhatsApp’s security notice for realism. |
+| **🔒 End‑to‑end encryption** | UI mimics WhatsApp’s security notice for realism. |
 
 ---
 
@@ -70,25 +76,87 @@ This project leverages **RAGina** – a lightweight RAG (Retrieval‑Augmented G
 ### 1. Clone or download the repository
 
 ```bash
-git clone https://github.com/your-username/myTeamGroup.git
-cd mammoth-cw-run
+git clone https://github.com/suryasticsai/myTeamOnWhatsApp.git
+cd myTeamOnWhatsApp
 ```
 
-### 2. Open the app
+2. Open the app
 
-Simply open `index.html` in your favourite browser. No build steps, no dependencies – it just works.
+Simply open index.html in your favourite browser. No build steps, no dependencies – it just works.
 
-### 3. Start chatting
+3. Start chatting
 
-- The group chat **WhatsApp – Team Group** is pre‑selected with the full history.
-- Type a message in the input box at the bottom and press Enter (or click the send icon).
-- Use `@` followed by a team member’s name to mention them (e.g., `@Sanchita`).
-- Right‑click any message to reply, react, star, or delete.
+· The group chat is pre‑selected with the full history.
+· Type a message in the input box at the bottom and press Enter (or click the send icon).
+· Use @ followed by a team member’s name to mention them (e.g., @Sanchita).
+· Right‑click any message to reply, react, star, or delete.
 
-### 4. (Optional) Load team knowledge
+4. (Optional) Load team knowledge
 
-Click the menu (☰) → **Load team knowledge (RAGina)** and paste a URL to a team wiki or documentation. The app will crawl and index it, making the AI’s answers more context‑aware.
+Click the menu (☰) → Load team knowledge (RAGina) and paste a URL to a team wiki or documentation. The app will crawl and index it, making the AI’s answers more context‑aware.
 
+---
+
+🖼️ Screenshots
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/suryasticsai/myTeamOnWhatsApp/refs/heads/main/screenshot1.jpg" alt="Desktop View" width="80%" />
+  <br />
+  <em>Desktop view – group conversation with AI replies.</em>
+</div>
+
+<br />
+
+<div align="center">
+  <img src="https://raw.githubusercontent.com/suryasticsai/myTeamOnWhatsApp/refs/heads/main/screenshot2.jpg" alt="Mobile View & Reply Threading" width="45%" />
+  <br />
+  <em>Mobile responsive view and reply threading.</em>
+</div>
+
+---
+
+📁 File Structure
+
+```
+.
+├── index.html          # Complete single‑file application (HTML + CSS + JS)
+├── screenshot1.jpg     # Desktop screenshot
+├── screenshot2.jpg     # Mobile screenshot
+└── README.md           # This file
+```
+
+---
+
+🔧 Customization
+
+Add your own team knowledge
+
+1. Click the menu (☰) → Load team knowledge (RAGina).
+2. Enter the URL of your team’s wiki, Confluence page, or any public documentation.
+3. The app will crawl, chunk, and index the content – the AI will then use it to answer questions more accurately.
+
+Modify personas
+
+Each team member’s personality is defined in the PERSONAS object inside index.html. You can tweak the vibe, emojiHint, and role fields to change how they reply.
+
+---
+
+🤝 Contributing
+
+Contributions are welcome! Feel free to open issues or submit pull requests for improvements.
+
+---
+
+📄 License
+
+This project is licensed under the MIT License – see the LICENSE file for details.
+
+---
+
+<div align="center">
+  Made with ❤️ by <a href="https://github.com/suryasticsai">Sai Surya</a> & the 🦣 team
+</div>
+```
 ---
 
 ## 🖼️ Screenshots
