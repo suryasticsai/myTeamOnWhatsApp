@@ -2,7 +2,7 @@
   <img src="https://img.icons8.com/color/96/000000/whatsapp--v1.png" alt="WhatsApp Logo" width="80" />
   <h1>📱 My Team On WhatsApp </h1>
   <p><strong>A fully functional WhatsApp‑style chat interface with AI‑powered team members</strong></p>
-
+https://suryasticsai.github.io/myTeamOnWhatsApp
   <p>
     <img src="https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white" alt="HTML5" />
     <img src="https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white" alt="CSS3" />
