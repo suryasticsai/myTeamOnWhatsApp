@@ -29,7 +29,7 @@ With features like @mentions, reply threading, reactions, voice messages, and pe
 
 | Feature | Description |
 |---------|-------------|
-| **📜 Full chat history** | Pre‑populated with real messages from the Mammoth – CW RUN group (July 2026). |
+| **📜 Full chat history** | Pre‑populated with real messages from the My Team group (July 2026). |
 | **🧠 AI‑powered replies** | Each team member (Sanchita, Sivaram, Sunkul, Yamini, Laik) has a distinct personality and responds accordingly. |
 | **@mentions** | Type `@` followed by a name to tag a specific member – they will reply within seconds. |
 | **💬 Reply threading** | Right‑click any message to reply directly, with a quote card appearing above the input. |
@@ -70,7 +70,7 @@ This project leverages **RAGina** – a lightweight RAG (Retrieval‑Augmented G
 ### 1. Clone or download the repository
 
 ```bash
-git clone https://github.com/your-username/mammoth-cw-run.git
+git clone https://github.com/your-username/myTeamGroup.git
 cd mammoth-cw-run
 ```
 
@@ -80,7 +80,7 @@ Simply open `index.html` in your favourite browser. No build steps, no dependenc
 
 ### 3. Start chatting
 
-- The group chat **Mammoth – CW RUN** is pre‑selected with the full history.
+- The group chat **WhatsApp – Team Group** is pre‑selected with the full history.
 - Type a message in the input box at the bottom and press Enter (or click the send icon).
 - Use `@` followed by a team member’s name to mention them (e.g., `@Sanchita`).
 - Right‑click any message to reply, react, star, or delete.
@@ -145,5 +145,5 @@ This project is licensed under the MIT License – see the [LICENSE](LICENSE) fi
 ---
 
 <div align="center">
-  Made with ❤️ by <a href="https://github.com/suryasticsai">Sai Surya</a> & the Mammoth team
+  Made with ❤️ by <a href="https://github.com/suryasticsai">Sai Surya</a> & the 🦣 team
 </div>
