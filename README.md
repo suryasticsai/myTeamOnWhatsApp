@@ -1,6 +1,6 @@
 <div align="center">
-  <img src="https://img.icons8.com/color/96/000000/whatsapp--v1.png" alt="WhatsApp Logo" width="80" />
-  <h1>📱 My Team On WhatsApp</h1>
+  <img src="https://raw.githubusercontent.com/suryasticsai/myTeamOnWhatsApp/refs/heads/main/personasoi.png" alt="Personasoi Logo" width="80" />
+  <h1>📱Simulate your own Team On WhatsApp</h1>
   <p><strong>A fully functional WhatsApp‑style chat interface with AI‑powered team members</strong></p>
 
   <p>
@@ -25,7 +25,7 @@
 
 ## ✨ Overview
 
-**My Team On WhatsApp** is a realistic, single‑page WhatsApp‑style chat application that brings your team’s conversations to life. It comes pre‑loaded with a complete history from a real Team group and uses **RAGina** to generate context‑aware, persona‑driven replies from each team member.
+**Simulate Team On WhatsApp** is a realistic, single‑page WhatsApp‑style chat application that brings your team’s conversations to life. It comes pre‑loaded with a complete history from a real Team group and uses **RAGina** to generate context‑aware, persona‑driven replies from each team member.
 
 With features like @mentions, reply threading, reactions, voice messages, and persistent storage, this project demonstrates how AI can seamlessly integrate into familiar communication tools.
 
