@@ -197,25 +197,29 @@
 </head>
 <body>
 
-    <!-- HEADER -->
+    <!-- ========== HEADER ========== -->
     <header class="header">
         <div class="header-left">
             <img src="personasoi.png" alt="Personasoi logo" />
             <h1><span class="persona">Persona</span><span class="soi">soi</span></h1>
         </div>
         <div class="header-right">
+            <!-- User info: avatar + username (hidden by default) -->
             <div class="user-info" id="userInfo" style="display:none;">
                 <img id="avatar" src="" alt="avatar" />
                 <span class="username" id="usernameDisplay"></span>
             </div>
+            <!-- Auth buttons -->
             <button class="btn btn-secondary" id="loginBtn">🔑 Sign in</button>
             <button class="btn btn-danger" id="logoutBtn" style="display:none;">Sign out</button>
+            <!-- Push to GitHub -->
             <button class="btn btn-ai" id="pushToGithubBtn" style="display:none;" title="Commit persona.json to GitHub">☁️ Push to GitHub</button>
+            <!-- Settings -->
             <button class="btn-icon" id="settingsBtn" title="Preferences">⚙️</button>
         </div>
     </header>
 
-    <!-- MAIN -->
+    <!-- ========== MAIN ========== -->
     <main>
         <div class="status" id="statusMessage">💡 Ready. Add a persona or load existing JSON.</div>
         <div class="toolbar">
@@ -255,7 +259,7 @@
         </section>
     </main>
 
-    <!-- FOOTER -->
+    <!-- ========== FOOTER ========== -->
     <footer>
         <div class="footer-inner">
             <div class="footer-logo">
@@ -272,7 +276,8 @@
         </div>
     </footer>
 
-    <!-- MODALS -->
+    <!-- ========== MODALS ========== -->
+    <!-- Add/Edit Persona -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <h2 id="modalTitle">Add Persona</h2>
@@ -314,6 +319,7 @@
         </div>
     </div>
 
+    <!-- Batch Import -->
     <div class="modal-overlay" id="batchModalOverlay">
         <div class="modal batch-modal">
             <h2>📋 Batch Import Bios</h2>
@@ -327,6 +333,7 @@
         </div>
     </div>
 
+    <!-- Preferences -->
     <div class="modal-overlay" id="prefModalOverlay">
         <div class="modal">
             <h2>⚙️ Preferences</h2>
@@ -353,10 +360,10 @@
         </div>
     </div>
 
-    <!-- TOAST -->
+    <!-- ========== TOAST ========== -->
     <div class="toast" id="toast"></div>
 
-    <!-- FRONTEND CONSOLE -->
+    <!-- ========== FRONTEND CONSOLE ========== -->
     <button id="consoleToggle" title="Toggle Console">🐞</button>
     <div id="consolePanel">
         <div class="console-header">
@@ -583,12 +590,17 @@
                 const user = await res.json();
                 console.log('✅ User fetched:', user.login);
                 currentUser = user;
+
+                // ---- SHOW AVATAR & USERNAME ----
                 avatar.src = user.avatar_url;
                 usernameDisplay.textContent = user.login;
                 userInfo.style.display = 'flex';
+
+                // ---- SHOW LOGOUT & HIDE LOGIN ----
                 loginBtn.style.display = 'none';
                 logoutBtn.style.display = 'inline-block';
                 pushToGithubBtn.style.display = 'inline-block';
+
                 showToast(`👋 Welcome, ${user.login}!`, 'success');
                 loadFromGitHub();
             } catch (e) {
@@ -609,10 +621,15 @@
             currentFileSha = null;
             sessionStorage.removeItem('gh_token');
             currentUser = null;
+
+            // ---- HIDE AVATAR & USERNAME ----
             userInfo.style.display = 'none';
+
+            // ---- SHOW LOGIN & HIDE LOGOUT ----
             loginBtn.style.display = 'inline-block';
             logoutBtn.style.display = 'none';
             pushToGithubBtn.style.display = 'none';
+
             showToast('Signed out', 'success');
         }
 
