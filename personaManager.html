@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Personasoi – Persona Manager</title>
     <style>
+        /* ====== All styles (unchanged – same as before) ====== */
         :root {
             --bg-body: #f6f8fa; --bg-card: #ffffff; --text-primary: #1f2328; --text-secondary: #57606a;
             --border-color: #d0d7de; --shadow: 0 1px 3px rgba(0, 0, 0, 0.08); --accent: #2da44e;
@@ -197,14 +198,14 @@
 </head>
 <body>
 
-    <!-- ========== HEADER ========== -->
+    <!-- ====== HEADER ====== -->
     <header class="header">
         <div class="header-left">
             <img src="personasoi.png" alt="Personasoi logo" />
             <h1><span class="persona">Persona</span><span class="soi">soi</span></h1>
         </div>
         <div class="header-right">
-            <!-- User info: avatar + username (hidden by default) -->
+            <!-- User info: avatar + username -->
             <div class="user-info" id="userInfo" style="display:none;">
                 <img id="avatar" src="" alt="avatar" />
                 <span class="username" id="usernameDisplay"></span>
@@ -212,14 +213,14 @@
             <!-- Auth buttons -->
             <button class="btn btn-secondary" id="loginBtn">🔑 Sign in</button>
             <button class="btn btn-danger" id="logoutBtn" style="display:none;">Sign out</button>
-            <!-- Push to GitHub -->
-            <button class="btn btn-ai" id="pushToGithubBtn" style="display:none;" title="Commit persona.json to GitHub">☁️ Push to GitHub</button>
+            <!-- Save to Repo (only shown when logged in) -->
+            <button class="btn btn-ai" id="pushToGithubBtn" style="display:none;" title="Save personas to your GitHub repo">💾 Save to Repo</button>
             <!-- Settings -->
             <button class="btn-icon" id="settingsBtn" title="Preferences">⚙️</button>
         </div>
     </header>
 
-    <!-- ========== MAIN ========== -->
+    <!-- ====== MAIN ====== -->
     <main>
         <div class="status" id="statusMessage">💡 Ready. Add a persona or load existing JSON.</div>
         <div class="toolbar">
@@ -244,7 +245,7 @@
                 <li><strong>Batch Import:</strong> Paste multiple bios (one per line) to generate all at once.</li>
                 <li><strong>Edit / Clone / Delete:</strong> Each card has action buttons.</li>
                 <li><strong>Export / Import:</strong> Download or upload your collection as JSON.</li>
-                <li><strong>GitHub Sync:</strong> Sign in with GitHub. Once authenticated, click "☁️ Push to GitHub" to commit <code>persona.json</code> directly to <code>suryasticsai/myTeamOnWhatsApp</code>. Every save also auto‑pushes if you're logged in.</li>
+                <li><strong>GitHub Sync:</strong> Sign in with GitHub. Once authenticated, click "💾 Save to Repo" to commit <code>persona.json</code> directly to <code>suryasticsai/myTeamOnWhatsApp</code>. Every save also auto‑pushes if you're logged in.</li>
                 <li><strong>Preferences:</strong> Toggle dark mode, theme color, and sounds via ⚙️.</li>
             </ol>
             <div class="credits">
@@ -259,7 +260,7 @@
         </section>
     </main>
 
-    <!-- ========== FOOTER ========== -->
+    <!-- ====== FOOTER ====== -->
     <footer>
         <div class="footer-inner">
             <div class="footer-logo">
@@ -276,7 +277,7 @@
         </div>
     </footer>
 
-    <!-- ========== MODALS ========== -->
+    <!-- ====== MODALS (unchanged) ====== -->
     <!-- Add/Edit Persona -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
@@ -360,10 +361,10 @@
         </div>
     </div>
 
-    <!-- ========== TOAST ========== -->
+    <!-- ====== TOAST ====== -->
     <div class="toast" id="toast"></div>
 
-    <!-- ========== FRONTEND CONSOLE ========== -->
+    <!-- ====== FRONTEND CONSOLE ====== -->
     <button id="consoleToggle" title="Toggle Console">🐞</button>
     <div id="consolePanel">
         <div class="console-header">
@@ -378,7 +379,7 @@
     <!-- ============================================================= -->
     <script>
         // ============================================================
-        //  FRONTEND CONSOLE – captures logs and displays them in the UI
+        //  FRONTEND CONSOLE (captures all logs)
         // ============================================================
         (function setupConsole() {
             const consoleBody = document.getElementById('consoleBody');
@@ -386,13 +387,8 @@
             const panel = document.getElementById('consolePanel');
             const clearBtn = document.getElementById('consoleClearBtn');
 
-            toggleBtn.addEventListener('click', () => {
-                panel.classList.toggle('open');
-            });
-
-            clearBtn.addEventListener('click', () => {
-                consoleBody.innerHTML = '';
-            });
+            toggleBtn.addEventListener('click', () => panel.classList.toggle('open'));
+            clearBtn.addEventListener('click', () => { consoleBody.innerHTML = ''; });
 
             function appendLog(level, ...args) {
                 const time = new Date().toLocaleTimeString();
@@ -595,8 +591,10 @@
                 avatar.src = user.avatar_url;
                 usernameDisplay.textContent = user.login;
                 userInfo.style.display = 'flex';
+                console.log('👤 Avatar set to:', user.avatar_url);
+                console.log('👤 Username set to:', user.login);
 
-                // ---- SHOW LOGOUT & HIDE LOGIN ----
+                // ---- SHOW LOGOUT & SAVE BUTTONS ----
                 loginBtn.style.display = 'none';
                 logoutBtn.style.display = 'inline-block';
                 pushToGithubBtn.style.display = 'inline-block';
@@ -625,7 +623,7 @@
             // ---- HIDE AVATAR & USERNAME ----
             userInfo.style.display = 'none';
 
-            // ---- SHOW LOGIN & HIDE LOGOUT ----
+            // ---- SHOW LOGIN & HIDE LOGOUT/SAVE ----
             loginBtn.style.display = 'inline-block';
             logoutBtn.style.display = 'none';
             pushToGithubBtn.style.display = 'none';
