@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/suryasticsai/myTeamOnWhatsApp/refs/heads/main/personasoi.png" alt="Personasoi Logo" width="80" />
+  <img src="https://raw.githubusercontent.com/suryasticsai/myTeamOnWhatsApp/refs/heads/main/personasoi.png" alt="Personasoi Logo" width="120" />
   <h1>📱Simulate your own Team On WhatsApp</h1>
   <p><strong>A fully functional WhatsApp‑style chat interface with AI‑powered team members</strong></p>
 
