@@ -5,392 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Personasoi – Persona Manager</title>
     <style>
-        /* ========== CSS VARIABLES (controlled by preferences) ========== */
         :root {
-            --bg-body: #f6f8fa;
-            --bg-card: #ffffff;
-            --text-primary: #1f2328;
-            --text-secondary: #57606a;
-            --border-color: #d0d7de;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-            --accent: #2da44e;
-            --accent-hover: #22863a;
-            --accent-ai: #6f42c1;
-            --accent-ai-hover: #5a329a;
-            --modal-overlay: rgba(0, 0, 0, 0.5);
-            --toast-bg: #1f2328;
-            --footer-bg: #161b22;
-            --footer-text: #8b949e;
+            --bg-body: #f6f8fa; --bg-card: #ffffff; --text-primary: #1f2328; --text-secondary: #57606a;
+            --border-color: #d0d7de; --shadow: 0 1px 3px rgba(0, 0, 0, 0.08); --accent: #2da44e;
+            --accent-hover: #22863a; --accent-ai: #6f42c1; --accent-ai-hover: #5a329a;
+            --modal-overlay: rgba(0, 0, 0, 0.5); --toast-bg: #1f2328;
         }
-
-        /* Dark mode */
         body.dark-mode {
-            --bg-body: #0d1117;
-            --bg-card: #161b22;
-            --text-primary: #c9d1d9;
-            --text-secondary: #8b949e;
-            --border-color: #30363d;
-            --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
-            --modal-overlay: rgba(0, 0, 0, 0.7);
-            --toast-bg: #30363d;
+            --bg-body: #0d1117; --bg-card: #161b22; --text-primary: #c9d1d9; --text-secondary: #8b949e;
+            --border-color: #30363d; --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            --modal-overlay: rgba(0, 0, 0, 0.7); --toast-bg: #30363d;
         }
-
-        /* ========== RESET & BASE ========== */
         * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-        body {
-            margin: 0;
-            padding: 0;
-            background: var(--bg-body);
-            color: var(--text-primary);
-            transition: background 0.3s, color 0.3s;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
+        body { margin: 0; padding: 0; background: var(--bg-body); color: var(--text-primary); transition: background 0.3s, color 0.3s; display: flex; flex-direction: column; min-height: 100vh; }
+        
+        .header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 1rem 1.5rem; background: var(--bg-card); border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 100; }
+        .header-left { display: flex; align-items: center; gap: 0.75rem; }
+        .header-left img { height: 40px; width: 40px; object-fit: contain; }
+        .header-left h1 { margin: 0; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; }
+        .header-left h1 .persona { color: #0366d6; } .header-left h1 .soi { color: #2da44e; }
+        .header-right { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+        .user-info { display: flex; align-items: center; gap: 0.5rem; }
+        .user-info img { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--border-color); }
+        .username { font-size: 0.85rem; font-weight: 600; }
 
-        /* ========== HEADER ========== */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-            padding: 1rem 1.5rem;
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        .header-left img {
-            height: 40px;
-            width: 40px;
-            object-fit: contain;
-        }
-        .header-left h1 {
-            margin: 0;
-            font-size: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -0.5px;
-        }
-        .header-left h1 .persona { color: #0366d6; }
-        .header-left h1 .soi { color: #2da44e; }
-
-        .header-right {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-        }
-        .header-right .user-info {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .header-right .user-info img {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            border: 2px solid var(--border-color);
-        }
-        .header-right .user-info .username {
-            font-size: 0.85rem;
-            font-weight: 600;
-        }
-
-        /* ========== BUTTONS ========== */
-        .btn {
-            background: var(--accent);
-            color: #fff;
-            border: none;
-            padding: 0.5rem 1.2rem;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-size: 0.9rem;
-        }
+        .btn { background: var(--accent); color: #fff; border: none; padding: 0.5rem 1.2rem; border-radius: 6px; font-weight: 600; cursor: pointer; transition: background 0.2s; font-size: 0.9rem; }
         .btn:hover { background: var(--accent-hover); }
-        .btn-danger { background: #cf222e; }
-        .btn-danger:hover { background: #a0111f; }
-        .btn-secondary { background: var(--text-secondary); }
-        .btn-secondary:hover { background: #424a53; }
-        .btn-outline {
-            background: transparent;
-            color: var(--text-primary);
-            border: 1px solid var(--border-color);
-        }
+        .btn-danger { background: #cf222e; } .btn-danger:hover { background: #a0111f; }
+        .btn-secondary { background: var(--text-secondary); } .btn-secondary:hover { background: #424a53; }
+        .btn-outline { background: transparent; color: var(--text-primary); border: 1px solid var(--border-color); }
         .btn-outline:hover { background: var(--bg-body); }
-        .btn-ai { background: var(--accent-ai); color: #fff; }
-        .btn-ai:hover { background: var(--accent-ai-hover); }
-        .btn-icon {
-            background: transparent;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border-radius: 6px;
-            transition: background 0.2s;
-            color: var(--text-primary);
-        }
+        .btn-ai { background: var(--accent-ai); color: #fff; } .btn-ai:hover { background: var(--accent-ai-hover); }
+        .btn-icon { background: transparent; border: none; font-size: 1.2rem; cursor: pointer; padding: 0.25rem 0.5rem; border-radius: 6px; transition: background 0.2s; color: var(--text-primary); }
         .btn-icon:hover { background: var(--border-color); }
 
-        /* ========== MAIN CONTENT ========== */
-        main {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem 1.5rem;
-            flex: 1;
-            width: 100%;
-        }
-
-        /* ========== STATUS & TOOLBAR ========== */
+        main { max-width: 1200px; margin: 0 auto; padding: 2rem 1.5rem; flex: 1; width: 100%; }
         .status { font-size: 0.9rem; color: var(--text-secondary); margin: 1rem 0; }
-        .toolbar {
-            display: flex;
-            gap: 0.75rem;
-            flex-wrap: wrap;
-            margin: 1.5rem 0;
-            align-items: center;
-        }
+        .toolbar { display: flex; gap: 0.75rem; flex-wrap: wrap; margin: 1.5rem 0; align-items: center; }
         .toolbar .spacer { flex: 1; }
 
-        /* ========== PERSONA GRID ========== */
-        .persona-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 1.5rem;
-        }
-        .persona-card {
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border-color);
-            transition: box-shadow 0.2s, background 0.3s, border 0.3s;
-        }
+        .persona-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 1.5rem; }
+        .persona-card { background: var(--bg-card); border-radius: 12px; padding: 1.5rem; box-shadow: var(--shadow); border: 1px solid var(--border-color); transition: box-shadow 0.2s, background 0.3s, border 0.3s; }
         .persona-card:hover { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
-        .persona-card h3 {
-            margin: 0 0 0.25rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .persona-card .role { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem; }
-        .persona-card .field { font-size: 0.85rem; margin: 0.3rem 0; word-break: break-word; }
-        .persona-card .field strong { color: var(--text-primary); }
-        .persona-card .actions { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .persona-card .actions .btn { font-size: 0.75rem; padding: 0.3rem 0.8rem; }
-
+        .persona-card h3 { margin: 0 0 0.25rem 0; display: flex; align-items: center; gap: 0.5rem; }
+        .role { color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 0.75rem; }
+        .field { font-size: 0.85rem; margin: 0.3rem 0; word-break: break-word; }
+        .field strong { color: var(--text-primary); }
+        .actions { margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .actions .btn { font-size: 0.75rem; padding: 0.3rem 0.8rem; }
         .empty-state { text-align: center; color: var(--text-secondary); padding: 3rem 0; }
 
-        /* ========== HOW TO USE / CREDITS ========== */
-        .how-to-use {
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 2rem;
-            margin-top: 3rem;
-            border: 1px solid var(--border-color);
-            box-shadow: var(--shadow);
-        }
+        .how-to-use { background: var(--bg-card); border-radius: 12px; padding: 2rem; margin-top: 3rem; border: 1px solid var(--border-color); box-shadow: var(--shadow); }
         .how-to-use h2 { margin-top: 0; color: var(--accent); }
         .how-to-use ol { line-height: 1.8; color: var(--text-secondary); }
-        .credits {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-color);
-            text-align: center;
-        }
+        .credits { margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); text-align: center; }
         .credits p { margin: 0.25rem 0; color: var(--text-secondary); font-size: 0.9rem; }
         .credits .name { font-weight: 700; color: var(--text-primary); font-size: 1.1rem; }
         .credits .handle { color: #0366d6; font-weight: 600; }
-        .credits .tags span {
-            display: inline-block;
-            background: var(--accent-deep, #d9fdd3);
-            color: var(--accent-text, #008069);
-            padding: 2px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            margin: 4px 2px;
-            font-weight: 600;
-        }
+        .credits .tags span { display: inline-block; background: #d9fdd3; color: #008069; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; margin: 4px 2px; font-weight: 600; }
 
-        /* ========== MODALS ========== */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--modal-overlay);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            backdrop-filter: blur(4px);
-        }
+        .modal-overlay { position: fixed; inset: 0; background: var(--modal-overlay); display: none; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(4px); }
         .modal-overlay.active { display: flex; }
-        .modal {
-            background: var(--bg-card);
-            border-radius: 12px;
-            padding: 2rem;
-            max-width: 700px;
-            width: 95%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            border: 1px solid var(--border-color);
-        }
+        .modal { background: var(--bg-card); border-radius: 12px; padding: 2rem; max-width: 700px; width: 95%; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.3); border: 1px solid var(--border-color); }
         .modal h2 { margin-top: 0; }
-        .modal label {
-            display: block;
-            font-weight: 600;
-            margin: 0.75rem 0 0.25rem;
-            font-size: 0.9rem;
-        }
-        .modal input, .modal textarea, .modal select {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-family: inherit;
-            background: var(--bg-body);
-            color: var(--text-primary);
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
+        .modal label { display: block; font-weight: 600; margin: 0.75rem 0 0.25rem; font-size: 0.9rem; }
+        .modal input, .modal textarea, .modal select { width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.9rem; font-family: inherit; background: var(--bg-body); color: var(--text-primary); }
         .modal textarea { min-height: 80px; resize: vertical; }
-        .modal .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
-
-        /* Field with AI tag */
+        .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
         .field-with-tag { display: flex; align-items: center; gap: 0.5rem; }
-        .field-with-tag .ai-tag {
-            font-size: 0.7rem;
-            background: var(--accent-ai);
-            color: #fff;
-            padding: 0.1rem 0.5rem;
-            border-radius: 10px;
-            display: inline-block;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-        .field-with-tag .ai-tag.show { opacity: 1; }
-        .ai-highlight {
-            border-color: var(--accent-ai) !important;
-            box-shadow: 0 0 0 3px rgba(111,66,193,0.3);
-        }
-
-        /* AI Section */
-        .ai-section {
-            background: var(--bg-body);
-            padding: 1rem;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            border: 1px dashed var(--accent-ai);
-        }
-        .ai-section .ai-row { display: flex; gap: 0.5rem; align-items: flex-start; }
-        .ai-section .ai-row textarea { flex: 1; min-height: 60px; }
-        .ai-section .ai-row button { margin-top: 0.25rem; }
-
-        /* Batch modal */
+        .ai-tag { font-size: 0.7rem; background: var(--accent-ai); color: #fff; padding: 0.1rem 0.5rem; border-radius: 10px; opacity: 0; transition: opacity 0.3s; }
+        .ai-tag.show { opacity: 1; }
+        .ai-highlight { border-color: var(--accent-ai) !important; box-shadow: 0 0 0 3px rgba(111,66,193,0.3); }
+        .ai-section { background: var(--bg-body); padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border: 1px dashed var(--accent-ai); }
+        .ai-row { display: flex; gap: 0.5rem; align-items: flex-start; }
+        .ai-row textarea { flex: 1; min-height: 60px; }
         .batch-modal textarea { min-height: 200px; font-family: monospace; }
-
-        /* Preferences modal */
-        .pref-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border-color);
-        }
+        .pref-row { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--border-color); }
         .pref-row:last-child { border-bottom: none; }
-        .pref-row label { margin: 0; font-weight: 500; }
-        .pref-row select, .pref-row input[type="checkbox"] { width: auto; padding: 0.25rem 0.5rem; }
-        .pref-row input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; }
-        .pref-row .toggle-group { display: flex; align-items: center; gap: 0.75rem; }
+        .toggle-group { display: flex; align-items: center; gap: 0.75rem; }
 
-        /* ========== TOAST ========== */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--toast-bg);
-            color: #fff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 500;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 2000;
-            pointer-events: none;
-        }
+        .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: var(--toast-bg); color: #fff; padding: 0.75rem 1.5rem; border-radius: 8px; font-weight: 500; box-shadow: 0 4px 12px rgba(0,0,0,0.3); opacity: 0; transition: opacity 0.3s; z-index: 2000; pointer-events: none; }
         .toast.show { opacity: 1; }
         .toast.error { background: #cf222e; }
         .toast.success { background: var(--accent); }
 
-        /* ========== FILE INPUT WRAPPER ========== */
-        .file-input-wrapper {
-            display: inline-block;
-            position: relative;
-        }
-        .file-input-wrapper input[type="file"] {
-            position: absolute;
-            left: 0; top: 0;
-            opacity: 0;
-            width: 100%; height: 100%;
-            cursor: pointer;
-        }
+        .file-input-wrapper { display: inline-block; position: relative; }
+        .file-input-wrapper input[type="file"] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
 
-        /* ========== FOOTER ========== */
-        footer {
-            background: var(--footer-bg);
-            color: var(--footer-text);
-            padding: 2rem 1.5rem;
-            margin-top: auto;
-        }
-        .footer-inner {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
+        footer { background: #161b22; color: #8b949e; padding: 2rem 1.5rem; margin-top: auto; }
+        .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+        .footer-logo { display: flex; align-items: center; gap: 0.75rem; }
         .footer-logo img { height: 36px; width: 36px; object-fit: contain; }
-        .footer-logo span { font-size: 1.2rem; font-weight: 700; }
-        .footer-logo .persona { color: #0366d6; }
-        .footer-logo .soi { color: #2da44e; }
-        .footer-socials {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-        .footer-socials a {
-            color: var(--footer-text);
-            text-decoration: none;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            transition: color 0.2s;
-        }
+        .footer-socials { display: flex; gap: 1rem; flex-wrap: wrap; }
+        .footer-socials a { color: #8b949e; text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; }
         .footer-socials a:hover { color: #fff; }
         .footer-socials svg { width: 18px; height: 18px; fill: currentColor; }
 
-        /* ========== RESPONSIVE ========== */
         @media (max-width: 600px) {
             .persona-grid { grid-template-columns: 1fr; }
-            .ai-section .ai-row { flex-direction: column; }
+            .ai-row { flex-direction: column; }
             .header { flex-direction: column; align-items: stretch; }
             .header-right { justify-content: flex-start; }
             .footer-inner { flex-direction: column; text-align: center; }
@@ -399,8 +112,6 @@
     </style>
 </head>
 <body>
-
-    <!-- ========== HEADER ========== -->
     <header class="header">
         <div class="header-left">
             <img src="personasoi.png" alt="Personasoi logo" />
@@ -413,59 +124,50 @@
             </div>
             <button class="btn btn-secondary" id="loginBtn">🔑 Sign in</button>
             <button class="btn btn-danger" id="logoutBtn" style="display:none;">Sign out</button>
-            <button class="btn btn-ai" id="pushToGithubBtn" style="display:none;" title="Commit persona.json to GitHub">️ Push to GitHub</button>
+            <button class="btn btn-ai" id="pushToGithubBtn" style="display:none;" title="Commit persona.json to GitHub">☁️ Push to GitHub</button>
             <button class="btn-icon" id="settingsBtn" title="Preferences">⚙️</button>
         </div>
     </header>
 
-    <!-- ========== MAIN CONTENT ========== -->
     <main>
         <div class="status" id="statusMessage">💡 Ready. Add a persona or load existing JSON.</div>
-
         <div class="toolbar">
-            <button class="btn" id="addBtn"> Add Persona</button>
-            <button class="btn btn-secondary" id="autoCreateBtn"> Auto‑Create Sample</button>
+            <button class="btn" id="addBtn">➕ Add Persona</button>
+            <button class="btn btn-secondary" id="autoCreateBtn">🤖 Auto‑Create Sample</button>
             <button class="btn btn-ai" id="batchBtn">📋 Batch Import</button>
-            <button class="btn btn-outline" id="exportBtn"> Export JSON</button>
+            <button class="btn btn-outline" id="exportBtn">📥 Export JSON</button>
             <span class="file-input-wrapper">
-                <button class="btn btn-outline">📤 Import JSON</button>
+                <button class="btn btn-outline"> Import JSON</button>
                 <input type="file" id="importInput" accept=".json" />
             </span>
             <span class="spacer"></span>
             <span id="countDisplay" style="font-size:0.9rem;color:var(--text-secondary);">0 personas</span>
         </div>
-
         <div id="personaContainer" class="persona-grid"></div>
 
-        <!-- ========== HOW TO USE / CREDITS ========== -->
         <section class="how-to-use">
             <h2> How to Use</h2>
             <ol>
-                <li><strong>Add Persona:</strong> Click "Add Persona" to manually create one, or use "Auto-Create Sample" for a quick start.</li>
-                <li><strong>RAGina Auto-fill:</strong> Paste a free-text bio in the modal and click "✨ Auto-fill" — it extracts name, role, vibe, memes, quirks & flag automatically.</li>
-                <li><strong>Batch Import:</strong> Paste multiple bios (one per line) and generate all personas at once.</li>
-                <li><strong>Edit / Clone / Delete:</strong> Each card has action buttons. Cloning preserves all fields with a new ID.</li>
-                <li><strong>Export / Import:</strong> Download your collection as JSON or upload an existing file.</li>
+                <li><strong>Add Persona:</strong> Click "Add Persona" or use "Auto-Create Sample".</li>
+                <li><strong>RAGina Auto-fill:</strong> Paste a bio in the modal and click "✨ Auto-fill" to extract fields automatically.</li>
+                <li><strong>Batch Import:</strong> Paste multiple bios (one per line) to generate all at once.</li>
+                <li><strong>Edit / Clone / Delete:</strong> Each card has action buttons.</li>
+                <li><strong>Export / Import:</strong> Download or upload your collection as JSON.</li>
                 <li><strong>GitHub Sync:</strong> Sign in with GitHub. Once authenticated, click "☁️ Push to GitHub" to commit <code>persona.json</code> directly to <code>suryasticsai/myTeamOnWhatsApp</code>. Every save also auto-pushes if you're logged in.</li>
-                <li><strong>Preferences:</strong> Toggle dark mode, theme color, and sounds via the ⚙️ gear icon.</li>
+                <li><strong>Preferences:</strong> Toggle dark mode, theme color, and sounds via ⚙️.</li>
             </ol>
-
             <div class="credits">
                 <p class="name">Sai Varakala</p>
                 <p class="handle">@suryasticsai</p>
                 <p>SAFe Scrum Master · Techno Agilist · Tech Maniac · AI Enthusiast · AI Generalist</p>
                 <div class="tags">
-                    <span>SAFe Scrum Master</span>
-                    <span>Techno Agilist</span>
-                    <span>Tech Maniac</span>
-                    <span>AI Enthusiast</span>
-                    <span>AI Generalist</span>
+                    <span>SAFe Scrum Master</span><span>Techno Agilist</span><span>Tech Maniac</span>
+                    <span>AI Enthusiast</span><span>AI Generalist</span>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- ========== FOOTER ========== -->
     <footer>
         <div class="footer-inner">
             <div class="footer-logo">
@@ -473,31 +175,16 @@
                 <span><span class="persona">Persona</span><span class="soi">soi</span></span>
             </div>
             <div class="footer-socials">
-                <a href="https://github.com/suryasticsai" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
-                    GitHub
-                </a>
-                <a href="https://instagram.com/suryasticsai" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
-                    Instagram
-                </a>
-                <a href="https://medium.com/@suryasticsai" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42s-3.38-2.88-3.38-6.42 1.51-6.42 3.38-6.42 3.38 2.88 3.38 6.42zM24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg>
-                    Medium
-                </a>
-                <a href="https://huggingface.co/suryasticsai" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M9 14c1 1.5 5 1.5 6 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-                    HuggingFace
-                </a>
-                <a href="mailto:suryasticsai@gmail.com" target="_blank" rel="noopener">
-                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                    Gmail
-                </a>
+                <a href="https://github.com/suryasticsai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg> GitHub</a>
+                <a href="https://instagram.com/suryasticsai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg> Instagram</a>
+                <a href="https://medium.com/@suryasticsai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42s-3.38-2.88-3.38-6.42 1.51-6.42 3.38-6.42 3.38 2.88 3.38 6.42zM24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg> Medium</a>
+                <a href="https://huggingface.co/suryasticsai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M9 14c1 1.5 5 1.5 6 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> HuggingFace</a>
+                <a href="mailto:suryasticsai@gmail.com" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg> Gmail</a>
             </div>
         </div>
     </footer>
 
-    <!-- ========== MODAL: Add/Edit Persona ========== -->
+    <!-- Modals -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <h2 id="modalTitle">Add Persona</h2>
@@ -539,7 +226,6 @@
         </div>
     </div>
 
-    <!-- ========== MODAL: Batch Import ========== -->
     <div class="modal-overlay" id="batchModalOverlay">
         <div class="modal batch-modal">
             <h2> Batch Import Bios</h2>
@@ -553,33 +239,24 @@
         </div>
     </div>
 
-    <!-- ========== MODAL: Preferences ========== -->
     <div class="modal-overlay" id="prefModalOverlay">
         <div class="modal">
             <h2>⚙️ Preferences</h2>
             <div class="pref-row">
                 <label for="themeColor">Theme Color</label>
                 <select id="themeColor">
-                    <option value="#2da44e">Green</option>
-                    <option value="#0366d6">Blue</option>
-                    <option value="#6f42c1">Purple</option>
-                    <option value="#d73a49">Pink</option>
+                    <option value="#2da44e">Green</option><option value="#0366d6">Blue</option>
+                    <option value="#6f42c1">Purple</option><option value="#d73a49">Pink</option>
                     <option value="#e36209">Orange</option>
                 </select>
             </div>
             <div class="pref-row">
                 <label for="darkModeToggle">Dark Mode</label>
-                <div class="toggle-group">
-                    <input type="checkbox" id="darkModeToggle" />
-                    <span id="darkModeLabel">Off</span>
-                </div>
+                <div class="toggle-group"><input type="checkbox" id="darkModeToggle" /><span id="darkModeLabel">Off</span></div>
             </div>
             <div class="pref-row">
                 <label for="soundsToggle">Enable Sounds</label>
-                <div class="toggle-group">
-                    <input type="checkbox" id="soundsToggle" checked />
-                    <span id="soundsLabel">On</span>
-                </div>
+                <div class="toggle-group"><input type="checkbox" id="soundsToggle" checked /><span id="soundsLabel">On</span></div>
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-secondary" id="prefCloseBtn">Close</button>
@@ -588,12 +265,11 @@
         </div>
     </div>
 
-    <!-- ========== TOAST ========== -->
     <div class="toast" id="toast"></div>
 
     <script>
         // ============================================================
-        //  CONFIGURATION
+        //  CONFIGURATION - Matches GrishteSync pattern
         // ============================================================
         const CONFIG = {
             workerUrl: 'https://personasoi.varakala-saisurya.workers.dev',
@@ -611,363 +287,263 @@
         let accessToken = null;
         let currentUser = null;
         let currentFileSha = null;
-
         let prefs = { themeColor: '#2da44e', darkMode: false, soundsEnabled: true };
 
         // ============================================================
         //  DOM REFS
         // ============================================================
         const $ = (id) => document.getElementById(id);
-        const statusMsg = $('statusMessage');
-        const container = $('personaContainer');
-        const addBtn = $('addBtn');
-        const autoCreateBtn = $('autoCreateBtn');
-        const batchBtn = $('batchBtn');
-        const exportBtn = $('exportBtn');
-        const importInput = $('importInput');
-        const countDisplay = $('countDisplay');
-        const modalOverlay = $('modalOverlay');
-        const batchModalOverlay = $('batchModalOverlay');
-        const prefModalOverlay = $('prefModalOverlay');
-        const modalTitle = $('modalTitle');
-        const personaForm = $('personaForm');
-        const editId = $('editId');
-        const editName = $('editName');
-        const editFlag = $('editFlag');
-        const editRole = $('editRole');
-        const editNativeLang = $('editNativeLang');
-        const editVibe = $('editVibe');
-        const editCatchphrase = $('editCatchphrase');
-        const editPersonalStyle = $('editPersonalStyle');
-        const editMemeVocab = $('editMemeVocab');
-        const editQuirks = $('editQuirks');
-        const modalCancelBtn = $('modalCancelBtn');
-        const toast = $('toast');
-        const contextInput = $('contextInput');
-        const autoFillBtn = $('autoFillBtn');
-        const batchInput = $('batchInput');
-        const batchCancelBtn = $('batchCancelBtn');
-        const batchGenerateBtn = $('batchGenerateBtn');
-        const loginBtn = $('loginBtn');
-        const logoutBtn = $('logoutBtn');
-        const pushToGithubBtn = $('pushToGithubBtn');
-        const avatar = $('avatar');
-        const usernameDisplay = $('usernameDisplay');
-        const userInfo = $('userInfo');
-        const settingsBtn = $('settingsBtn');
-        const themeColorSelect = $('themeColor');
-        const darkModeToggle = $('darkModeToggle');
-        const darkModeLabel = $('darkModeLabel');
-        const soundsToggle = $('soundsToggle');
-        const soundsLabel = $('soundsLabel');
-        const prefCloseBtn = $('prefCloseBtn');
-        const prefSaveBtn = $('prefSaveBtn');
-        const tags = {
-            name: $('tagName'), flag: $('tagFlag'), role: $('tagRole'),
-            nativeLang: $('tagNativeLang'), vibe: $('tagVibe'),
-            catchphrase: $('tagCatchphrase'), personalStyle: $('tagPersonalStyle'),
-            memeVocab: $('tagMemeVocab'), quirks: $('tagQuirks'),
-        };
+        const statusMsg = $('statusMessage'), container = $('personaContainer');
+        const addBtn = $('addBtn'), autoCreateBtn = $('autoCreateBtn'), batchBtn = $('batchBtn');
+        const exportBtn = $('exportBtn'), importInput = $('importInput'), countDisplay = $('countDisplay');
+        const modalOverlay = $('modalOverlay'), batchModalOverlay = $('batchModalOverlay'), prefModalOverlay = $('prefModalOverlay');
+        const modalTitle = $('modalTitle'), personaForm = $('personaForm'), editId = $('editId');
+        const editName = $('editName'), editFlag = $('editFlag'), editRole = $('editRole');
+        const editNativeLang = $('editNativeLang'), editVibe = $('editVibe'), editCatchphrase = $('editCatchphrase');
+        const editPersonalStyle = $('editPersonalStyle'), editMemeVocab = $('editMemeVocab'), editQuirks = $('editQuirks');
+        const modalCancelBtn = $('modalCancelBtn'), toast = $('toast');
+        const contextInput = $('contextInput'), autoFillBtn = $('autoFillBtn');
+        const batchInput = $('batchInput'), batchCancelBtn = $('batchCancelBtn'), batchGenerateBtn = $('batchGenerateBtn');
+        const loginBtn = $('loginBtn'), logoutBtn = $('logoutBtn'), pushToGithubBtn = $('pushToGithubBtn');
+        const avatar = $('avatar'), usernameDisplay = $('usernameDisplay'), userInfo = $('userInfo');
+        const settingsBtn = $('settingsBtn'), themeColorSelect = $('themeColor');
+        const darkModeToggle = $('darkModeToggle'), darkModeLabel = $('darkModeLabel');
+        const soundsToggle = $('soundsToggle'), soundsLabel = $('soundsLabel');
+        const prefCloseBtn = $('prefCloseBtn'), prefSaveBtn = $('prefSaveBtn');
+        const tags = { name: $('tagName'), flag: $('tagFlag'), role: $('tagRole'), nativeLang: $('tagNativeLang'), vibe: $('tagVibe'), catchphrase: $('tagCatchphrase'), personalStyle: $('tagPersonalStyle'), memeVocab: $('tagMemeVocab'), quirks: $('tagQuirks') };
 
         // ============================================================
         //  TOAST
         // ============================================================
         let toastTimer = null;
         function showToast(msg, type = 'success') {
-            toast.textContent = msg;
-            toast.className = 'toast ' + type + ' show';
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
-            if (prefs.soundsEnabled) {
-                try {
-                    const audio = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoAAACBhYV/g4SEf3+FhH9/hYR/f4WEf3+FhH9/hYR/f4WEf4ODhH9/hYSEf4OCg4R/f4WEhH8AAAA=');
-                    audio.volume = 0.2; audio.play().catch(() => {});
-                } catch (e) {}
-            }
+            toast.textContent = msg; toast.className = 'toast ' + type + ' show';
+            clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+            if (prefs.soundsEnabled) { try { const a = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoAAACBhYV/g4SEf3+FhH9/hYR/f4WEf3+FhH9/hYR/f4WEf4ODhH9/hYSEf4OCg4R/f4WEhH8AAAA='); a.volume = 0.2; a.play().catch(()=>{}); } catch(e){} }
         }
 
         // ============================================================
         //  PREFERENCES
         // ============================================================
-        function loadPreferences() {
-            const saved = localStorage.getItem('personasoi_prefs');
-            if (saved) { try { prefs = { ...prefs, ...JSON.parse(saved) }; } catch (e) {} }
-            applyPreferences();
-        }
+        function loadPreferences() { const s = localStorage.getItem('personasoi_prefs'); if(s) { try{ prefs={...prefs,...JSON.parse(s)}; }catch(e){} } applyPreferences(); }
         function applyPreferences() {
             document.documentElement.style.setProperty('--accent', prefs.themeColor);
-            document.documentElement.style.setProperty('--accent-hover', prefs.themeColor + 'dd');
-            if (prefs.darkMode) {
-                document.body.classList.add('dark-mode');
-                darkModeToggle.checked = true; darkModeLabel.textContent = 'On';
-            } else {
-                document.body.classList.remove('dark-mode');
-                darkModeToggle.checked = false; darkModeLabel.textContent = 'Off';
-            }
-            soundsToggle.checked = prefs.soundsEnabled;
-            soundsLabel.textContent = prefs.soundsEnabled ? 'On' : 'Off';
-            themeColorSelect.value = prefs.themeColor;
+            document.documentElement.style.setProperty('--accent-hover', prefs.themeColor+'dd');
+            if(prefs.darkMode){ document.body.classList.add('dark-mode'); darkModeToggle.checked=true; darkModeLabel.textContent='On'; }
+            else { document.body.classList.remove('dark-mode'); darkModeToggle.checked=false; darkModeLabel.textContent='Off'; }
+            soundsToggle.checked=prefs.soundsEnabled; soundsLabel.textContent=prefs.soundsEnabled?'On':'Off'; themeColorSelect.value=prefs.themeColor;
         }
         function savePreferences() {
-            prefs.themeColor = themeColorSelect.value;
-            prefs.darkMode = darkModeToggle.checked;
-            prefs.soundsEnabled = soundsToggle.checked;
-            localStorage.setItem('personasoi_prefs', JSON.stringify(prefs));
-            applyPreferences();
-            showToast('✅ Preferences saved', 'success');
-            prefModalOverlay.classList.remove('active');
+            prefs.themeColor=themeColorSelect.value; prefs.darkMode=darkModeToggle.checked; prefs.soundsEnabled=soundsToggle.checked;
+            localStorage.setItem('personasoi_prefs', JSON.stringify(prefs)); applyPreferences();
+            showToast('✅ Preferences saved','success'); prefModalOverlay.classList.remove('active');
         }
 
         // ============================================================
-        //  GITHUB AUTH & API (Via Cloudflare Worker Proxy)
+        //  GITHUB AUTH & API (Via Cloudflare Worker Proxy - GrishteSync Pattern)
         // ============================================================
         function handleOAuthCallback() {
             const params = new URLSearchParams(window.location.search);
             const code = params.get('code');
-            if (code) {
-                window.history.replaceState({}, document.title, window.location.pathname);
-                exchangeCodeForToken(code);
-                return true;
+            if(code) { 
+                window.history.replaceState({},document.title,window.location.pathname); 
+                exchangeCodeForToken(code); 
+                return true; 
             }
-            const savedToken = sessionStorage.getItem('gh_token');
-            if (savedToken) { accessToken = savedToken; fetchUserAndData(); return true; }
+            const saved = sessionStorage.getItem('gh_token');
+            if(saved) { accessToken=saved; fetchUserAndData(); return true; }
             return false;
         }
 
         async function exchangeCodeForToken(code) {
             try {
-                showToast('🔄 Authenticating...', 'success');
-                const response = await fetch(`${CONFIG.workerUrl}/token`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ code })
+                showToast('🔄 Authenticating...','success');
+                // FIXED: Use POST to worker /token endpoint instead of GET /callback
+                const res = await fetch(`${CONFIG.workerUrl}/token`, { 
+                    method:'POST', 
+                    headers:{'Content-Type':'application/json'}, 
+                    body:JSON.stringify({code}) 
                 });
-                if (!response.ok) throw new Error(`Worker error: ${response.status}`);
-                const data = await response.json();
-                if (data.access_token) {
-                    accessToken = data.access_token;
-                    sessionStorage.setItem('gh_token', accessToken);
-                    fetchUserAndData();
-                } else {
-                    throw new Error(data.error_description || 'Failed to get access token');
+                
+                if(!res.ok) {
+                    const errText = await res.text().catch(() => '');
+                    throw new Error(`Worker error ${res.status}: ${errText}`);
                 }
-            } catch (err) {
-                console.error('Auth error:', err);
-                showToast('❌ Login failed: ' + err.message, 'error');
+                
+                const data = await res.json();
+                
+                if(data.access_token) { 
+                    accessToken=data.access_token; 
+                    sessionStorage.setItem('gh_token',accessToken); 
+                    fetchUserAndData(); 
+                } else {
+                    throw new Error(data.error_description || data.error || 'No access_token returned');
+                }
+            } catch(err) { 
+                console.error('Auth error:',err); 
+                showToast('❌ Login failed: '+err.message,'error'); 
             }
         }
 
         async function fetchUserAndData() {
             try {
-                const res = await fetch('https://api.github.com/user', {
-                    headers: { 'Authorization': `token ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' }
+                const res = await fetch('https://api.github.com/user', { 
+                    headers:{'Authorization':`Bearer ${accessToken}`,'Accept':'application/vnd.github.v3+json'} 
                 });
-                if (!res.ok) throw new Error('Failed to fetch user');
-                const user = await res.json();
-                currentUser = user;
-                avatar.src = user.avatar_url;
-                usernameDisplay.textContent = user.login;
-                userInfo.style.display = 'flex';
-                loginBtn.style.display = 'none';
-                logoutBtn.style.display = 'inline-block';
-                pushToGithubBtn.style.display = 'inline-block';
-                showToast(` Welcome, ${user.login}!`, 'success');
+                if(!res.ok) throw new Error('Failed to fetch user');
+                const user = await res.json(); 
+                currentUser=user; 
+                avatar.src=user.avatar_url; 
+                usernameDisplay.textContent=user.login;
+                userInfo.style.display='flex'; 
+                loginBtn.style.display='none'; 
+                logoutBtn.style.display='inline-block'; 
+                pushToGithubBtn.style.display='inline-block';
+                showToast(`👋 Welcome, ${user.login}!`,'success'); 
                 loadFromGitHub();
-            } catch (e) {
-                console.error('Auth error:', e);
-                showToast('❌ Session expired. Please sign in again.', 'error');
-                logout();
+            } catch(e) { 
+                console.error('Auth error:',e); 
+                showToast('❌ Session expired. Please sign in again.','error'); 
+                logout(); 
             }
         }
 
         function triggerLogin() {
             const redirectUri = encodeURIComponent(window.location.href.split('?')[0]);
+            // FIXED: Native redirect avoids CORS issues with fetch()
             window.location.href = `${CONFIG.workerUrl}/login?redirect_uri=${redirectUri}`;
         }
 
         function logout() {
-            accessToken = null; currentFileSha = null;
-            sessionStorage.removeItem('gh_token'); currentUser = null;
-            userInfo.style.display = 'none';
-            loginBtn.style.display = 'inline-block';
-            logoutBtn.style.display = 'none';
-            pushToGithubBtn.style.display = 'none';
-            showToast('Signed out', 'success');
+            accessToken=null; currentFileSha=null; sessionStorage.removeItem('gh_token'); currentUser=null;
+            userInfo.style.display='none'; loginBtn.style.display='inline-block'; logoutBtn.style.display='none'; pushToGithubBtn.style.display='none';
+            showToast('Signed out','success');
         }
 
         async function saveToGitHub() {
-            if (!accessToken || !currentUser) return;
+            if(!accessToken||!currentUser) return;
             try {
-                const content = btoa(JSON.stringify(personas, null, 2));
+                const content = btoa(JSON.stringify(personas,null,2));
                 const url = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${CONFIG.filePath}`;
-                const payload = { message: `Update personas.json [${new Date().toISOString()}]`, content, branch: CONFIG.branch };
-                if (currentFileSha) payload.sha = currentFileSha;
-                const res = await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `token ${accessToken}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                const payload = { message:`Update personas.json [${new Date().toISOString()}]`, content, branch:CONFIG.branch };
+                if(currentFileSha) payload.sha=currentFileSha;
+                const res = await fetch(url, { 
+                    method:'PUT', 
+                    headers:{'Authorization':`Bearer ${accessToken}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'}, 
+                    body:JSON.stringify(payload) 
                 });
-                if (!res.ok) { const err = await res.json(); throw new Error(err.message || 'GitHub API Error'); }
-                const result = await res.json();
-                currentFileSha = result.content.sha;
-                showToast('☁️ Saved to GitHub!', 'success');
-            } catch (err) {
-                console.error('GitHub Save Error:', err);
-                showToast('⚠️ Failed to save to GitHub: ' + err.message, 'error');
-            }
+                if(!res.ok) { const err=await res.json(); throw new Error(err.message||'GitHub API Error'); }
+                const result = await res.json(); currentFileSha=result.content.sha; showToast('☁️ Saved to GitHub!','success');
+            } catch(err) { console.error('GitHub Save Error:',err); showToast('⚠️ Failed to save to GitHub: '+err.message,'error'); }
         }
 
         async function loadFromGitHub() {
             try {
                 const url = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${CONFIG.filePath}?ref=${CONFIG.branch}`;
-                const res = await fetch(url, { headers: { 'Authorization': `token ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' } });
-                if (res.status === 404) { currentFileSha = null; return; }
-                if (!res.ok) throw new Error('Failed to fetch file');
-                const data = await res.json();
-                currentFileSha = data.sha;
-                const decoded = atob(data.content);
-                const parsed = JSON.parse(decoded);
-                if (Array.isArray(parsed)) personas = parsed;
-                else if (parsed.personas && Array.isArray(parsed.personas)) personas = parsed.personas;
-                render();
-                showToast('📂 Loaded latest version from GitHub', 'success');
-            } catch (err) {
-                console.error('GitHub Load Error:', err);
-                loadFromLocalStorage();
-            }
+                const res = await fetch(url, { headers:{'Authorization':`Bearer ${accessToken}`,'Accept':'application/vnd.github.v3+json'} });
+                if(res.status===404) { currentFileSha=null; return; }
+                if(!res.ok) throw new Error('Failed to fetch file');
+                const data = await res.json(); currentFileSha=data.sha;
+                const decoded = atob(data.content); const parsed = JSON.parse(decoded);
+                if(Array.isArray(parsed)) personas=parsed;
+                else if(parsed.personas&&Array.isArray(parsed.personas)) personas=parsed.personas;
+                render(); showToast(' Loaded latest version from GitHub','success');
+            } catch(err) { console.error('GitHub Load Error:',err); loadFromLocalStorage(); }
         }
 
         // ============================================================
         //  RENDER PERSONAS
         // ============================================================
         function render() {
-            if (!personas.length) {
-                container.innerHTML = `<div class="empty-state">No personas yet. Add one or import a JSON file.</div>`;
-                countDisplay.textContent = '0 personas'; return;
-            }
-            container.innerHTML = personas.map((p, idx) => `
+            if(!personas.length) { container.innerHTML=`<div class="empty-state">No personas yet. Add one or import a JSON file.</div>`; countDisplay.textContent='0 personas'; return; }
+            container.innerHTML = personas.map((p,idx)=>`
                 <div class="persona-card" data-index="${idx}">
-                    <h3>${p.flag || ''} ${p.name}</h3>
-                    <div class="role">${p.role || 'No role'}</div>
-                    ${p.native_language ? `<div class="field"><strong>Native:</strong> ${p.native_language}</div>` : ''}
-                    ${p.vibe ? `<div class="field"><strong>Vibe:</strong> ${p.vibe}</div>` : ''}
-                    ${p.catchphrase ? `<div class="field"><strong>Catchphrase:</strong> "${p.catchphrase}"</div>` : ''}
-                    ${p.personal_style ? `<div class="field"><strong>Style:</strong> ${p.personal_style}</div>` : ''}
-                    ${p.meme_vocabulary?.length ? `<div class="field"><strong>Memes:</strong> ${p.meme_vocabulary.join(', ')}</div>` : ''}
-                    ${p.quirks?.length ? `<div class="field"><strong>Quirks:</strong> ${p.quirks.join(', ')}</div>` : ''}
+                    <h3>${p.flag||''} ${p.name}</h3>
+                    <div class="role">${p.role||'No role'}</div>
+                    ${p.native_language?`<div class="field"><strong>Native:</strong> ${p.native_language}</div>`:''}
+                    ${p.vibe?`<div class="field"><strong>Vibe:</strong> ${p.vibe}</div>`:''}
+                    ${p.catchphrase?`<div class="field"><strong>Catchphrase:</strong> "${p.catchphrase}"</div>`:''}
+                    ${p.personal_style?`<div class="field"><strong>Style:</strong> ${p.personal_style}</div>`:''}
+                    ${p.meme_vocabulary?.length?`<div class="field"><strong>Memes:</strong> ${p.meme_vocabulary.join(', ')}</div>`:''}
+                    ${p.quirks?.length?`<div class="field"><strong>Quirks:</strong> ${p.quirks.join(', ')}</div>`:''}
                     <div class="actions">
                         <button class="btn btn-outline" onclick="editPersona(${idx})">✏️ Edit</button>
-                        <button class="btn btn-outline" onclick="clonePersona(${idx})"> Clone</button>
+                        <button class="btn btn-outline" onclick="clonePersona(${idx})">📋 Clone</button>
                         <button class="btn btn-danger" onclick="deletePersona(${idx})">🗑️</button>
                     </div>
-                </div>
-            `).join('');
-            countDisplay.textContent = `${personas.length} persona${personas.length !== 1 ? 's' : ''}`;
-            statusMsg.textContent = `✅ ${personas.length} personas loaded`;
+                </div>`).join('');
+            countDisplay.textContent=`${personas.length} persona${personas.length!==1?'s':''}`;
+            statusMsg.textContent=`✅ ${personas.length} personas loaded`;
         }
 
         // ============================================================
         //  CRUD OPERATIONS
         // ============================================================
         function getPersonaFromForm() {
-            const memeVocab = editMemeVocab.value.split(',').map(s => s.trim()).filter(Boolean);
-            const quirks = editQuirks.value.split(',').map(s => s.trim()).filter(Boolean);
-            return {
-                id: editId.value || generateId(editName.value),
-                name: editName.value.trim(), flag: editFlag.value.trim() || '👤',
-                role: editRole.value.trim(), native_language: editNativeLang.value.trim(),
-                vibe: editVibe.value.trim(), catchphrase: editCatchphrase.value.trim(),
-                personal_style: editPersonalStyle.value.trim(),
-                meme_vocabulary: memeVocab, quirks: quirks,
-            };
+            const memeVocab=editMemeVocab.value.split(',').map(s=>s.trim()).filter(Boolean);
+            const quirks=editQuirks.value.split(',').map(s=>s.trim()).filter(Boolean);
+            return { id:editId.value||generateId(editName.value), name:editName.value.trim(), flag:editFlag.value.trim()||'👤', role:editRole.value.trim(), native_language:editNativeLang.value.trim(), vibe:editVibe.value.trim(), catchphrase:editCatchphrase.value.trim(), personal_style:editPersonalStyle.value.trim(), meme_vocabulary:memeVocab, quirks };
         }
         function fillForm(persona) {
-            editId.value = persona.id || ''; editName.value = persona.name || '';
-            editFlag.value = persona.flag || ''; editRole.value = persona.role || '';
-            editNativeLang.value = persona.native_language || ''; editVibe.value = persona.vibe || '';
-            editCatchphrase.value = persona.catchphrase || ''; editPersonalStyle.value = persona.personal_style || '';
-            editMemeVocab.value = (persona.meme_vocabulary || []).join(', ');
-            editQuirks.value = (persona.quirks || []).join(', ');
-            contextInput.value = '';
-            Object.values(tags).forEach(el => el.classList.remove('show'));
-            document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight'));
+            editId.value=persona.id||''; editName.value=persona.name||''; editFlag.value=persona.flag||''; editRole.value=persona.role||'';
+            editNativeLang.value=persona.native_language||''; editVibe.value=persona.vibe||''; editCatchphrase.value=persona.catchphrase||'';
+            editPersonalStyle.value=persona.personal_style||''; editMemeVocab.value=(persona.meme_vocabulary||[]).join(', '); editQuirks.value=(persona.quirks||[]).join(', ');
+            contextInput.value=''; Object.values(tags).forEach(el=>el.classList.remove('show')); document.querySelectorAll('.ai-highlight').forEach(el=>el.classList.remove('ai-highlight'));
         }
-        function generateId(name) { return name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now().toString(36); }
-        function openModal(persona, index, isEdit = false) {
-            if (persona) { fillForm(persona); modalTitle.textContent = isEdit ? '✏️ Edit Persona' : '📋 Clone Persona'; }
-            else { modalTitle.textContent = '➕ Add Persona'; personaForm.reset(); editId.value = ''; contextInput.value = ''; Object.values(tags).forEach(el => el.classList.remove('show')); document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight')); }
-            editingIndex = index; modalOverlay.classList.add('active');
+        function generateId(name) { return name.toLowerCase().replace(/\s+/g,'_')+'_'+Date.now().toString(36); }
+        function openModal(persona,index,isEdit=false) {
+            if(persona) { fillForm(persona); modalTitle.textContent=isEdit?'✏️ Edit Persona':'📋 Clone Persona'; }
+            else { modalTitle.textContent='➕ Add Persona'; personaForm.reset(); editId.value=''; contextInput.value=''; Object.values(tags).forEach(el=>el.classList.remove('show')); document.querySelectorAll('.ai-highlight').forEach(el=>el.classList.remove('ai-highlight')); }
+            editingIndex=index; modalOverlay.classList.add('active');
         }
-        function closeModal() { modalOverlay.classList.remove('active'); editingIndex = -1; }
-        window.editPersona = function(idx) { openModal(personas[idx], idx, true); };
-        window.clonePersona = function(idx) {
-            const p = personas[idx];
-            openModal({ ...p, id: generateId(p.name + '_copy'), name: p.name + ' (copy)' }, -1, false);
-        };
-        window.deletePersona = function(idx) {
-            if (!confirm(`Delete "${personas[idx].name}"?`)) return;
-            personas.splice(idx, 1); syncAndRender();
-            showToast('️ Persona deleted', 'success');
-        };
-        personaForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const data = getPersonaFromForm();
-            if (!data.name || !data.role) { showToast('❌ Name and Role are required.', 'error'); return; }
-            if (editingIndex >= 0 && editingIndex < personas.length) { personas[editingIndex] = data; showToast('✅ Persona updated', 'success'); }
-            else { personas.push(data); showToast('✅ Persona added', 'success'); }
+        function closeModal() { modalOverlay.classList.remove('active'); editingIndex=-1; }
+        window.editPersona=function(idx){ openModal(personas[idx],idx,true); };
+        window.clonePersona=function(idx){ const p=personas[idx]; openModal({...p,id:generateId(p.name+'_copy'),name:p.name+' (copy)'},-1,false); };
+        window.deletePersona=function(idx){ if(!confirm(`Delete "${personas[idx].name}"?`)) return; personas.splice(idx,1); syncAndRender(); showToast('🗑️ Persona deleted','success'); };
+        personaForm.addEventListener('submit',function(e){
+            e.preventDefault(); const data=getPersonaFromForm();
+            if(!data.name||!data.role){ showToast('❌ Name and Role are required.','error'); return; }
+            if(editingIndex>=0&&editingIndex<personas.length){ personas[editingIndex]=data; showToast('✅ Persona updated','success'); }
+            else { personas.push(data); showToast('✅ Persona added','success'); }
             closeModal(); syncAndRender();
         });
-        modalCancelBtn.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+        modalCancelBtn.addEventListener('click',closeModal);
+        modalOverlay.addEventListener('click',(e)=>{ if(e.target===modalOverlay) closeModal(); });
 
-        function syncAndRender() {
-            saveToLocalStorage();
-            if (accessToken) saveToGitHub();
-            render();
-        }
+        function syncAndRender() { saveToLocalStorage(); if(accessToken) saveToGitHub(); render(); }
 
         // ============================================================
         //  BUTTONS
         // ============================================================
-        addBtn.addEventListener('click', () => openModal(null, -1, false));
-        autoCreateBtn.addEventListener('click', function() {
-            personas.push({
-                id: 'sample_' + Date.now().toString(36), name: 'Sample Persona', flag: '🌟',
-                role: 'Team Lead', native_language: 'English & Hindi', vibe: 'Friendly and motivating',
-                catchphrase: "Let's get this done!", personal_style: 'Casual but professional',
-                meme_vocabulary: ['vibe', 'flex', 'no cap'], quirks: ['Always early', 'Loves coffee'],
-            });
-            syncAndRender(); showToast('🤖 Sample persona created', 'success');
+        addBtn.addEventListener('click',()=>openModal(null,-1,false));
+        autoCreateBtn.addEventListener('click',function(){
+            personas.push({ id:'sample_'+Date.now().toString(36), name:'Sample Persona', flag:'🌟', role:'Team Lead', native_language:'English & Hindi', vibe:'Friendly and motivating', catchphrase:"Let's get this done!", personal_style:'Casual but professional', meme_vocabulary:['vibe','flex','no cap'], quirks:['Always early','Loves coffee'] });
+            syncAndRender(); showToast('🤖 Sample persona created','success');
         });
-        pushToGithubBtn.addEventListener('click', () => {
-            if (!accessToken) { showToast('❌ Please sign in first.', 'error'); return; }
-            saveToGitHub();
-        });
+        pushToGithubBtn.addEventListener('click',()=>{ if(!accessToken){ showToast(' Please sign in first.','error'); return; } saveToGitHub(); });
 
         // ============================================================
         //  EXPORT / IMPORT
         // ============================================================
-        exportBtn.addEventListener('click', function() {
-            if (!personas.length) { showToast('❌ No personas to export.', 'error'); return; }
-            const json = JSON.stringify({ personas: personas }, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'personas.json';
+        exportBtn.addEventListener('click',function(){
+            if(!personas.length){ showToast('❌ No personas to export.','error'); return; }
+            const json=JSON.stringify({personas},null,2); const blob=new Blob([json],{type:'application/json'});
+            const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='personas.json';
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-            showToast('📥 Exported personas.json', 'success');
+            showToast('📥 Exported personas.json','success');
         });
-        importInput.addEventListener('change', function(e) {
-            const file = e.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(ev) {
+        importInput.addEventListener('change',function(e){
+            const file=e.target.files[0]; if(!file) return;
+            const reader=new FileReader();
+            reader.onload=function(ev){
                 try {
-                    const data = JSON.parse(ev.target.result);
-                    if (Array.isArray(data)) personas = data;
-                    else if (data.personas && Array.isArray(data.personas)) personas = data.personas;
-                    else { showToast('❌ Invalid JSON format.', 'error'); return; }
-                    syncAndRender(); showToast(`📤 Imported ${personas.length} personas`, 'success');
-                } catch (err) { showToast('❌ Failed to parse JSON: ' + err.message, 'error'); }
-                importInput.value = '';
+                    const data=JSON.parse(ev.target.result);
+                    if(Array.isArray(data)) personas=data;
+                    else if(data.personas&&Array.isArray(data.personas)) personas=data.personas;
+                    else { showToast('❌ Invalid JSON format.','error'); return; }
+                    syncAndRender(); showToast(`📤 Imported ${personas.length} personas`,'success');
+                } catch(err){ showToast('❌ Failed to parse JSON: '+err.message,'error'); }
+                importInput.value='';
             };
             reader.readAsText(file);
         });
@@ -975,16 +551,16 @@
         // ============================================================
         //  BATCH IMPORT
         // ============================================================
-        batchBtn.addEventListener('click', () => { batchInput.value = ''; batchModalOverlay.classList.add('active'); });
-        batchCancelBtn.addEventListener('click', () => batchModalOverlay.classList.remove('active'));
-        batchModalOverlay.addEventListener('click', (e) => { if (e.target === batchModalOverlay) batchModalOverlay.classList.remove('active'); });
-        batchGenerateBtn.addEventListener('click', function() {
-            const bios = batchInput.value.split('\n').filter(line => line.trim());
-            if (!bios.length) { showToast('❌ No bios to process.', 'error'); return; }
-            let created = 0;
-            for (let bio of bios) { const persona = extractPersonaFromBio(bio); if (persona.name && persona.role) { personas.push(persona); created++; } }
-            if (created === 0) showToast('❌ Could not extract valid personas.', 'error');
-            else { syncAndRender(); showToast(`✅ Created ${created} persona${created > 1 ? 's' : ''} from batch.`, 'success'); }
+        batchBtn.addEventListener('click',()=>{ batchInput.value=''; batchModalOverlay.classList.add('active'); });
+        batchCancelBtn.addEventListener('click',()=>batchModalOverlay.classList.remove('active'));
+        batchModalOverlay.addEventListener('click',(e)=>{ if(e.target===batchModalOverlay) batchModalOverlay.classList.remove('active'); });
+        batchGenerateBtn.addEventListener('click',function(){
+            const bios=batchInput.value.split('\n').filter(line=>line.trim());
+            if(!bios.length){ showToast('❌ No bios to process.','error'); return; }
+            let created=0;
+            for(let bio of bios){ const persona=extractPersonaFromBio(bio); if(persona.name&&persona.role){ personas.push(persona); created++; } }
+            if(created===0) showToast('❌ Could not extract valid personas.','error');
+            else { syncAndRender(); showToast(`✅ Created ${created} persona${created>1?'s':''} from batch.`,'success'); }
             batchModalOverlay.classList.remove('active');
         });
 
@@ -992,147 +568,68 @@
         //  RAGINA AUTO-FILL EXTRACTOR
         // ============================================================
         function extractPersonaFromBio(text) {
-            function extractName(txt) {
-                let m = txt.match(/(?:my name is|i am|i'm|call me)\s+([A-Z][a-z]+)/i); if (m) return m[1];
-                m = txt.match(/^([A-Z][a-z]+)\s*[—\-–]/); if (m) return m[1];
-                m = txt.match(/^([A-Z][a-z]+)\s+/); if (m) return m[1]; return '';
-            }
-            function extractRole(txt) {
-                let m = txt.match(/(?:sharp with|solid in|strong in|good at|good with|expert in|skilled in)\s+([a-zA-Z\s,]+)(?:[.,;]|$)/i);
-                if (m) { let s = m[1].split(',').map(x => x.trim()).filter(Boolean); if (s.length > 1) return s.join('/') + ' Developer'; if (s.length === 1) return s[0] + ' Developer'; }
-                const roles = ['developer','lead','manager','designer','engineer','analyst','architect','tester','devops','product','owner','scrum master','coach','consultant','strategist','marketing','sales','support','hr','finance','legal'];
-                for (let r of roles) if (txt.toLowerCase().includes(r)) return r.replace(/\b\w/g, c => c.toUpperCase());
-                return '';
-            }
-            function extractLanguages(txt) {
-                const langs = ['hindi','telugu','tamil','kannada','malayalam','english','spanish','french','german','japanese','chinese','korean','russian','arabic','portuguese','italian','dutch','marathi','gujarati','urdu','punjabi','bengali','nagpuri'];
-                let found = []; const lower = txt.toLowerCase();
-                for (let l of langs) if (lower.includes(l)) found.push(l.charAt(0).toUpperCase() + l.slice(1));
-                if (found.length > 2) return found.join(', '); if (found.length === 2) return found.join(' & '); if (found.length === 1) return found[0]; return '';
-            }
-            function extractVibe(txt) {
-                let m = txt.match(/[Vv]ibe\s*[:：]\s*([^.,;]+)/); if (m) return m[1].trim();
-                const vibes = ['chill','introvert','extrovert','ambivert','friendly','motivating','calm','energetic','creative','analytical','strategic','empathetic','confident','humble','funny','viber','quiet observer','deep thinker','dry humor','hustler'];
-                for (let v of vibes) if (txt.toLowerCase().includes(v)) return v.charAt(0).toUpperCase() + v.slice(1); return '';
-            }
-            function extractCatchphrase(txt) {
-                let m = txt.match(/"([^"]+)"/); if (m) return m[1];
-                const common = ['cool','chill','awesome',"let's go",'no problem','alright','yeah','bet'];
-                for (let c of common) if (txt.toLowerCase().includes(c)) return c.charAt(0).toUpperCase() + c.slice(1); return '';
-            }
-            function extractPersonalStyle(txt) {
-                const styles = ['orator','casual','professional','formal','creative','concise','elaborate','direct','diplomatic','humorous','inspiring','motivational','supportive','deep thinker','dry humor','quiet observer'];
-                for (let s of styles) if (txt.toLowerCase().includes(s)) return s.charAt(0).toUpperCase() + s.slice(1); return '';
-            }
-            function extractMemeVocab(txt) {
-                const memes = ['vibe','flex','no cap','bet','yeet','sus','pog','based','cringe','lit','fire','goat','oof','smh','fr','af','lowkey','highkey','slay','periodt','bestie','cool','chill','✨','🔥','🚀','💯','🙌','🤙'];
-                let found = []; const lower = txt.toLowerCase();
-                for (let m of memes) if (lower.includes(m) || txt.includes(m)) found.push(m);
-                const emojiRegex = /([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]|✨|🔥|🚀|💯|🙌|🤙)/gu;
-                const emojis = txt.match(emojiRegex);
-                if (emojis) for (let e of emojis) if (!found.includes(e)) found.push(e);
-                return found.slice(0, 5);
-            }
-            function extractQuirks(txt) {
-                const quirks = [];
-                let m = txt.match(/(?:Loves|Enjoys|Obsessed with|Fan of)\s+([^.,;]+)/i); if (m) quirks.push('Loves ' + m[1].trim());
-                m = txt.match(/Into\s+([^.,;]+)/i); if (m) quirks.push('Into ' + m[1].trim());
-                if (txt.toLowerCase().includes('secretly a meme lord')) quirks.push('Secretly a meme lord');
-                if (txt.toLowerCase().includes('natural hype-man')) quirks.push('Natural hype-man');
-                if (txt.toLowerCase().includes('low-key philosopher')) quirks.push('Low-key philosopher');
-                if (txt.toLowerCase().includes('motivational speaker')) quirks.push('Motivational speaker');
-                if (txt.toLowerCase().includes('drops one-liners')) quirks.push('Drops one-liners');
-                if (txt.toLowerCase().includes('comeback story')) quirks.push('Always has a comeback story');
-                if (txt.toLowerCase().includes('life advice')) quirks.push('Drops random life advice');
-                if (txt.toLowerCase().includes('introvert')) quirks.push('Introvert');
-                if (txt.toLowerCase().includes('extrovert')) quirks.push('Extrovert');
-                if (txt.toLowerCase().includes('quiet observer')) quirks.push('Quiet observer');
-                if (txt.toLowerCase().includes('deep thinker')) quirks.push('Deep thinker');
-                if (txt.toLowerCase().includes('dry humor')) quirks.push('Dry humor');
-                if (txt.toLowerCase().includes('hustler')) quirks.push('Hustler');
-                return quirks.slice(0, 5);
-            }
-            const name = extractName(text), role = extractRole(text), nativeLang = extractLanguages(text);
-            const vibe = extractVibe(text), catchphrase = extractCatchphrase(text), style = extractPersonalStyle(text);
-            const memes = extractMemeVocab(text), quirks = extractQuirks(text);
-            let flag = ''; const langLower = nativeLang.toLowerCase();
-            if (langLower.includes('telugu')||langLower.includes('hindi')||langLower.includes('marathi')||langLower.includes('gujarati')||langLower.includes('urdu')||langLower.includes('punjabi')||langLower.includes('bengali')||langLower.includes('nagpuri')) flag = '🇮🇳';
-            else if (langLower.includes('japanese')) flag = '🇯';
-            else if (langLower.includes('spanish')) flag = '🇪🇸';
-            else if (langLower.includes('french')) flag = '🇫🇷';
-            else if (langLower.includes('german')) flag = '🇩🇪';
-            else if (langLower.includes('chinese')) flag = '🇳';
-            else if (langLower.includes('korean')) flag = '🇰🇷';
-            else if (langLower.includes('english')) flag = '🇬🇧';
-            return { id: name ? generateId(name) : 'unknown_'+Date.now().toString(36), name: name||'Unknown', flag: flag||'👤', role: role||'Unspecified', native_language: nativeLang, vibe, catchphrase, personal_style: style, meme_vocabulary: memes, quirks };
+            function extractName(txt){ let m=txt.match(/(?:my name is|i am|i'm|call me)\s+([A-Z][a-z]+)/i); if(m) return m[1]; m=txt.match(/^([A-Z][a-z]+)\s*[—\-–]/); if(m) return m[1]; m=txt.match(/^([A-Z][a-z]+)\s+/); if(m) return m[1]; return ''; }
+            function extractRole(txt){ let m=txt.match(/(?:sharp with|solid in|strong in|good at|good with|expert in|skilled in)\s+([a-zA-Z\s,]+)(?:[.,;]|$)/i); if(m){ let s=m[1].split(',').map(x=>x.trim()).filter(Boolean); if(s.length>1) return s.join('/')+' Developer'; if(s.length===1) return s[0]+' Developer'; } const roles=['developer','lead','manager','designer','engineer','analyst','architect','tester','devops','product','owner','scrum master','coach','consultant','strategist','marketing','sales','support','hr','finance','legal']; for(let r of roles) if(txt.toLowerCase().includes(r)) return r.replace(/\b\w/g,c=>c.toUpperCase()); return ''; }
+            function extractLanguages(txt){ const langs=['hindi','telugu','tamil','kannada','malayalam','english','spanish','french','german','japanese','chinese','korean','russian','arabic','portuguese','italian','dutch','marathi','gujarati','urdu','punjabi','bengali','nagpuri']; let found=[]; const lower=txt.toLowerCase(); for(let l of langs) if(lower.includes(l)) found.push(l.charAt(0).toUpperCase()+l.slice(1)); if(found.length>2) return found.join(', '); if(found.length===2) return found.join(' & '); if(found.length===1) return found[0]; return ''; }
+            function extractVibe(txt){ let m=txt.match(/[Vv]ibe\s*[:：]\s*([^.,;]+)/); if(m) return m[1].trim(); const vibes=['chill','introvert','extrovert','ambivert','friendly','motivating','calm','energetic','creative','analytical','strategic','empathetic','confident','humble','funny','viber','quiet observer','deep thinker','dry humor','hustler']; for(let v of vibes) if(txt.toLowerCase().includes(v)) return v.charAt(0).toUpperCase()+v.slice(1); return ''; }
+            function extractCatchphrase(txt){ let m=txt.match(/"([^"]+)"/); if(m) return m[1]; const common=['cool','chill','awesome',"let's go",'no problem','alright','yeah','bet']; for(let c of common) if(txt.toLowerCase().includes(c)) return c.charAt(0).toUpperCase()+c.slice(1); return ''; }
+            function extractPersonalStyle(txt){ const styles=['orator','casual','professional','formal','creative','concise','elaborate','direct','diplomatic','humorous','inspiring','motivational','supportive','deep thinker','dry humor','quiet observer']; for(let s of styles) if(txt.toLowerCase().includes(s)) return s.charAt(0).toUpperCase()+s.slice(1); return ''; }
+            function extractMemeVocab(txt){ const memes=['vibe','flex','no cap','bet','yeet','sus','pog','based','cringe','lit','fire','goat','oof','smh','fr','af','lowkey','highkey','slay','periodt','bestie','cool','chill','✨','🔥','🚀','💯','','🤙']; let found=[]; const lower=txt.toLowerCase(); for(let m of memes) if(lower.includes(m)||txt.includes(m)) found.push(m); const emojiRegex=/([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]|✨|🔥|🚀||🙌|🤙)/gu; const emojis=txt.match(emojiRegex); if(emojis) for(let e of emojis) if(!found.includes(e)) found.push(e); return found.slice(0,5); }
+            function extractQuirks(txt){ const quirks=[]; let m=txt.match(/(?:Loves|Enjoys|Obsessed with|Fan of)\s+([^.,;]+)/i); if(m) quirks.push('Loves '+m[1].trim()); m=txt.match(/Into\s+([^.,;]+)/i); if(m) quirks.push('Into '+m[1].trim()); if(txt.toLowerCase().includes('secretly a meme lord')) quirks.push('Secretly a meme lord'); if(txt.toLowerCase().includes('natural hype-man')) quirks.push('Natural hype-man'); if(txt.toLowerCase().includes('low-key philosopher')) quirks.push('Low-key philosopher'); if(txt.toLowerCase().includes('motivational speaker')) quirks.push('Motivational speaker'); if(txt.toLowerCase().includes('drops one-liners')) quirks.push('Drops one-liners'); if(txt.toLowerCase().includes('comeback story')) quirks.push('Always has a comeback story'); if(txt.toLowerCase().includes('life advice')) quirks.push('Drops random life advice'); if(txt.toLowerCase().includes('introvert')) quirks.push('Introvert'); if(txt.toLowerCase().includes('extrovert')) quirks.push('Extrovert'); if(txt.toLowerCase().includes('quiet observer')) quirks.push('Quiet observer'); if(txt.toLowerCase().includes('deep thinker')) quirks.push('Deep thinker'); if(txt.toLowerCase().includes('dry humor')) quirks.push('Dry humor'); if(txt.toLowerCase().includes('hustler')) quirks.push('Hustler'); return quirks.slice(0,5); }
+            const name=extractName(text), role=extractRole(text), nativeLang=extractLanguages(text), vibe=extractVibe(text), catchphrase=extractCatchphrase(text), style=extractPersonalStyle(text), memes=extractMemeVocab(text), quirks=extractQuirks(text);
+            let flag=''; const langLower=nativeLang.toLowerCase();
+            if(langLower.includes('telugu')||langLower.includes('hindi')||langLower.includes('marathi')||langLower.includes('gujarati')||langLower.includes('urdu')||langLower.includes('punjabi')||langLower.includes('bengali')||langLower.includes('nagpuri')) flag='🇮🇳';
+            else if(langLower.includes('japanese')) flag='🇯🇵'; else if(langLower.includes('spanish')) flag='🇪'; else if(langLower.includes('french')) flag='🇫🇷';
+            else if(langLower.includes('german')) flag='🇪'; else if(langLower.includes('chinese')) flag='🇨🇳'; else if(langLower.includes('korean')) flag='🇰🇷'; else if(langLower.includes('english')) flag='🇬🇧';
+            return { id:name?generateId(name):'unknown_'+Date.now().toString(36), name:name||'Unknown', flag:flag||'', role:role||'Unspecified', native_language:nativeLang, vibe, catchphrase, personal_style:style, meme_vocabulary:memes, quirks };
         }
 
-        autoFillBtn.addEventListener('click', function() {
-            const text = contextInput.value.trim();
-            if (!text) { showToast('❌ Please enter a description first.', 'error'); return; }
-            Object.values(tags).forEach(el => el.classList.remove('show'));
-            document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight'));
-            const persona = extractPersonaFromBio(text);
-            function showTag(fieldId, tagId) {
-                const el = document.getElementById(fieldId), tag = document.getElementById(tagId);
-                if (el && tag) { el.classList.add('ai-highlight'); tag.classList.add('show'); setTimeout(() => el.classList.remove('ai-highlight'), 3000); }
-            }
-            if (persona.name && persona.name !== 'Unknown') { editName.value = persona.name; showTag('editName','tagName'); }
-            if (persona.role && persona.role !== 'Unspecified') { editRole.value = persona.role; showTag('editRole','tagRole'); }
-            if (persona.native_language) { editNativeLang.value = persona.native_language; showTag('editNativeLang','tagNativeLang'); }
-            if (persona.vibe) { editVibe.value = persona.vibe; showTag('editVibe','tagVibe'); }
-            if (persona.catchphrase) { editCatchphrase.value = persona.catchphrase; showTag('editCatchphrase','tagCatchphrase'); }
-            if (persona.personal_style) { editPersonalStyle.value = persona.personal_style; showTag('editPersonalStyle','tagPersonalStyle'); }
-            if (persona.meme_vocabulary.length) { editMemeVocab.value = persona.meme_vocabulary.join(', '); showTag('editMemeVocab','tagMemeVocab'); }
-            if (persona.quirks.length) { editQuirks.value = persona.quirks.join(', '); showTag('editQuirks','tagQuirks'); }
-            if (persona.flag && persona.flag !== '') { editFlag.value = persona.flag; showTag('editFlag','tagFlag'); }
-            if (persona.name && persona.name !== 'Unknown') editId.value = generateId(persona.name);
-            const filled = [];
-            if (persona.name) filled.push('Name'); if (persona.role) filled.push('Role');
-            if (persona.native_language) filled.push('Native Language'); if (persona.vibe) filled.push('Vibe');
-            if (persona.catchphrase) filled.push('Catchphrase'); if (persona.personal_style) filled.push('Style');
-            if (persona.meme_vocabulary.length) filled.push('Memes'); if (persona.quirks.length) filled.push('Quirks');
-            if (persona.flag) filled.push('Flag');
-            if (filled.length) showToast(`✨ Auto-filled: ${filled.join(', ')}`, 'success');
-            else showToast('⚠️ Could not extract any fields. Try a more descriptive prompt.', 'error');
+        autoFillBtn.addEventListener('click',function(){
+            const text=contextInput.value.trim(); if(!text){ showToast('❌ Please enter a description first.','error'); return; }
+            Object.values(tags).forEach(el=>el.classList.remove('show')); document.querySelectorAll('.ai-highlight').forEach(el=>el.classList.remove('ai-highlight'));
+            const persona=extractPersonaFromBio(text);
+            function showTag(fieldId,tagId){ const el=document.getElementById(fieldId), tag=document.getElementById(tagId); if(el&&tag){ el.classList.add('ai-highlight'); tag.classList.add('show'); setTimeout(()=>el.classList.remove('ai-highlight'),3000); } }
+            if(persona.name&&persona.name!=='Unknown'){ editName.value=persona.name; showTag('editName','tagName'); }
+            if(persona.role&&persona.role!=='Unspecified'){ editRole.value=persona.role; showTag('editRole','tagRole'); }
+            if(persona.native_language){ editNativeLang.value=persona.native_language; showTag('editNativeLang','tagNativeLang'); }
+            if(persona.vibe){ editVibe.value=persona.vibe; showTag('editVibe','tagVibe'); }
+            if(persona.catchphrase){ editCatchphrase.value=persona.catchphrase; showTag('editCatchphrase','tagCatchphrase'); }
+            if(persona.personal_style){ editPersonalStyle.value=persona.personal_style; showTag('editPersonalStyle','tagPersonalStyle'); }
+            if(persona.meme_vocabulary.length){ editMemeVocab.value=persona.meme_vocabulary.join(', '); showTag('editMemeVocab','tagMemeVocab'); }
+            if(persona.quirks.length){ editQuirks.value=persona.quirks.join(', '); showTag('editQuirks','tagQuirks'); }
+            if(persona.flag&&persona.flag!=='👤'){ editFlag.value=persona.flag; showTag('editFlag','tagFlag'); }
+            if(persona.name&&persona.name!=='Unknown') editId.value=generateId(persona.name);
+            const filled=[]; if(persona.name) filled.push('Name'); if(persona.role) filled.push('Role'); if(persona.native_language) filled.push('Native Language');
+            if(persona.vibe) filled.push('Vibe'); if(persona.catchphrase) filled.push('Catchphrase'); if(persona.personal_style) filled.push('Style');
+            if(persona.meme_vocabulary.length) filled.push('Memes'); if(persona.quirks.length) filled.push('Quirks'); if(persona.flag) filled.push('Flag');
+            if(filled.length) showToast(`✨ Auto-filled: ${filled.join(', ')}`,'success'); else showToast('⚠️ Could not extract any fields. Try a more descriptive prompt.','error');
         });
 
         // ============================================================
         //  LOCAL STORAGE PERSISTENCE
         // ============================================================
         function saveToLocalStorage() { localStorage.setItem('personasoi_data', JSON.stringify(personas)); }
-        function loadFromLocalStorage() {
-            const saved = localStorage.getItem('personasoi_data');
-            if (saved) { try { const parsed = JSON.parse(saved); if (Array.isArray(parsed)) { personas = parsed; render(); showToast('📂 Loaded from local storage', 'success'); } } catch (e) {} }
-        }
+        function loadFromLocalStorage() { const s=localStorage.getItem('personasoi_data'); if(s){ try{ const p=JSON.parse(s); if(Array.isArray(p)){ personas=p; render(); showToast('📂 Loaded from local storage','success'); } }catch(e){} } }
 
         // ============================================================
         //  EVENT LISTENERS
         // ============================================================
-        loginBtn.addEventListener('click', triggerLogin);
-        logoutBtn.addEventListener('click', logout);
-        settingsBtn.addEventListener('click', () => {
-            themeColorSelect.value = prefs.themeColor; darkModeToggle.checked = prefs.darkMode;
-            darkModeLabel.textContent = prefs.darkMode ? 'On' : 'Off';
-            soundsToggle.checked = prefs.soundsEnabled; soundsLabel.textContent = prefs.soundsEnabled ? 'On' : 'Off';
-            prefModalOverlay.classList.add('active');
-        });
-        darkModeToggle.addEventListener('change', function() { darkModeLabel.textContent = this.checked ? 'On' : 'Off'; });
-        soundsToggle.addEventListener('change', function() { soundsLabel.textContent = this.checked ? 'On' : 'Off'; });
-        prefCloseBtn.addEventListener('click', () => prefModalOverlay.classList.remove('active'));
-        prefModalOverlay.addEventListener('click', (e) => { if (e.target === prefModalOverlay) prefModalOverlay.classList.remove('active'); });
-        prefSaveBtn.addEventListener('click', savePreferences);
+        loginBtn.addEventListener('click',triggerLogin);
+        logoutBtn.addEventListener('click',logout);
+        settingsBtn.addEventListener('click',()=>{ themeColorSelect.value=prefs.themeColor; darkModeToggle.checked=prefs.darkMode; darkModeLabel.textContent=prefs.darkMode?'On':'Off'; soundsToggle.checked=prefs.soundsEnabled; soundsLabel.textContent=prefs.soundsEnabled?'On':'Off'; prefModalOverlay.classList.add('active'); });
+        darkModeToggle.addEventListener('change',function(){ darkModeLabel.textContent=this.checked?'On':'Off'; });
+        soundsToggle.addEventListener('change',function(){ soundsLabel.textContent=this.checked?'On':'Off'; });
+        prefCloseBtn.addEventListener('click',()=>prefModalOverlay.classList.remove('active'));
+        prefModalOverlay.addEventListener('click',(e)=>{ if(e.target===prefModalOverlay) prefModalOverlay.classList.remove('active'); });
+        prefSaveBtn.addEventListener('click',savePreferences);
 
         // ============================================================
         //  INIT
         // ============================================================
         (function init() {
             loadPreferences();
-            const handled = handleOAuthCallback();
-            if (!handled) {
-                loadFromLocalStorage();
-                if (!personas.length) { render(); statusMsg.textContent = '💡 Ready. Add a persona or load existing JSON.'; }
-            }
+            const handled=handleOAuthCallback();
+            if(!handled){ loadFromLocalStorage(); if(!personas.length){ render(); statusMsg.textContent='💡 Ready. Add a persona or load existing JSON.'; } }
             console.log('🧑‍💼 Persona Manager (with GitHub Sync) loaded.');
         })();
     </script>
