@@ -552,29 +552,44 @@
             .footer-inner { flex-direction: column; text-align: center; }
             .footer-socials { justify-content: center; }
         }
-.btn-play {
-    background: var(--electric);
-    color: #fff;
-    border: none;
-    padding: 0.65rem 1.8rem;
-    border-radius: 999px;
-    font-family: var(--font-head);
-    font-weight: 700;
-    font-size: 1rem;
-    letter-spacing: 1px;
-    cursor: pointer;
-    box-shadow: 0 0 20px var(--electric-glow);
-    transition: all 0.3s ease;
-    animation: pulseGlow 2s ease-in-out infinite;
-}
-.btn-play:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 40px var(--electric-glow);
-}
-@keyframes pulseGlow {
-    0%, 100% { box-shadow: 0 0 20px var(--electric-glow); }
-    50% { box-shadow: 0 0 40px var(--volt-glow), 0 0 60px var(--electric-glow); }
-}
+
+        /* ====== STICKY PLAY BUTTON ====== */
+        .sticky-play-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 9998;
+            background: var(--electric);
+            color: #fff;
+            border: none;
+            padding: 0.85rem 2rem;
+            border-radius: 999px;
+            font-family: var(--font-head);
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: 1px;
+            cursor: pointer;
+            box-shadow: 0 0 25px var(--electric-glow), 0 8px 32px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+            animation: pulseGlow 2s ease-in-out infinite;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .sticky-play-btn:hover {
+            transform: scale(1.08) translateY(-3px);
+            box-shadow: 0 0 45px var(--volt-glow), 0 12px 40px rgba(0,0,0,0.6);
+            background: var(--volt);
+            color: #04121a;
+        }
+        .sticky-play-btn:active { transform: scale(0.96); }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 25px var(--electric-glow), 0 8px 32px rgba(0,0,0,0.5); }
+            50% { box-shadow: 0 0 45px var(--volt-glow), 0 0 70px var(--electric-glow), 0 8px 32px rgba(0,0,0,0.5); }
+        }
+        @media (max-width: 640px) {
+            .sticky-play-btn { bottom: 1.25rem; right: 1.25rem; padding: 0.7rem 1.5rem; font-size: 0.9rem; }
+        }
     </style>
 </head>
 <body>
@@ -604,7 +619,7 @@
                 <div class="logo-orb sm"><img src="personasoi.png" alt="Personasoi logo" /></div>
                 <div class="brand-text">
                     <h1><span class="persona">Persona</span><span class="soi">soi</span></h1>
-                    <div class="tagline">Persona Manager </div>
+                    <div class="tagline">Persona Manager</div>
                 </div>
             </div>
             <div class="header-right">
@@ -615,12 +630,12 @@
                 <button class="btn btn-secondary" id="loginBtn">🔑 Sign in</button>
                 <button class="btn btn-danger" id="logoutBtn" style="display:none;">Sign out</button>
                 <button class="btn" id="pushToGithubBtn" style="display:none;" title="Save personas to GitHub">💾 Save to Repo</button>
-                <button class="btn-icon" id="settingsBtn" title="Preferences">⚙️</button>
+                <button class="btn-icon" id="settingsBtn" title="Preferences">️</button>
             </div>
         </header>
 
         <main>
-            <div class="hud-status" id="statusMessage">💡 Ready. Create your first character.</div>
+            <div class="hud-status" id="statusMessage"> Ready. Create your first character.</div>
             <div class="toolbar">
                 <button class="btn" id="addBtn">➕ New Character</button>
                 <button class="btn btn-secondary" id="autoCreateBtn">🎲 Quick Sample</button>
@@ -634,10 +649,6 @@
                 <span id="countDisplay">0 characters</span>
             </div>
             <div id="personaContainer" class="persona-grid"></div>
-<!-- In the header-right section -->
-<button class="btn btn-play" id="playGameBtn" title="Launch the full simulation">
-    ▶ Play the Game
-</button>
         </main>
 
         <footer>
@@ -657,6 +668,11 @@
         </footer>
     </div>
 
+    <!-- ====== STICKY PLAY BUTTON ====== -->
+    <button class="sticky-play-btn" id="playGameBtn" title="Launch the full simulation">
+        ▶ Play Game
+    </button>
+
     <!-- ====== MODALS ====== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
@@ -674,7 +690,7 @@
                     </div>
                     <div class="avatar-option" data-gender="female" onclick="selectGender('female')">
                         <span class="check">✔</span>
-                        <div class="avatar-preview">👩‍💻</div>
+                        <div class="avatar-preview">‍💻</div>
                         <div class="label">Female</div>
                     </div>
                 </div>
@@ -720,7 +736,7 @@
 
                 <div class="modal-actions">
                     <button type="button" class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
-                    <button type="submit" class="btn btn-volt" id="modalSaveBtn">💾 Save Character</button>
+                    <button type="submit" class="btn btn-volt" id="modalSaveBtn"> Save Character</button>
                 </div>
             </form>
         </div>
@@ -734,7 +750,7 @@
             <textarea id="batchInput" style="min-height:140px;" placeholder="Riya — Loves K-dramas, sharp with Python...&#10;Arjun — Cricket fanatic, solid in C++..."></textarea>
             <div class="modal-actions">
                 <button type="button" class="btn btn-secondary" id="batchCancelBtn">Cancel</button>
-                <button type="button" class="btn btn-volt" id="batchGenerateBtn">🚀 Generate Characters</button>
+                <button type="button" class="btn btn-volt" id="batchGenerateBtn"> Generate Characters</button>
             </div>
         </div>
     </div>
@@ -812,6 +828,105 @@
             memeVocab: $('tagMemeVocab'), quirks: $('tagQuirks')
         };
 
+        // ====== SOUND EFFECTS ENGINE ======
+        let audioCtx = null;
+        function getAudioCtx() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            return audioCtx;
+        }
+
+        // Thunder sound: deep rumbling with multiple oscillators
+        function playThunder() {
+            if (!prefs.soundsEnabled) return;
+            try {
+                const ctx = getAudioCtx();
+                const now = ctx.currentTime;
+                
+                // Main rumble oscillator
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(40, now);
+                osc1.frequency.exponentialRampToValueAtTime(20, now + 2.5);
+                gain1.gain.setValueAtTime(0, now);
+                gain1.gain.linearRampToValueAtTime(0.3, now + 0.1);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 3);
+                osc1.connect(gain1).connect(ctx.destination);
+                osc1.start(now);
+                osc1.stop(now + 3);
+
+                // Secondary crackle
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'square';
+                osc2.frequency.setValueAtTime(120, now);
+                osc2.frequency.exponentialRampToValueAtTime(30, now + 1.5);
+                gain2.gain.setValueAtTime(0, now);
+                gain2.gain.linearRampToValueAtTime(0.15, now + 0.05);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+                osc2.connect(gain2).connect(ctx.destination);
+                osc2.start(now);
+                osc2.stop(now + 1.8);
+
+                // Low sub-bass roll
+                const osc3 = ctx.createOscillator();
+                const gain3 = ctx.createGain();
+                osc3.type = 'sine';
+                osc3.frequency.setValueAtTime(25, now);
+                osc3.frequency.linearRampToValueAtTime(15, now + 2);
+                gain3.gain.setValueAtTime(0, now);
+                gain3.gain.linearRampToValueAtTime(0.25, now + 0.2);
+                gain3.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
+                osc3.connect(gain3).connect(ctx.destination);
+                osc3.start(now);
+                osc3.stop(now + 3.5);
+            } catch (e) { /* silently fail */ }
+        }
+
+        // Arcade/UI click sound
+        function playArcadeSound() {
+            if (!prefs.soundsEnabled) return;
+            try {
+                const ctx = getAudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(880, ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                osc.connect(gain).connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.2);
+            } catch (e) { /* silently fail */ }
+        }
+
+        // Toast notification sound
+        function playToastSound(type) {
+            if (!prefs.soundsEnabled) return;
+            try {
+                const ctx = getAudioCtx();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523, ctx.currentTime);
+                    osc.frequency.setValueAtTime(659, ctx.currentTime + 0.08);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+                } else {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(200, ctx.currentTime);
+                    osc.frequency.linearRampToValueAtTime(150, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                }
+                osc.connect(gain).connect(ctx.destination);
+                osc.start();
+                osc.stop(ctx.currentTime + 0.3);
+            } catch (e) {}
+        }
+
         // ====== SKY CANVAS: stars, drifting storm clouds, real lightning ======
         (function sky() {
             const canvas = $('skyCanvas');
@@ -874,12 +989,8 @@
                 }
                 bolts.push({ segs, life: 1 });
                 flashEl.classList.remove('strike'); void flashEl.offsetWidth; flashEl.classList.add('strike');
-                try {
-                    if (prefs.soundsEnabled) {
-                        const a = new Audio('data:audio/wav;base64,UklGRlIAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoAAACBhYV/g4SEf3+FhH9/hYR/f4WEf3+FhH9/hYR/f4WEf4ODhH9/hYSEf4OCg4R/f4WEhH8AAAA=');
-                        a.volume = 0.15; a.play().catch(() => {});
-                    }
-                } catch (e) {}
+                // Play thunder sound on every lightning strike
+                playThunder();
             }
 
             function drawBolts() {
@@ -944,12 +1055,11 @@
             }, 220);
 
             function enter() {
+                playArcadeSound();
                 screen.classList.add('hidden');
                 app.classList.add('visible');
             }
             startBtn.addEventListener('click', enter);
-            // auto-enter after a short grace period in case the user doesn't click
-            setTimeout(() => { if (!app.classList.contains('visible') && progress >= 100) { /* wait for click, but allow fallback */ } }, 6000);
         }
 
         // ====== AVATAR SELECTION ======
@@ -968,6 +1078,7 @@
             toast.className = 'toast ' + type + ' show';
             clearTimeout(toastTimer);
             toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+            playToastSound(type);
         }
 
         // ====== PREFERENCES ======
@@ -1051,20 +1162,15 @@
         // ====== UTF-8 Safe Base64 ======
         function utf8ToBase64(str) {
             const utf8Bytes = new TextEncoder().encode(str);
-            // Convert to binary string
             let binary = '';
-            for (let i = 0; i < utf8Bytes.length; i++) {
-                binary += String.fromCharCode(utf8Bytes[i]);
-            }
+            for (let i = 0; i < utf8Bytes.length; i++) binary += String.fromCharCode(utf8Bytes[i]);
             return btoa(binary);
         }
 
         function base64ToUtf8(base64) {
             const binary = atob(base64);
             const bytes = new Uint8Array(binary.length);
-            for (let i = 0; i < binary.length; i++) {
-                bytes[i] = binary.charCodeAt(i);
-            }
+            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
             return new TextDecoder().decode(bytes);
         }
 
@@ -1072,7 +1178,6 @@
         async function saveToGitHub() {
             if (!accessToken || !currentUser) { showToast('⚠️ Please sign in first.', 'error'); return; }
             try {
-                // Use UTF-8 safe base64
                 const content = utf8ToBase64(JSON.stringify(personas, null, 2));
                 const url = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${CONFIG.filePath}`;
                 const payload = { message: `Update personas.json [${new Date().toISOString()}]`, content, branch: CONFIG.branch };
@@ -1100,7 +1205,6 @@
                 if (!res.ok) throw new Error('Failed to fetch file');
                 const data = await res.json();
                 currentFileSha = data.sha;
-                // Use UTF-8 safe decoding
                 const decoded = base64ToUtf8(data.content);
                 const parsed = JSON.parse(decoded);
                 if (Array.isArray(parsed)) personas = parsed;
@@ -1122,7 +1226,7 @@
             }
             container.innerHTML = personas.map((p, idx) => {
                 const genderClass = p.gender === 'female' ? 'female' : 'male';
-                const avatarIcon = p.gender === 'female' ? '👩‍💻' : '👨‍💻';
+                const avatarIcon = p.gender === 'female' ? '👩‍💻' : '‍💻';
                 return `
                 <div class="persona-card" data-index="${idx}">
                     <span class="slot-tag">SLOT ${String(idx + 1).padStart(2, '0')}</span>
@@ -1140,7 +1244,7 @@
                     ${p.meme_vocabulary?.length ? `<div class="field"><strong>Memes:</strong> ${p.meme_vocabulary.join(', ')}</div>` : ''}
                     ${p.quirks?.length ? `<div class="field"><strong>Quirks:</strong> ${p.quirks.join(', ')}</div>` : ''}
                     <div class="actions">
-                        <button class="btn btn-outline" onclick="editPersona(${idx})">✏️ Edit</button>
+                        <button class="btn btn-outline" onclick="editPersona(${idx})">️ Edit</button>
                         <button class="btn btn-outline" onclick="clonePersona(${idx})">📋 Clone</button>
                         <button class="btn btn-danger" onclick="deletePersona(${idx})">🗑️</button>
                     </div>
@@ -1217,7 +1321,7 @@
             if (!confirm(`Delete "${personas[idx].name}"?`)) return;
             personas.splice(idx, 1);
             syncAndRender();
-            showToast('🗑️ Character deleted', 'success');
+            showToast('️ Character deleted', 'success');
         };
 
         personaForm.addEventListener('submit', function(e) {
@@ -1345,7 +1449,7 @@
                 return '';
             }
             function extractMemeVocab(txt) {
-                const memes = ['vibe','flex','no cap','bet','yeet','sus','pog','based','cringe','lit','fire','goat','oof','smh','fr','af','lowkey','highkey','slay','periodt','bestie','cool','chill','✨','🔥','🚀','💯','🙌','🤙'];
+                const memes = ['vibe','flex','no cap','bet','yeet','sus','pog','based','cringe','lit','fire','goat','oof','smh','fr','af','lowkey','highkey','slay','periodt','bestie','cool','chill','✨','🔥','🚀','','🙌','🤙'];
                 let found = []; const lower = txt.toLowerCase();
                 for (let m of memes) if (lower.includes(m) || txt.includes(m)) found.push(m);
                 const emojiRegex = /([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]|✨|🔥|🚀|💯|🙌|🤙)/gu;
@@ -1377,14 +1481,14 @@
             const memes = extractMemeVocab(text), quirks = extractQuirks(text);
             let flag = ''; const langLower = nativeLang.toLowerCase();
             if (langLower.includes('telugu')||langLower.includes('hindi')||langLower.includes('marathi')||langLower.includes('gujarati')||langLower.includes('urdu')||langLower.includes('punjabi')||langLower.includes('bengali')||langLower.includes('nagpuri')) flag = '🇮🇳';
-            else if (langLower.includes('japanese')) flag = '🇯🇵'; else if (langLower.includes('spanish')) flag = '🇪🇸'; else if (langLower.includes('french')) flag = '🇫🇷';
-            else if (langLower.includes('german')) flag = '🇩🇪'; else if (langLower.includes('chinese')) flag = '🇨🇳'; else if (langLower.includes('korean')) flag = '🇰🇷'; else if (langLower.includes('english')) flag = '🇬🇧';
+            else if (langLower.includes('japanese')) flag = '🇯🇵'; else if (langLower.includes('spanish')) flag = '🇪🇸'; else if (langLower.includes('french')) flag = '🇷';
+            else if (langLower.includes('german')) flag = '🇩'; else if (langLower.includes('chinese')) flag = '🇨🇳'; else if (langLower.includes('korean')) flag = '🇰🇷'; else if (langLower.includes('english')) flag = '🇬🇧';
             return { id: name ? generateId(name) : 'unknown_'+Date.now().toString(36), name: name||'Unknown', flag: flag||'', role: role||'Unspecified', native_language: nativeLang, vibe, catchphrase, personal_style: style, meme_vocabulary: memes, quirks, gender: Math.random() < 0.5 ? 'female' : 'male' };
         }
 
         autoFillBtn.addEventListener('click', function() {
             const text = contextInput.value.trim();
-            if (!text) { showToast('❌ Please enter a description first.', 'error'); return; }
+            if (!text) { showToast(' Please enter a description first.', 'error'); return; }
             Object.values(tags).forEach(el => el.classList.remove('show'));
             document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight'));
             const persona = extractPersonaFromBio(text);
@@ -1431,30 +1535,15 @@
         prefCloseBtn.addEventListener('click', () => prefModalOverlay.classList.remove('active'));
         prefModalOverlay.addEventListener('click', (e) => { if (e.target === prefModalOverlay) prefModalOverlay.classList.remove('active'); });
         prefSaveBtn.addEventListener('click', savePreferences);
-// In your script section
-function playArcadeSound() {
-    if (!prefs.soundsEnabled) return;
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(880, ctx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15);
-        gain.gain.setValueAtTime(0.15, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-        osc.connect(gain).connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + 0.2);
-    } catch (e) { /* silently fail */ }
-}
 
-document.getElementById('playGameBtn').addEventListener('click', function() {
-    playArcadeSound();
-    setTimeout(() => {
-        window.open('https://suryasticsai.github.io/MyTeamOnWhatsApp', '_blank');
-    }, 200);
-});
+        // ====== STICKY PLAY BUTTON HANDLER ======
+        $('playGameBtn').addEventListener('click', function() {
+            playArcadeSound();
+            setTimeout(() => {
+                window.open('https://suryasticsai.github.io/MyTeamOnWhatsApp', '_blank');
+            }, 200);
+        });
+
         // ====== INIT ======
         (function init() {
             runLoadingSequence();
