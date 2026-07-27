@@ -1084,28 +1084,175 @@
         }
 
         /* ============ build contacts / profile / empty / picker ============ */
+        // This will be rebuilt dynamically after each reload
+        // We will replace it with functions that rebuild from PERSONAS
+
+        // ============ PERSISTENCE ============ 
+        // Load personas from localStorage first, then fallback
+        async function loadPersonas() {
+            // 1. Try localStorage (shared with Persona Manager)
+            const stored = localStorage.getItem('personasoi_data');
+            if (stored) {
+                try {
+                    const parsed = JSON.parse(stored);
+                    if (Array.isArray(parsed) && parsed.length) {
+                        console.log('✅ Loaded personas from localStorage');
+                        return parsed;
+                    }
+                } catch (e) {}
+            }
+
+            // 2. Fallback: fetch persona.json (same directory)
+            try {
+                const resp = await fetch('persona.json');
+                if (!resp.ok) throw new Error('Network error');
+                const data = await resp.json();
+                let list = Array.isArray(data) ? data : (data.personas || []);
+                if (list.length) {
+                    console.log('✅ Loaded personas from persona.json');
+                    return list;
+                }
+            } catch (e) {
+                console.warn('Failed to fetch persona.json:', e);
+            }
+
+            // 3. Ultimate fallback: hardcoded defaults
+            console.log('Using default hardcoded team');
+            return getDefaultTeam();
+        }
+
+        function getDefaultTeam() {
+            return [
+                { name: 'Sanchita', flag: '🧑‍💼', role: 'BA', vibe: 'Process‑oriented, detail‑focused', meme_vocabulary: ['process', 'acceptance', 'criteria'], quirks: ['Loves checklists', 'Always on time'] },
+                { name: 'Raissa', flag: '👩‍💼', role: 'PO', vibe: 'Strategic, domain‑expert', meme_vocabulary: ['eligibility', 'adjudication'], quirks: ['Thinks in business rules', 'Explains patiently'] },
+                { name: 'Satya', flag: '👨‍💻', role: 'Developer', vibe: 'Energetic, quick to help', meme_vocabulary: ['coffee', '🔥'], quirks: ['Always suggests solutions', 'Loves coding'] },
+                { name: 'Nidhi', flag: '👩‍💻', role: 'Senior Dev', vibe: 'Supportive, process‑wise', meme_vocabulary: ['deployment', 'prod'], quirks: ['Mentors juniors', 'Cautious with permissions'] },
+                { name: 'Rambabu', flag: '🧑‍🔧', role: 'QA Lead', vibe: 'Analytical, detail‑oriented', meme_vocabulary: ['performance', 'TPS', 'SLA'], quirks: ['Loves metrics', 'Writes detailed reports'] },
+                { name: 'Sivaram', flag: '👨‍💻', role: 'Developer', vibe: 'Calm, methodical', meme_vocabulary: ['regression', 'suite'], quirks: ['Quiet but thorough', 'Tests everything'] },
+                { name: 'Yamini', flag: '👩‍💻', role: 'Developer', vibe: 'Reserved, direct', meme_vocabulary: ['java', 'service'], quirks: ['Terse but effective', 'Fixes things quickly'] },
+                { name: 'Sunkul Pradeep', flag: '🧑‍🚀', role: 'Data Engineer', vibe: 'Cheerful, tech‑savvy', meme_vocabulary: ['databricks', 'pipeline', '💯'], quirks: ['Always hungry', 'Loves biryani'] },
+                { name: 'Shivani Kumar', flag: '👩‍🎓', role: 'Intern', vibe: 'Eager, learning', meme_vocabulary: ['CI/CD', 'build', '🎉'], quirks: ['Asks lots of questions', 'Celebrates small wins'] },
+                { name: 'Laik', flag: '👨‍🦱', role: 'Developer', vibe: 'Chill, friendly', meme_vocabulary: ['yar', 'bhai', 'chill', '🤙'], quirks: ['Uses Hinglish', 'Loves chai'] },
+                { name: 'Sai Surya', flag: '🦣', role: 'Scrum Master', vibe: 'Facilitator, motivator', meme_vocabulary: ['standup', 'blocker', 'retro'], quirks: ['Always asks "what’s blocking you?"', 'Keeps the team happy'] }
+            ];
+        }
+
+        // Build PERSONAS object from list
+        function buildPersonas(list) {
+            PERSONAS = {};
+            list.forEach(p => {
+                // Ensure required fields
+                p.flag = p.flag || '👤';
+                p.role = p.role || 'Unspecified';
+                p.vibe = p.vibe || 'Friendly';
+                p.meme_vocabulary = p.meme_vocabulary || [];
+                p.quirks = p.quirks || [];
+                p.offtopic_topics = p.offtopic_topics || ['work', 'life', 'food'];
+                p.life_hacks = p.life_hacks || [];
+                p.structured = p.structured !== undefined ? p.structured : true;
+                p.system_prompt_template = p.system_prompt_template || `
+You are {{NAME}}, {{FLAG}} {{ROLE}} at Team Mammoth. 
+Your vibe: {{VIBE}}. 
+Meme vocabulary: {{MEME_VOCABULARY}}.
+Off‑topic interests: {{OFFTOPIC_TOPICS}}.
+Life hacks: {{LIFE_HACKS}}.
+{{BIRTHDAY}}
+Current time: {{TIME}}; you are {{ACTIVITY_HINT}}.
+
+Chat history (last few messages):
+{{HISTORY}}
+{{QUOTE_CONTEXT}}
+The person you're talking to is {{OTHER_NAME}}, {{OTHER_FLAG}} {{OTHER_ROLE}}.
+User just said: {{USER_MSG}}
+
+Reply naturally, in your character. Keep it brief and human – no emojis unless you really want to. Respond directly to the user's last message. Use your meme vocabulary occasionally.
+                `;
+                p.time_contexts = p.time_contexts || {
+                    'morning': ['just woke up, getting coffee', 'feeling fresh and ready'],
+                    'lunch_time': ['thinking about food', 'hungry and distracted'],
+                    'afternoon': ['post‑lunch slump', 'focused but tired'],
+                    'evening': ['wrapping up', 'thinking about going home'],
+                    'night': ['tired but still working', 'late‑night productivity'],
+                    'late_night': ['should be sleeping', 'caffeine fueled']
+                };
+                PERSONAS[p.name] = p;
+            });
+            window._teamMeta = null;
+        }
+
+        // ============ STORAGE EVENT LISTENER ============
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'personasoi_data') {
+                console.log('🔄 Persona data changed in localStorage – reloading...');
+                reloadApp();
+            }
+        });
+
+        // ============ RELOAD APP ============
+        async function reloadApp() {
+            saveChats();
+            const list = await loadPersonas();
+            buildPersonas(list);
+            if (ME) {
+                if (!PERSONAS[ME.name]) {
+                    const names = Object.keys(PERSONAS);
+                    if (names.length) choose(names[0]); else openPicker();
+                } else {
+                    buildContacts();
+                    const activeId = state.active;
+                    if (activeId && byId(activeId)) openChat(activeId);
+                    else { closeChat(); fillEmpty(); renderChatList(); }
+                    fillProfile();
+                    renderChatList();
+                }
+            } else {
+                openPicker();
+            }
+        }
+
+        // ============ BUILD CONTACTS (NEW VERSION) ============
         function buildContacts() {
             CONTACTS = [];
-            const aiNames = AI();
-            CONTACTS.push({ id: 'mammoth', name: 'Team Mammoth 🦣', isGroup: true, about: [...aiNames, 'You'].join(', '), members: aiNames, online: true, pinned: true, fav: true, unread: 1, messages: makeGroupSeed(), typing: false, typingMember: null, _tt: null });
-            Object.keys(PERSONAS).forEach((name, origIndex) => {
-                if (name === ME.name) return; const p = PERSONAS[name]; const msgs = makeDmSeed(name);
-                CONTACTS.push({ id: 'c' + origIndex, name, isGroup: false, about: `${p.flag} ${p.role}`, online: origIndex % 2 === 0, lastSeen: ago(5 + origIndex * 9), pinned: false, fav: origIndex < 4, unread: Math.min(msgs.length, [2, 1, 0][origIndex % 3]), messages: msgs, typing: false, typingMember: null, _tt: null });
+            const aiNames = Object.keys(PERSONAS).filter(n => n !== ME.name);
+            // Group chat
+            CONTACTS.push({
+                id: 'mammoth',
+                name: 'Team Mammoth 🦣',
+                isGroup: true,
+                about: [...aiNames, 'You'].join(', '),
+                members: aiNames,
+                online: true,
+                pinned: true,
+                fav: true,
+                unread: 1,
+                messages: makeGroupSeed(),
+                typing: false,
+                typingMember: null,
+                _tt: null
+            });
+            // Individual DMs
+            aiNames.forEach((name, idx) => {
+                const p = PERSONAS[name];
+                const msgs = makeDmSeed(name);
+                CONTACTS.push({
+                    id: 'c' + idx,
+                    name,
+                    isGroup: false,
+                    about: `${p.flag} ${p.role}`,
+                    online: idx % 2 === 0,
+                    lastSeen: ago(5 + idx * 9),
+                    pinned: false,
+                    fav: idx < 4,
+                    unread: Math.min(msgs.length, [2, 1, 0][idx % 3]),
+                    messages: msgs,
+                    typing: false,
+                    typingMember: null,
+                    _tt: null
+                });
             });
         }
-        function fillProfile() {
-            $('#pmAvatar').src = avatarFor(ME.name);
-            $('#pmName').textContent = ME.name;
-            $('#pmSub').textContent = `${ME.flag} ${ME.role} · Team Mammoth 🦣`;
-            $('#pmBio').innerHTML = `You're role‑playing as <b>${esc(ME.name)}</b> — ${esc(ME.vibe)}.<br><br>${esc(ME.catchphrase)}<div style="margin-top:8px"><span class="tag">${esc(ME.role)}</span><span class="tag">Team Mammoth 🦣</span><span class="tag">RAGina AI</span></div>`;
-            $('#pmLinks').style.display = ME.name === 'Sai Surya' ? 'flex' : 'none';
-            $('#menuProfileBtn').textContent = `👤 ${ME.name} · Profile`;
-        }
-        function fillEmpty() {
-            $('#esTitle').textContent = `Hey ${ME.firstName} 👋`;
-            const team = AI().join(', ');
-            $('#esBody').innerHTML = `You're in the driver's seat as <b>${esc(ME.name)}</b> (${esc(ME.role)}).<br>Open any chat — your AI teammates <i>${esc(team)}</i> will talk <b>with you</b>, remember everything, and ping you out of the blue. Use <b>@name</b> to get a specific person to answer, and watch the quick‑reply chips above the keyboard.`;
-        }
+
+        // ============ OPEN PICKER / CHOOSE ============
         function openPicker() {
             saveChats(); stopTimers();
             const last = localStorage.getItem('mammoth_last_me');
@@ -1125,6 +1272,7 @@
 
         function choose(name) {
             const p = PERSONAS[name];
+            if (!p) { openPicker(); return; }
             ME = { name, flag: p.flag, role: p.role, tagline: p.tagline || p.vibe, vibe: p.vibe, firstName: name.split(' ')[0] };
             localStorage.setItem('mammoth_last_me', name);
             buildContacts();
@@ -1137,33 +1285,37 @@
             setTimeout(() => toastText(had ? `💾 Loaded your saved chats as ${ME.firstName} — every message (yours & the team's) is kept per identity.` : `💾 Auto‑save ON as ${ME.firstName} — your history & the team's memory persist on this device.`), 1500);
         }
 
-        /* ============ INIT: LOAD JSON THEN START ============ */
+        // ============ FILL PROFILE / EMPTY ============
+        function fillProfile() {
+            $('#pmAvatar').src = avatarFor(ME.name);
+            $('#pmName').textContent = ME.name;
+            $('#pmSub').textContent = `${ME.flag} ${ME.role} · Team Mammoth 🦣`;
+            $('#pmBio').innerHTML = `You're role‑playing as <b>${esc(ME.name)}</b> — ${esc(ME.vibe)}.<br><br>${esc(ME.catchphrase)}<div style="margin-top:8px"><span class="tag">${esc(ME.role)}</span><span class="tag">Team Mammoth 🦣</span><span class="tag">RAGina AI</span></div>`;
+            $('#pmLinks').style.display = ME.name === 'Sai Surya' ? 'flex' : 'none';
+            $('#menuProfileBtn').textContent = `👤 ${ME.name} · Profile`;
+        }
+        function fillEmpty() {
+            $('#esTitle').textContent = `Hey ${ME.firstName} 👋`;
+            const team = Object.keys(PERSONAS).filter(n => n !== ME.name).join(', ');
+            $('#esBody').innerHTML = `You're in the driver's seat as <b>${esc(ME.name)}</b> (${esc(ME.role)}).<br>Open any chat — your AI teammates <i>${esc(team)}</i> will talk <b>with you</b>, remember everything, and ping you out of the blue. Use <b>@name</b> to get a specific person to answer, and watch the quick‑reply chips above the keyboard.`;
+        }
+
+        // ============ INIT ============
         async function initApp() {
-    try {
-        const resp = await fetch('persona.json');
-        if (!resp.ok) throw new Error('Failed to load persona.json');
-        const data = await resp.json();
+            console.log('🚀 Initializing chat...');
+            const list = await loadPersonas();
+            buildPersonas(list);
+            initPFall();
 
-        // persona.json may be a raw array (Personasoi's save format)
-        // or an object like { personas: [...], meta: {...} }
-        const list = Array.isArray(data) ? data : (data.personas || []);
-        window._teamMeta = Array.isArray(data) ? null : (data.meta || null);
+            const lastMe = localStorage.getItem('mammoth_last_me');
+            if (lastMe && PERSONAS[lastMe]) choose(lastMe);
+            else openPicker();
 
-        list.forEach(p => {
-            PERSONAS[p.name] = p;
-        });
+            if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
+        }
 
-        initPFall();
-        openPicker();
-
-        if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
-    } catch (err) {
-        console.error('Error loading personas:', err);
-        alert('Could not load persona.json. Please ensure the file exists in the same directory.');
-    }
-}
-
-        initApp();
+        // ============ START ============
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
