@@ -214,5 +214,4 @@ This project is licensed under the MIT License – see the LICENSE file for deta
 <div align="center">
   Made with ❤️ by <a href="https://github.com/suryasticsai">Sai Surya</a> & the 🦣 team
 </div>
-```
 
