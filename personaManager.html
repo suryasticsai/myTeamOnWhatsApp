@@ -552,6 +552,29 @@
             .footer-inner { flex-direction: column; text-align: center; }
             .footer-socials { justify-content: center; }
         }
+.btn-play {
+    background: var(--electric);
+    color: #fff;
+    border: none;
+    padding: 0.65rem 1.8rem;
+    border-radius: 999px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    box-shadow: 0 0 20px var(--electric-glow);
+    transition: all 0.3s ease;
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+.btn-play:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 40px var(--electric-glow);
+}
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 20px var(--electric-glow); }
+    50% { box-shadow: 0 0 40px var(--volt-glow), 0 0 60px var(--electric-glow); }
+}
     </style>
 </head>
 <body>
@@ -611,6 +634,10 @@
                 <span id="countDisplay">0 characters</span>
             </div>
             <div id="personaContainer" class="persona-grid"></div>
+<!-- In the header-right section -->
+<button class="btn btn-play" id="playGameBtn" title="Launch the full simulation">
+    ▶ Play the Game
+</button>
         </main>
 
         <footer>
@@ -1404,7 +1431,30 @@
         prefCloseBtn.addEventListener('click', () => prefModalOverlay.classList.remove('active'));
         prefModalOverlay.addEventListener('click', (e) => { if (e.target === prefModalOverlay) prefModalOverlay.classList.remove('active'); });
         prefSaveBtn.addEventListener('click', savePreferences);
+// In your script section
+function playArcadeSound() {
+    if (!prefs.soundsEnabled) return;
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(880, ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15);
+        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start();
+        osc.stop(ctx.currentTime + 0.2);
+    } catch (e) { /* silently fail */ }
+}
 
+document.getElementById('playGameBtn').addEventListener('click', function() {
+    playArcadeSound();
+    setTimeout(() => {
+        window.open('https://suryasticsai.github.io/MyTeamOnWhatsApp', '_blank');
+    }, 200);
+});
         // ====== INIT ======
         (function init() {
             runLoadingSequence();
