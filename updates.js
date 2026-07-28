@@ -1,6 +1,7 @@
 /**
- * updates.js - WhatsApp-style Status Cards from task.json
- * For myTeamOnWhatsApp project
+ * updates.js – WhatsApp-style Status Cards
+ * Integrates with myTeamOnWhatsApp's existing Updates nav button.
+ * Expects tasks to be injected via Updates.setTasks(tasks).
  */
 
 (function() {
@@ -10,11 +11,10 @@
     // CONFIGURATION
     // =============================================
     const CONFIG = {
-        TASKS_URL: 'task.json',              // Your existing task.json
-        REFRESH_INTERVAL: 30000,             // 30 seconds
+        REFRESH_INTERVAL: 30000,          // auto-refresh every 30s
         MAX_STATUSES_PER_USER: 5,
-        STATUS_DURATION: 86400000,           // 24 hours
-        VIEWER_DURATION: 5000,               // 5 seconds per status
+        STATUS_DURATION: 86400000,         // 24h
+        VIEWER_DURATION: 5000,             // 5s per status
     };
 
     // =============================================
@@ -28,6 +28,7 @@
     let viewerTasks = [];
     let progressInterval = null;
     let viewerTimeout = null;
+    let isUpdatesVisible = false;
 
     // =============================================
     // DOM HELPERS
@@ -51,6 +52,7 @@
     // STYLES (injected)
     // =============================================
     function injectStyles() {
+        if (document.getElementById('updates-styles')) return;
         const style = document.createElement('style');
         style.id = 'updates-styles';
         style.textContent = `
@@ -383,38 +385,23 @@
     }
 
     // =============================================
-    // DATA LOADING (handles your task.json)
+    // PUBLIC: Set tasks from external source
     // =============================================
-    async function loadTasks() {
-        try {
-            const response = await fetch(CONFIG.TASKS_URL);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-
-            // Your task.json structure: { meta: {...}, tasks: [...] }
-            tasks = data.tasks || [];
-            // Cache
-            try {
-                localStorage.setItem('updates_tasks', JSON.stringify(tasks));
-            } catch (_) {}
-            return tasks;
-        } catch (err) {
-            console.warn('[Updates] Could not load task.json:', err.message);
-            // Try cache
-            try {
-                const cached = localStorage.getItem('updates_tasks');
-                if (cached) {
-                    tasks = JSON.parse(cached);
-                    return tasks;
-                }
-            } catch (_) {}
-            tasks = [];
-            return tasks;
+    function setTasks(newTasks) {
+        if (!Array.isArray(newTasks)) {
+            console.warn('[Updates] setTasks expects an array');
+            return;
         }
+        tasks = newTasks;
+        // Cache for offline
+        try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
+        processStatuses();
+        renderIfVisible();
+        console.log(`[Updates] Tasks updated: ${tasks.length} tasks`);
     }
 
     // =============================================
-    // STATUS PROCESSING (groups by assigned_to)
+    // PROCESSING (groups by assigned_to)
     // =============================================
     function processStatuses() {
         const now = Date.now();
@@ -516,7 +503,6 @@
     }
 
     function getAvatarUrl(name) {
-        // Use ui-avatars.com for consistent avatars
         return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=25d366&color=fff&size=64&bold=true`;
     }
 
@@ -578,7 +564,6 @@
             </div>
         `;
 
-        // Event listeners
         viewer.querySelector('#viewer-close').addEventListener('click', closeStatusViewer);
         viewer.querySelector('#viewer-prev').addEventListener('click', () => navigateViewer(-1));
         viewer.querySelector('#viewer-next').addEventListener('click', () => navigateViewer(1));
@@ -616,23 +601,17 @@
 
         const task = viewerTasks[viewerIndex];
 
-        // Update user info
         viewer.querySelector('#viewer-avatar').src = getAvatarUrl(currentViewingUser);
         viewer.querySelector('#viewer-name').textContent = currentViewingUser;
         viewer.querySelector('#viewer-time').textContent = formatTimeAgo(task.timestamp);
 
-        // Build meta info from your task fields
         let metaHTML = `
             <span>🔖 ${task.priority || 'normal'}</span>
             <span>📌 ${task.status || 'unknown'}</span>
             <span>🕐 ${new Date(task.timestamp).toLocaleString()}</span>
         `;
-        if (task.role) {
-            metaHTML += `<span>👤 ${task.role}</span>`;
-        }
-        if (task.tags && task.tags.length) {
-            metaHTML += `<span>#${task.tags.join(' #')}</span>`;
-        }
+        if (task.role) metaHTML += `<span>👤 ${task.role}</span>`;
+        if (task.tags && task.tags.length) metaHTML += `<span>#${task.tags.join(' #')}</span>`;
 
         const content = viewer.querySelector('#viewer-content');
         content.innerHTML = `
@@ -641,11 +620,9 @@
             <div class="task-meta">${metaHTML}</div>
         `;
 
-        // Reset progress
         const progress = viewer.querySelector('#viewer-progress');
         progress.style.width = '0%';
 
-        // Show/hide navigation arrows
         viewer.querySelector('#viewer-prev').style.display = viewerIndex > 0 ? 'block' : 'none';
         viewer.querySelector('#viewer-next').style.display = viewerIndex < viewerTasks.length - 1 ? 'block' : 'none';
     }
@@ -710,7 +687,6 @@
         const container = createElement('div', 'updates-container');
         container.id = 'updates-container';
 
-        // Header
         const header = createElement('div', 'updates-header');
         header.innerHTML = `
             <button class="back-btn" id="updates-back">‹</button>
@@ -719,11 +695,9 @@
         `;
         container.appendChild(header);
 
-        // Grid
         const grid = createElement('div', 'status-grid');
         container.appendChild(grid);
 
-        // Events
         header.querySelector('#updates-back').addEventListener('click', hideUpdates);
         header.querySelector('#updates-refresh').addEventListener('click', async (e) => {
             const btn = e.currentTarget;
@@ -735,16 +709,20 @@
         return container;
     }
 
+    function renderIfVisible() {
+        const container = document.getElementById('updates-container');
+        if (container && container.classList.contains('active')) {
+            renderStatusGrid(container);
+        }
+    }
+
     // =============================================
     // REFRESH
     // =============================================
     async function refreshUpdates() {
-        await loadTasks();
         processStatuses();
         const container = document.getElementById('updates-container');
-        if (container) {
-            renderStatusGrid(container);
-        }
+        if (container) renderStatusGrid(container);
         return statuses;
     }
 
@@ -763,7 +741,7 @@
                 chatContainer.style.display = 'none';
                 chatContainer.parentNode.insertBefore(container, chatContainer);
             } else {
-                // Fallback: append to body and hide other content
+                // Fallback: append to body and hide other main content
                 document.body.appendChild(container);
                 $$('.app, .main, .chat-view, .chat-container').forEach(el => {
                     if (el.id !== 'updates-container') el.style.display = 'none';
@@ -772,17 +750,22 @@
         }
 
         container.classList.add('active');
-        // Refresh data
+        isUpdatesVisible = true;
         refreshUpdates();
 
         // Start auto-refresh
         if (refreshTimer) clearInterval(refreshTimer);
         refreshTimer = setInterval(refreshUpdates, CONFIG.REFRESH_INTERVAL);
+
+        // Highlight the nav button (optional)
+        const navBtn = document.querySelector('[data-nav="updates"]');
+        if (navBtn) navBtn.classList.add('active');
     }
 
     function hideUpdates() {
         const container = document.getElementById('updates-container');
         if (container) container.classList.remove('active');
+        isUpdatesVisible = false;
 
         // Restore chat
         const chatContainer = document.querySelector('.chat-container') ||
@@ -795,6 +778,9 @@
             refreshTimer = null;
         }
         closeStatusViewer();
+
+        const navBtn = document.querySelector('[data-nav="updates"]');
+        if (navBtn) navBtn.classList.remove('active');
     }
 
     // =============================================
@@ -803,19 +789,34 @@
     function initUpdates() {
         injectStyles();
 
-        // Load cached data first
+        // Try to load cached tasks if no external setTasks was called yet
         try {
             const cached = localStorage.getItem('updates_tasks');
             if (cached) {
-                tasks = JSON.parse(cached);
-                processStatuses();
+                const parsed = JSON.parse(cached);
+                if (parsed.length > 0) {
+                    tasks = parsed;
+                    processStatuses();
+                }
             }
         } catch (_) {}
 
-        // Refresh in background
-        setTimeout(refreshUpdates, 500);
+        // Hook into the existing Updates nav button
+        const navBtn = document.querySelector('[data-nav="updates"]');
+        if (navBtn) {
+            navBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (isUpdatesVisible) {
+                    hideUpdates();
+                } else {
+                    showUpdates();
+                }
+            });
+        } else {
+            console.warn('[Updates] No button with data-nav="updates" found.');
+        }
 
-        console.log('[Updates] Initialized. Use window.Updates.show() to open.');
+        console.log('[Updates] Initialized. Use Updates.setTasks(tasks) to inject tasks.');
     }
 
     // =============================================
@@ -826,59 +827,15 @@
         show: showUpdates,
         hide: hideUpdates,
         refresh: refreshUpdates,
-        loadTasks: loadTasks,
+        setTasks: setTasks,          // <--- main method
         getStatuses: () => statuses,
     };
 
-    // Auto-init
+    // Auto-init when DOM is ready
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initUpdates);
     } else {
         initUpdates();
     }
-
-    // =============================================
-    // INJECT MENU BUTTON
-    // =============================================
-    function addMenuButton() {
-        const checkInterval = setInterval(() => {
-            // Look for a navigation/menu container in your app
-            const menu = document.querySelector('.menu, .header-menu, nav, .top-bar, .chat-header');
-            if (menu) {
-                clearInterval(checkInterval);
-                const btn = document.createElement('button');
-                btn.className = 'updates-menu-btn';
-                btn.innerHTML = '📱 Updates';
-                btn.style.cssText = `
-                    background: none;
-                    border: none;
-                    color: var(--txt, #111b21);
-                    cursor: pointer;
-                    padding: 8px 12px;
-                    font-size: 14px;
-                    border-radius: 6px;
-                    transition: background 0.2s;
-                    font-weight: 500;
-                `;
-                btn.addEventListener('mouseenter', () => {
-                    btn.style.background = 'var(--hover, #f0f0f0)';
-                });
-                btn.addEventListener('mouseleave', () => {
-                    btn.style.background = 'transparent';
-                });
-                btn.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    if (document.getElementById('updates-container')?.classList.contains('active')) {
-                        window.Updates.hide();
-                    } else {
-                        window.Updates.show();
-                    }
-                });
-                menu.appendChild(btn);
-            }
-        }, 500);
-    }
-
-    setTimeout(addMenuButton, 1000);
 
 })();
