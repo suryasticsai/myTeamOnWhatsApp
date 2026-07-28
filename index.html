@@ -30,149 +30,48 @@
         .flex1 { flex: 1; }
 
         /* ====== PICKER / WELCOME ====== */
-      #picker { position: fixed; inset: 0; z-index: 200; background: linear-gradient(160deg, #eafaf4, #eef1f2); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn .25s ease both; }
-#picker.hidden { display: none; }
-.pk-card { background: #fff; border-radius: 22px; box-shadow: 0 24px 70px rgba(0,0,0,.18); width: min(560px,94vw); max-height: 88vh; display: flex; flex-direction: column; overflow-y: auto; animation: modalIn .3s cubic-bezier(.3,1.3,.5,1) both; }
-.pk-head { padding: 26px 28px 12px; text-align: center; }
-.pk-head .mascot { font-size: 44px; width: 80px; height: 80px; margin: 0 auto; object-fit: contain; }
-.pk-head h1 { margin: 6px 0 0; font-size: 23px; font-weight: 700; color: var(--txt); }
-.pk-head p { margin: 8px auto 0; color: var(--txt-2); font-size: 13.5px; line-height: 1.5; max-width: 380px; }
-.pk-list { overflow-y: auto; padding: 6px 14px 20px; }
-.slide-container { margin-top: auto; }
-        /* ====== SLIDE TO CONFIRM ====== */
-        .slide-container {
-            position: relative; background: var(--panel-2); border-radius: 999px; height: 52px;
-            display: flex; align-items: center; cursor: pointer; user-select: none;
-            overflow: hidden; border: 1px solid var(--border); margin-top: 0.5rem;
-        }
-        .slide-thumb {
-            position: absolute; left: 4px; width: 44px; height: 44px; border-radius: 50%;
-            background: var(--accent); display: flex; align-items: center; justify-content: center;
-            color: #fff; font-size: 1.2rem; transition: left 0.1s;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            will-change: left;
-        }
+        #picker { position: fixed; inset: 0; z-index: 200; background: linear-gradient(160deg, #eafaf4, #eef1f2); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn .25s ease both; }
+        #picker.hidden { display: none; }
+        .pk-card { background: #fff; border-radius: 22px; box-shadow: 0 24px 70px rgba(0,0,0,.18); width: min(560px,94vw); max-height: 88vh; display: flex; flex-direction: column; overflow-y: auto; animation: modalIn .3s cubic-bezier(.3,1.3,.5,1) both; }
+        .pk-head { padding: 26px 28px 12px; text-align: center; flex-shrink: 0; }
+        .pk-head .mascot { font-size: 44px; width: 80px; height: 80px; margin: 0 auto; object-fit: contain; }
+        .pk-head h1 { margin: 6px 0 0; font-size: 23px; font-weight: 700; color: var(--txt); }
+        .pk-head p { margin: 8px auto 0; color: var(--txt-2); font-size: 13.5px; line-height: 1.5; max-width: 380px; }
+        .pk-list { overflow-y: auto; padding: 6px 14px 20px; }
+        .slide-container { margin-top: auto; background: var(--panel-2); border-radius: 999px; height: 52px; display: flex; align-items: center; cursor: pointer; user-select: none; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0; }
+        .slide-thumb { position: absolute; left: 4px; width: 44px; height: 44px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.2rem; transition: left 0.1s; box-shadow: 0 2px 8px rgba(0,0,0,0.2); will-change: left; }
         .slide-thumb.dragging { transition: none; }
-        .slide-label {
-            position: absolute; left: 50%; transform: translateX(-50%);
-            font-size: 0.9rem; color: var(--txt-2); font-weight: 500; pointer-events: none;
-        }
+        .slide-label { position: absolute; left: 50%; transform: translateX(-50%); font-size: 0.9rem; color: var(--txt-2); font-weight: 500; pointer-events: none; }
         .slide-label.completed { color: var(--accent-text); }
 
         /* ====== TASK INBOX STYLES ====== */
-        .task-item {
-            background: var(--panel-2);
-            border-radius: 12px;
-            padding: 1rem 1.2rem;
-            margin-bottom: 0.75rem;
-            border-left: 4px solid var(--accent);
-            transition: background 0.2s;
-        }
-        .task-item.completed {
-            opacity: 0.7;
-            border-left-color: var(--txt-2);
-        }
-        .task-item.completed .task-title {
-            text-decoration: line-through;
-            color: var(--txt-2);
-        }
-        .task-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-        .task-header input[type="checkbox"] {
-            margin-top: 0.2rem;
-            width: 18px; height: 18px;
-            accent-color: var(--accent);
-            cursor: pointer;
-            flex-shrink: 0;
-        }
-        .task-title {
-            font-weight: 600;
-            font-size: 0.95rem;
-            color: var(--txt);
-        }
-        .task-meta {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem 1rem;
-            margin-top: 0.4rem;
-            font-size: 0.8rem;
-            color: var(--txt-2);
-        }
+        .task-item { background: var(--panel-2); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 0.75rem; border-left: 4px solid var(--accent); transition: background 0.2s; }
+        .task-item.completed { opacity: 0.7; border-left-color: var(--txt-2); }
+        .task-item.completed .task-title { text-decoration: line-through; color: var(--txt-2); }
+        .task-header { display: flex; align-items: flex-start; gap: 0.75rem; }
+        .task-header input[type="checkbox"] { margin-top: 0.2rem; width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+        .task-title { font-weight: 600; font-size: 0.95rem; color: var(--txt); }
+        .task-meta { display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; margin-top: 0.4rem; font-size: 0.8rem; color: var(--txt-2); }
         .task-meta .priority-high { color: var(--danger); font-weight: 600; }
         .task-meta .priority-critical { color: var(--danger); font-weight: 700; }
         .task-meta .priority-medium { color: var(--gold); }
         .task-meta .priority-low { color: var(--success); }
-        .task-desc {
-            font-size: 0.85rem;
-            color: var(--txt-2);
-            margin-top: 0.3rem;
-            line-height: 1.4;
-        }
-        .task-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.3rem;
-            margin-top: 0.4rem;
-        }
-        .task-tag {
-            background: rgba(0,0,0,0.06);
-            padding: 0.1rem 0.5rem;
-            border-radius: 10px;
-            font-size: 0.65rem;
-            color: var(--txt-2);
-            border: 1px solid var(--border);
-        }
-        .task-empty {
-            text-align: center; color: var(--txt-2); padding: 2rem 0;
-            font-size: 1rem;
-        }
+        .task-desc { font-size: 0.85rem; color: var(--txt-2); margin-top: 0.3rem; line-height: 1.4; }
+        .task-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.4rem; }
+        .task-tag { background: rgba(0,0,0,0.06); padding: 0.1rem 0.5rem; border-radius: 10px; font-size: 0.65rem; color: var(--txt-2); border: 1px solid var(--border); }
+        .task-empty { text-align: center; color: var(--txt-2); padding: 2rem 0; font-size: 1rem; }
 
-        /* ====== AGREE CHECKBOX ====== */
-        .agree-row {
-            padding: 1rem 1.5rem;
-            border-top: 1px solid var(--border);
-            border-bottom: 1px solid var(--border);
-            margin: 0.5rem 0;
-        }
-        .agree-row label {
-            display: flex; align-items: center; gap: 0.75rem;
-            cursor: pointer; font-size: 0.85rem; color: var(--txt-2);
-        }
-        .agree-row input[type="checkbox"] {
-            width: 18px; height: 18px; accent-color: var(--accent);
-            cursor: pointer; flex-shrink: 0;
-        }
+        .agree-row { padding: 1rem 1.5rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); margin: 0.5rem 0; flex-shrink: 0; }
+        .agree-row label { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; font-size: 0.85rem; color: var(--txt-2); }
+        .agree-row input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
 
-        /* ====== WELCOME NOTE INSIDE PICKER ====== */
-        .welcome-note {
-            padding: 0.5rem 1.5rem 0.5rem;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: var(--txt);
-        }
+        .welcome-note { padding: 0.5rem 1.5rem 0.5rem; font-size: 0.95rem; line-height: 1.6; color: var(--txt); flex-shrink: 0; }
         .welcome-note strong { color: var(--accent-text); }
-        .welcome-note .inbox-reminder {
-            font-size: 0.85rem;
-            color: var(--txt-2);
-            background: var(--panel-2);
-            border-radius: 8px;
-            padding: 0.6rem 1rem;
-            margin-top: 0.5rem;
-        }
-        .admin-sig {
-            text-align: right;
-            font-size: 0.85rem;
-            color: var(--txt-2);
-            margin-top: 0.3rem;
-            padding-top: 0.3rem;
-            border-top: 1px solid var(--border);
-        }
+        .welcome-note .inbox-reminder { font-size: 0.85rem; color: var(--txt-2); background: var(--panel-2); border-radius: 8px; padding: 0.6rem 1rem; margin-top: 0.5rem; }
+        .admin-sig { text-align: right; font-size: 0.85rem; color: var(--txt-2); margin-top: 0.3rem; padding-top: 0.3rem; border-top: 1px solid var(--border); }
         .admin-sig strong { color: var(--accent-text); }
 
-        /* ====== EXISTING STYLES (unchanged) ====== */
+        /* Existing styles (unchanged) */
         #app { display: flex; height: 100vh; height: 100dvh; width: 100%; animation: appIn .35s ease both; }
         @keyframes appIn { from { opacity: 0; transform: scale(.995); } to { opacity: 1; transform: none; } }
 
@@ -438,11 +337,13 @@
             </div>
             <div class="menu" id="menuDrop">
                 <button data-act="home">🏠 Back to Home</button> 
-                <button data-act="standup">🦣 Run a standup in the group</button>
-                <button data-act="knowledge">📚 Load team knowledge (RAGina)</button>
-                <button data-act="export">📥 Export active chat (.txt)</button>
-                <button data-act="clear">🗑️ Clear active chat</button>
+                <button data-act="standup">🦣 Run a standup</button>
+                <button data-act="discuss">🗣️ Start Discussion</button>
+                <button data-act="knowledge">📚 Load knowledge</button>
+                <button data-act="export">📥 Export chat</button>
+                <button data-act="clear">🗑️ Clear chat</button>
                 <button data-act="ai">📥 Inbox</button>
+                <button data-act="pause" id="pauseBtn">⏸️ Pause AI</button>
                 <button data-act="profile" id="menuProfileBtn">👤 Profile</button>
                 <button data-act="switch" id="menuSwitchBtn">🔄 Switch identity</button>
             </div>
@@ -629,7 +530,7 @@
             </div>
 
             <div style="padding:0 1.5rem 1.5rem;">
-                <div class="slide-container" id="slideContainer">
+                <div class="slide-container" style="position:relative;" id="slideContainer">
                     <div class="slide-thumb" id="slideThumb">▶</div>
                     <span class="slide-label" id="slideLabel">Slide to enter the team →</span>
                 </div>
@@ -667,6 +568,7 @@
     let PERSONAS = {};
     let CONTACTS = [];
     let ME = null;
+    let aiEnabled = true; // global pause/play
 
     // ============ WELCOME MESSAGES ============
     const WELCOME_MESSAGES = {
@@ -944,6 +846,47 @@
         document.getElementById('aiModal').classList.remove('open');
     }
 
+    /* ============ Pause/Play ============ */
+    let pauseBtn = document.getElementById('pauseBtn');
+    if (pauseBtn) {
+        pauseBtn.textContent = '⏸️ Pause AI';
+    }
+    function togglePause() {
+        aiEnabled = !aiEnabled;
+        if (pauseBtn) {
+            pauseBtn.textContent = aiEnabled ? '⏸️ Pause AI' : '▶️ Play AI';
+        }
+        toastText(aiEnabled ? '▶️ AI replies resumed' : '⏸️ AI replies paused');
+    }
+
+    /* ============ Start Discussion ============ */
+    function startDiscussion() {
+        const group = byId('mammoth');
+        if (!group) { toastText('⚠️ Group chat not found.'); return; }
+        // Post a message from Raissa
+        const topic = prompt('What topic should the team discuss?', 'Prod deployment this weekend – who can support?');
+        if (!topic) return;
+        const msg = M('them', topic, new Date(), { member: 'Raissa' });
+        pushMessage(group, msg);
+        // After a delay, have others respond
+        setTimeout(() => {
+            // Sanchita asks the player
+            const ask = M('them', `@${ME.name} what do you think? Are you available?`, new Date(), { member: 'Sanchita' });
+            pushMessage(group, ask);
+        }, 2000);
+        // After a bit more, other characters chime in automatically (only if AI enabled)
+        if (aiEnabled) {
+            setTimeout(() => {
+                const chars = AI().filter(n => n !== 'Raissa' && n !== 'Sanchita' && n !== ME.name);
+                if (chars.length) {
+                    const randChar = chars[Math.floor(Math.random() * chars.length)];
+                    const reply = M('them', `I'm ${Math.random() > 0.5 ? 'in' : 'out'} for this one.`, new Date(), { member: randChar });
+                    pushMessage(group, reply);
+                }
+            }, 4000);
+        }
+    }
+
     /* ============ persona prompt builder using JSON ============ */
     function buildPromptFromJSON(persona, mode, otherName, history, userMsg, short, replyToMsg) {
         const tpl = persona.system_prompt_template;
@@ -1062,7 +1005,7 @@
         renderChatList();
     }
     async function deliverOne(c, member, hint, opts = {}) {
-        if (!ME) return;
+        if (!ME || !aiEnabled) return; // skip if paused
         setTyping(c, true, member);
         const userText = opts.init ? '' : (hint || lastUserText(c) || '');
         const hist = historyText(c);
@@ -1092,9 +1035,10 @@
     }
 
     function aiReply(c, hint, replyToMsg) {
+        if (!aiEnabled) return; // skip if paused
         clearTimeout(c._tt);
         c._tt = setTimeout(async () => {
-            if (!ME) return;
+            if (!ME || !aiEnabled) return;
             if (c.isGroup) {
                 const txt = hint || lastUserText(c);
                 const mention = firstMention(txt);
@@ -1116,7 +1060,7 @@
     const lastPing = {};
     function recentThem(c) { const l = lastMsg(c); return l && l.from === 'them' && (Date.now() - l.t < 100000); }
     function autoTick() {
-        if (!ME || document.visibilityState === 'hidden') return;
+        if (!ME || document.visibilityState === 'hidden' || !aiEnabled) return;
         const dms = CONTACTS.filter(c => !c.isGroup);
         const useGroup = Math.random() < 0.28;
         let c, member;
@@ -1348,6 +1292,12 @@
         }
         else if (a === 'home') {
             window.location.href = 'personaManager.html';
+        }
+        else if (a === 'pause') {
+            togglePause();
+        }
+        else if (a === 'discuss') {
+            startDiscussion();
         }
         else if (a === 'clear') {
             const c = activeChat();
@@ -1685,7 +1635,6 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
         const picker = document.getElementById('picker');
         const pickerList = document.getElementById('pickerList');
         
-        // Show the regular persona picker
         if (pickerList) {
             const last = localStorage.getItem('mammoth_last_me');
             pickerList.innerHTML = Object.keys(PERSONAS).map(name => {
@@ -1708,16 +1657,14 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
         
         const picker = document.getElementById('picker');
         const pickerList = document.getElementById('pickerList');
-        if (pickerList) pickerList.innerHTML = ''; // hide the list
+        if (pickerList) pickerList.innerHTML = '';
         
-        // Update the picker head
         const mascot = document.getElementById('pickerMascot');
-        if (mascot) mascot.src = 'personasoi.png'; // use logo
+        if (mascot) mascot.src = 'personasoi.png';
         document.getElementById('pickerTitle').innerHTML = `Welcome, <span id="pickerUserName">${esc(userId)}</span>!`;
         document.getElementById('pickerUserName').textContent = userId;
         document.getElementById('pickerSub').textContent = 'It might take some time to blend in, but believe me, you\'ll have great fun while you work with us.';
         
-        // Build the welcome note
         const welcomeNote = document.getElementById('welcomeNote');
         if (welcomeNote) {
             welcomeNote.innerHTML = `
@@ -1732,112 +1679,104 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
             `;
         }
         
-        // Show the picker with the welcome screen
         if (picker) picker.classList.remove('hidden');
-        
-        // Set up slide to confirm
         setupSlideToConfirm(userId);
     }
     
     // ====== SLIDE TO CONFIRM ======
     function setupSlideToConfirm(userId) {
-    const slideContainer = document.getElementById('slideContainer');
-    const slideThumb = document.getElementById('slideThumb');
-    const slideLabel = document.getElementById('slideLabel');
-    const agreeCheck = document.getElementById('agreeCheck');
-    
-    if (!slideContainer || !slideThumb || !slideLabel) return;
-    
-    let isDragging = false;
-    let startX = 0;
-    let thumbLeft = 4;
-    
-    function resetSlider() {
-        thumbLeft = 4;
-        slideThumb.style.left = '4px';
-        slideLabel.textContent = 'Slide to enter the team →';
-        slideLabel.classList.remove('completed');
-        // Also make slider visually disabled if unchecked
-        if (!agreeCheck.checked) {
-            slideContainer.style.opacity = '0.5';
-            slideContainer.style.cursor = 'not-allowed';
-            slideThumb.style.background = 'var(--txt-2)';
-        } else {
-            slideContainer.style.opacity = '1';
-            slideContainer.style.cursor = 'pointer';
-            slideThumb.style.background = 'var(--accent)';
-        }
-    }
-    
-    function onStart(e) {
-        // ✅ Only allow dragging if agreed
-        if (!agreeCheck.checked) {
-            toastText('⚠️ Please agree to the terms first.');
-            return;
-        }
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const rect = slideContainer.getBoundingClientRect();
-        startX = clientX - rect.left - 22;
-        isDragging = true;
-        slideThumb.classList.add('dragging');
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup', onEnd);
-        document.addEventListener('touchmove', onMove, { passive: true });
-        document.addEventListener('touchend', onEnd);
-    }
-    
-    function onMove(e) {
-        if (!isDragging) return;
-        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-        const rect = slideContainer.getBoundingClientRect();
-        let newLeft = clientX - rect.left - 22;
-        const maxLeft = rect.width - 48;
-        newLeft = Math.max(4, Math.min(newLeft, maxLeft));
-        thumbLeft = newLeft;
-        slideThumb.style.left = newLeft + 'px';
-        
-        const progress = (newLeft - 4) / (maxLeft - 4);
-        if (progress > 0.5) {
-            slideLabel.textContent = 'Release to enter!';
-            slideLabel.classList.add('completed');
-        } else {
+        const slideContainer = document.getElementById('slideContainer');
+        const slideThumb = document.getElementById('slideThumb');
+        const slideLabel = document.getElementById('slideLabel');
+        const agreeCheck = document.getElementById('agreeCheck');
+
+        if (!slideContainer || !slideThumb || !slideLabel) return;
+
+        let isDragging = false;
+        let startX = 0;
+        let thumbLeft = 4;
+
+        function resetSlider() {
+            thumbLeft = 4;
+            slideThumb.style.left = '4px';
             slideLabel.textContent = 'Slide to enter the team →';
             slideLabel.classList.remove('completed');
+            if (!agreeCheck.checked) {
+                slideContainer.style.opacity = '0.5';
+                slideContainer.style.cursor = 'not-allowed';
+                slideThumb.style.background = 'var(--txt-2)';
+            } else {
+                slideContainer.style.opacity = '1';
+                slideContainer.style.cursor = 'pointer';
+                slideThumb.style.background = 'var(--accent)';
+            }
         }
-    }
-    
-    function onEnd() {
-        if (!isDragging) return;
-        isDragging = false;
-        slideThumb.classList.remove('dragging');
-        document.removeEventListener('mousemove', onMove);
-        document.removeEventListener('mouseup', onEnd);
-        document.removeEventListener('touchmove', onMove);
-        document.removeEventListener('touchend', onEnd);
-        
-        const rect = slideContainer.getBoundingClientRect();
-        const maxLeft = rect.width - 48;
-        
-        if (thumbLeft >= maxLeft - 4) {
-            proceedToGame(userId);
-            return;
-        } else {
+
+        function onStart(e) {
+            if (!agreeCheck.checked) {
+                toastText('⚠️ Please agree to the terms first.');
+                return;
+            }
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const rect = slideContainer.getBoundingClientRect();
+            startX = clientX - rect.left - 22;
+            isDragging = true;
+            slideThumb.classList.add('dragging');
+            document.addEventListener('mousemove', onMove);
+            document.addEventListener('mouseup', onEnd);
+            document.addEventListener('touchmove', onMove, { passive: true });
+            document.addEventListener('touchend', onEnd);
+        }
+
+        function onMove(e) {
+            if (!isDragging) return;
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            const rect = slideContainer.getBoundingClientRect();
+            let newLeft = clientX - rect.left - 22;
+            const maxLeft = rect.width - 48;
+            newLeft = Math.max(4, Math.min(newLeft, maxLeft));
+            thumbLeft = newLeft;
+            slideThumb.style.left = newLeft + 'px';
+
+            const progress = (newLeft - 4) / (maxLeft - 4);
+            if (progress > 0.5) {
+                slideLabel.textContent = 'Release to enter!';
+                slideLabel.classList.add('completed');
+            } else {
+                slideLabel.textContent = 'Slide to enter the team →';
+                slideLabel.classList.remove('completed');
+            }
+        }
+
+        function onEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            slideThumb.classList.remove('dragging');
+            document.removeEventListener('mousemove', onMove);
+            document.removeEventListener('mouseup', onEnd);
+            document.removeEventListener('touchmove', onMove);
+            document.removeEventListener('touchend', onEnd);
+
+            const rect = slideContainer.getBoundingClientRect();
+            const maxLeft = rect.width - 48;
+
+            if (thumbLeft >= maxLeft - 4) {
+                proceedToGame(userId);
+                return;
+            } else {
+                resetSlider();
+            }
+        }
+
+        slideContainer.addEventListener('mousedown', onStart);
+        slideContainer.addEventListener('touchstart', onStart, { passive: true });
+
+        agreeCheck.addEventListener('change', function() {
             resetSlider();
-        }
-    }
-    
-    // Attach events
-    slideContainer.addEventListener('mousedown', onStart);
-    slideContainer.addEventListener('touchstart', onStart, { passive: true });
-    
-    // Update slider when checkbox changes
-    agreeCheck.addEventListener('change', function() {
+        });
+
         resetSlider();
-    });
-    
-    // Initial state
-    resetSlider();
-}
+    }
     
     function proceedToGame(userId) {
         const agreeCheck = document.getElementById('agreeCheck');
@@ -1847,7 +1786,7 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
             return;
         }
         
-        // Play a success sound
+        // Play success sound
         try {
             const ctx = new (window.AudioContext || window.webkitAudioContext)();
             const osc = ctx.createOscillator();
@@ -1863,10 +1802,9 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
             osc.stop(ctx.currentTime + 0.25);
         } catch(e) {}
         
-        // Close picker and start the chat
         document.getElementById('picker').classList.add('hidden');
         if (ME && ME.name !== userId) {
-            choose(userId, true);
+            choose(userId, false);
         } else {
             fillEmpty();
             renderChatList();
@@ -1884,7 +1822,7 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
         });
     }
 
-    function choose(name, showWelcomeModal = false) {
+    function choose(name, showWelcome = false) {
         const p = PERSONAS[name];
         if (!p) { openPicker(); return; }
         ME = { name, flag: p.flag, role: p.role, tagline: p.tagline || p.vibe, vibe: p.vibe, firstName: name.split(' ')[0] };
@@ -1895,8 +1833,12 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
         closeChat();
         fillProfile(); fillEmpty(); renderChatList();
         startTimers();
-        setTimeout(() => toastText(` You're ${ME.firstName} now — Team Mammoth is online. Unlimited chat, no dead ends.`), 500);
-        setTimeout(() => toastText(had ? `💾 Loaded your saved chats as ${ME.firstName} — every message (yours & the team's) is kept per identity.` : `💾 Auto‑save ON as ${ME.firstName} — your history & the team's memory persist on this device.`), 1500);
+        // If first time and showWelcome is true, show welcome modal? Actually we now handle welcome in init separately.
+        // So no need here.
+        setTimeout(() => toastText(` You're ${ME.firstName} now — Team Mammoth is online.`), 500);
+        if (had) {
+            setTimeout(() => toastText(`💾 Loaded your saved chats as ${ME.firstName}.`), 1500);
+        }
     }
 
     function fillProfile() {
@@ -1936,19 +1878,36 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
         const urlParams = new URLSearchParams(window.location.search);
         let userId = urlParams.get('user_id') || urlParams.get('user');
 
-        // If no user specified or user not found, default to 'Sai Surya' or first persona
+        // If no user or not found, default to first persona (or "Sai Surya")
         if (!userId || !PERSONAS[userId]) {
             const firstKey = Object.keys(PERSONAS)[0];
             userId = firstKey || 'Sai Surya';
-            if (!PERSONAS[userId] && firstKey) userId = firstKey;
+        }
+        if (!PERSONAS[userId] && Object.keys(PERSONAS).length) {
+            userId = Object.keys(PERSONAS)[0];
         }
 
+        // Check if this is first time
+        const visitedKey = `visited_${userId}`;
+        const firstTime = !localStorage.getItem(visitedKey);
+
         if (PERSONAS[userId]) {
+            // Set ME
             choose(userId, false);
-            showWelcomeScreen(userId);
+            if (firstTime) {
+                // Show welcome screen with slide
+                showWelcomeScreen(userId);
+                localStorage.setItem(visitedKey, 'true');
+            } else {
+                // Go straight to chat
+                document.getElementById('picker').classList.add('hidden');
+                fillEmpty();
+                renderChatList();
+                startTimers();
+                toastText(`👋 Welcome back, ${userId}!`);
+            }
             localStorage.setItem('mammoth_last_me', userId);
         } else {
-            // Fallback: open picker
             openPicker();
         }
 
