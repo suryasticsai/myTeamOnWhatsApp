@@ -863,18 +863,28 @@
     function startDiscussion() {
         const group = byId('mammoth');
         if (!group) { toastText('⚠️ Group chat not found.'); return; }
-        // Post a message from Raissa
+
         const topic = prompt('What topic should the team discuss?', 'Prod deployment this weekend – who can support?');
         if (!topic) return;
-        const msg = M('them', topic, new Date(), { member: 'Raissa' });
-        pushMessage(group, msg);
-        // After a delay, have others respond
+
+        // 1. Group message from Raissa
+        const groupMsg = M('them', topic, new Date(), { member: 'Raissa' });
+        pushMessage(group, groupMsg);
+
+        // 2. Personal DM from Raissa to the player
+        const playerDm = CONTACTS.find(c => !c.isGroup && c.name === ME.name);
+        if (playerDm) {
+            const dmMsg = M('them', `Hi ${ME.firstName}, I just asked the team about ${topic}. Would you be able to join the discussion in the group?`, new Date(), { member: 'Raissa' });
+            pushMessage(playerDm, dmMsg);
+        }
+
+        // 3. Sanchita asks the player in group (after delay)
         setTimeout(() => {
-            // Sanchita asks the player
             const ask = M('them', `@${ME.name} what do you think? Are you available?`, new Date(), { member: 'Sanchita' });
             pushMessage(group, ask);
         }, 2000);
-        // After a bit more, other characters chime in automatically (only if AI enabled)
+
+        // 4. Other members chime in (if AI enabled)
         if (aiEnabled) {
             setTimeout(() => {
                 const chars = AI().filter(n => n !== 'Raissa' && n !== 'Sanchita' && n !== ME.name);
@@ -1683,19 +1693,20 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
         setupSlideToConfirm(userId);
     }
     
-    // ====== SLIDE TO CONFIRM ======
+    // ====== SLIDE TO CONFIRM (FIXED VERSION) ======
     function setupSlideToConfirm(userId) {
         const slideContainer = document.getElementById('slideContainer');
         const slideThumb = document.getElementById('slideThumb');
         const slideLabel = document.getElementById('slideLabel');
         const agreeCheck = document.getElementById('agreeCheck');
-
+        
         if (!slideContainer || !slideThumb || !slideLabel) return;
-
+        
         let isDragging = false;
         let startX = 0;
         let thumbLeft = 4;
-
+        let maxLeft = 0;
+        
         function resetSlider() {
             thumbLeft = 4;
             slideThumb.style.left = '4px';
@@ -1711,7 +1722,7 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
                 slideThumb.style.background = 'var(--accent)';
             }
         }
-
+        
         function onStart(e) {
             if (!agreeCheck.checked) {
                 toastText('⚠️ Please agree to the terms first.');
@@ -1720,6 +1731,7 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const rect = slideContainer.getBoundingClientRect();
             startX = clientX - rect.left - 22;
+            maxLeft = rect.width - 48;
             isDragging = true;
             slideThumb.classList.add('dragging');
             document.addEventListener('mousemove', onMove);
@@ -1727,17 +1739,17 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
             document.addEventListener('touchmove', onMove, { passive: true });
             document.addEventListener('touchend', onEnd);
         }
-
+        
         function onMove(e) {
             if (!isDragging) return;
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
             const rect = slideContainer.getBoundingClientRect();
             let newLeft = clientX - rect.left - 22;
-            const maxLeft = rect.width - 48;
+            maxLeft = rect.width - 48;
             newLeft = Math.max(4, Math.min(newLeft, maxLeft));
             thumbLeft = newLeft;
             slideThumb.style.left = newLeft + 'px';
-
+            
             const progress = (newLeft - 4) / (maxLeft - 4);
             if (progress > 0.5) {
                 slideLabel.textContent = 'Release to enter!';
@@ -1747,7 +1759,7 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
                 slideLabel.classList.remove('completed');
             }
         }
-
+        
         function onEnd() {
             if (!isDragging) return;
             isDragging = false;
@@ -1756,28 +1768,36 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
             document.removeEventListener('mouseup', onEnd);
             document.removeEventListener('touchmove', onMove);
             document.removeEventListener('touchend', onEnd);
-
+            
             const rect = slideContainer.getBoundingClientRect();
-            const maxLeft = rect.width - 48;
-
-            if (thumbLeft >= maxLeft - 4) {
+            maxLeft = rect.width - 48;
+            
+            // Increased tolerance to 10px to ensure completion triggers
+            if (thumbLeft >= maxLeft - 10) {
+                console.log('✅ Slider completed, proceeding to game for:', userId);
                 proceedToGame(userId);
                 return;
             } else {
                 resetSlider();
             }
         }
-
+        
+        // Recalculate maxLeft on resize
+        window.addEventListener('resize', function() {
+            const rect = slideContainer.getBoundingClientRect();
+            maxLeft = rect.width - 48;
+        });
+        
         slideContainer.addEventListener('mousedown', onStart);
         slideContainer.addEventListener('touchstart', onStart, { passive: true });
-
+        
         agreeCheck.addEventListener('change', function() {
             resetSlider();
         });
-
+        
         resetSlider();
     }
-    
+
     function proceedToGame(userId) {
         const agreeCheck = document.getElementById('agreeCheck');
         if (!agreeCheck || !agreeCheck.checked) {
@@ -1788,7 +1808,7 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
         
         // Play success sound
         try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const ctx = new(window.AudioContext || window.webkitAudioContext)();
             const osc = ctx.createOscillator();
             const gain = ctx.createGain();
             osc.type = 'square';
@@ -1800,26 +1820,21 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
             osc.connect(gain).connect(ctx.destination);
             osc.start();
             osc.stop(ctx.currentTime + 0.25);
-        } catch(e) {}
+        } catch (e) {}
         
+        // Hide picker
         document.getElementById('picker').classList.add('hidden');
-        if (ME && ME.name !== userId) {
+        
+        // If ME is not set (shouldn't happen), set it now
+        if (!ME || ME.name !== userId) {
             choose(userId, false);
         } else {
+            // Already set, just show the chat
             fillEmpty();
             renderChatList();
             startTimers();
             toastText(`🎮 Welcome ${userId}! You're now part of Team Mammoth.`);
         }
-    }
-    
-    const pickerList = document.getElementById('pickerList');
-    if (pickerList) {
-        pickerList.addEventListener('click', e => { 
-            const r = e.target.closest('.pk-row'); 
-            if (!r) return; 
-            choose(r.dataset.name, false); 
-        });
     }
 
     function choose(name, showWelcome = false) {
@@ -1833,8 +1848,6 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
         closeChat();
         fillProfile(); fillEmpty(); renderChatList();
         startTimers();
-        // If first time and showWelcome is true, show welcome modal? Actually we now handle welcome in init separately.
-        // So no need here.
         setTimeout(() => toastText(` You're ${ME.firstName} now — Team Mammoth is online.`), 500);
         if (had) {
             setTimeout(() => toastText(`💾 Loaded your saved chats as ${ME.firstName}.`), 1500);
@@ -1869,90 +1882,104 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
     }
 
     /* ============ INIT ============ */
-    async function initApp() {
-  console.log('🚀 Initializing chat...');
-  const list = await loadPersonas();
-  buildPersonas(list);
-  initPFall();
-  
-  const urlParams = new URLSearchParams(window.location.search);
-  let userId = urlParams.get('user_id') || urlParams.get('user');
-  
-  // Prioritise URL parameter
-  if (userId && PERSONAS[userId]) {
-    // valid user
-  } else if (userId && !PERSONAS[userId]) {
-    // specified not found – fallback to first
-    const firstKey = Object.keys(PERSONAS)[0];
-    userId = firstKey || 'Sai Surya';
-  } else {
-    const firstKey = Object.keys(PERSONAS)[0];
-    userId = firstKey || 'Sai Surya';
-  }
-  
-  if (!PERSONAS[userId]) {
-    userId = Object.keys(PERSONAS)[0];
-  }
-  
-  const visitedKey = `visited_${userId}`;
-  const firstTime = !localStorage.getItem(visitedKey);
-  
-  if (PERSONAS[userId]) {
-    choose(userId, false);
-    if (firstTime) {
-      showWelcomeScreen(userId);
-      localStorage.setItem(visitedKey, 'true');
-    } else {
-      document.getElementById('picker').classList.add('hidden');
-      fillEmpty();
-      renderChatList();
-      startTimers();
-      toastText(`👋 Welcome back, ${userId}!`);
+    /* ============ INIT ============ */
+async function initApp() {
+    console.log('🚀 Initializing chat...');
+    const list = await loadPersonas();
+    buildPersonas(list);
+    initPFall();
+    
+    const urlParams = new URLSearchParams(window.location.search);
+    let userId = urlParams.get('user_id') || urlParams.get('user');
+    
+    // ✅ FIX: Look up by ID instead of name
+    // First, try to find the persona by ID
+    let persona = null;
+    if (userId) {
+        // Find by ID (case-insensitive)
+        persona = Object.values(PERSONAS).find(p =>
+            p.id && p.id.toLowerCase() === userId.toLowerCase()
+        );
     }
+    
+    if (persona) {
+        // Found by ID – use it
+        console.log('✅ User from URL (by ID):', persona.id, '→', persona.name);
+        userId = persona.id;
+    } else if (userId && !persona) {
+        // URL had a user but not found by ID – fallback to first
+        const firstKey = Object.keys(PERSONAS)[0];
+        userId = firstKey;
+        console.warn('⚠️ User not found by ID, falling back to:', userId);
+    } else {
+        // No user specified – use first persona
+        const firstKey = Object.keys(PERSONAS)[0];
+        userId = firstKey;
+        console.log('ℹ️ No user specified, using default:', userId);
+    }
+    
+    if (!PERSONAS[userId]) {
+        userId = Object.keys(PERSONAS)[0];
+    }
+    
+    // Force set ME using the persona ID
+    choose(userId, false);
+    
+    const visitedKey = `visited_${userId}`;
+    const firstTime = !localStorage.getItem(visitedKey);
+    
+    if (firstTime) {
+        showWelcomeScreen(userId);
+        localStorage.setItem(visitedKey, 'true');
+    } else {
+        document.getElementById('picker').classList.add('hidden');
+        fillEmpty();
+        renderChatList();
+        startTimers();
+        toastText(`👋 Welcome back, ${userId}!`);
+    }
+    
     localStorage.setItem('mammoth_last_me', userId);
-  } else {
-    openPicker();
-  }
-  
-  if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
+    if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
 }
 
-function startDiscussion() {
-  const group = byId('mammoth');
-  if (!group) { toastText('⚠️ Group chat not found.'); return; }
-  
-  const topic = prompt('What topic should the team discuss?', 'Prod deployment this weekend – who can support?');
-  if (!topic) return;
-  
-  // 1. Group message from Raissa
-  const groupMsg = M('them', topic, new Date(), { member: 'Raissa' });
-  pushMessage(group, groupMsg);
-  
-  // 2. Personal DM from Raissa to the player
-  const playerDm = CONTACTS.find(c => !c.isGroup && c.name === ME.name);
-  if (playerDm) {
-    const dmMsg = M('them', `Hi ${ME.firstName}, I just asked the team about ${topic}. Would you be able to join the discussion in the group?`, new Date(), { member: 'Raissa' });
-    pushMessage(playerDm, dmMsg);
-  }
-  
-  // 3. Sanchita asks the player in group (after delay)
-  setTimeout(() => {
-    const ask = M('them', `@${ME.name} what do you think? Are you available?`, new Date(), { member: 'Sanchita' });
-    pushMessage(group, ask);
-  }, 2000);
-  
-  // 4. Other members chime in (if AI enabled)
-  if (aiEnabled) {
-    setTimeout(() => {
-      const chars = AI().filter(n => n !== 'Raissa' && n !== 'Sanchita' && n !== ME.name);
-      if (chars.length) {
-        const randChar = chars[Math.floor(Math.random() * chars.length)];
-        const reply = M('them', `I'm ${Math.random() > 0.5 ? 'in' : 'out'} for this one.`, new Date(), { member: randChar });
-        pushMessage(group, reply);
-      }
-    }, 4000);
-  }
+function choose(id, showWelcome = false) {
+    // ✅ FIX: Find persona by ID
+    const p = PERSONAS[id];
+    if (!p) {
+        console.error('❌ Persona not found for ID:', id);
+        openPicker();
+        return;
+    }
+    
+    // Set ME with the persona data
+    ME = {
+        name: p.name,
+        flag: p.flag,
+        role: p.role,
+        tagline: p.tagline || p.vibe,
+        vibe: p.vibe,
+        firstName: p.name.split(' ')[0],
+        id: p.id // Store the ID for reference
+    };
+    
+    localStorage.setItem('mammoth_last_me', id);
+    buildContacts();
+    const had = loadHistoryFor();
+    document.getElementById('picker').classList.add('hidden');
+    closeChat();
+    fillProfile();
+    fillEmpty();
+    renderChatList();
+    startTimers();
+    
+    setTimeout(() => toastText(` You're ${ME.firstName} now — Team Mammoth is online.`), 500);
+    if (had) {
+        setTimeout(() => toastText(`💾 Loaded your saved chats as ${ME.firstName}.`), 1500);
+    }
 }
+
+    document.addEventListener('DOMContentLoaded', initApp);
 </script>
 </body>
 </html>
