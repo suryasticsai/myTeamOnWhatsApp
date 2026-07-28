@@ -767,6 +767,15 @@ function loadTasks() {
                 try { taskCompletion = JSON.parse(saved); } catch(e) {}
             }
 
+            // ===== NEW: Pass ALL tasks to the Updates section =====
+            if (window.Updates && typeof window.Updates.setTasks === 'function') {
+                window.Updates.setTasks(data.tasks);
+                console.log('[loadTasks] All tasks passed to Updates.');
+            } else {
+                console.warn('[loadTasks] Updates module not available yet.');
+            }
+
+            // --- Existing user‑specific filtering and rendering ---
             const nameLower = ME ? ME.name.toLowerCase() : '';
             const userTasks = data.tasks.filter(task => {
                 if (!task.assigned_to) return false;
