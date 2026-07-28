@@ -899,7 +899,7 @@
         let quoteCtx = '';
         if (replyToMsg) {
             const who = replyToMsg.from === 'me' ? ME.name : (replyToMsg.member || otherName);
-            quoteCtx = `\nYou are replying to this specific message from ${who}: "${replyToMsg.text || mediaLabel(replyToMsg.type)}"\nMake your reply a direct, relevant response to that exact message.`;
+            quoteCtx = `\nYou are replying to this specific message from ${who}: "${replyToMsg.text || mediaLabel(replyToMsg.type)}"\nMake your reply a direct, relevant response to that exact message.`; 
         }
 
         let prompt = tpl
@@ -1870,51 +1870,89 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
 
     /* ============ INIT ============ */
     async function initApp() {
-        console.log('🚀 Initializing chat...');
-        const list = await loadPersonas();
-        buildPersonas(list);
-        initPFall();
-
-        const urlParams = new URLSearchParams(window.location.search);
-        let userId = urlParams.get('user_id') || urlParams.get('user');
-
-        // If no user or not found, default to first persona (or "Sai Surya")
-        if (!userId || !PERSONAS[userId]) {
-            const firstKey = Object.keys(PERSONAS)[0];
-            userId = firstKey || 'Sai Surya';
-        }
-        if (!PERSONAS[userId] && Object.keys(PERSONAS).length) {
-            userId = Object.keys(PERSONAS)[0];
-        }
-
-        // Check if this is first time
-        const visitedKey = `visited_${userId}`;
-        const firstTime = !localStorage.getItem(visitedKey);
-
-        if (PERSONAS[userId]) {
-            // Set ME
-            choose(userId, false);
-            if (firstTime) {
-                // Show welcome screen with slide
-                showWelcomeScreen(userId);
-                localStorage.setItem(visitedKey, 'true');
-            } else {
-                // Go straight to chat
-                document.getElementById('picker').classList.add('hidden');
-                fillEmpty();
-                renderChatList();
-                startTimers();
-                toastText(`👋 Welcome back, ${userId}!`);
-            }
-            localStorage.setItem('mammoth_last_me', userId);
-        } else {
-            openPicker();
-        }
-
-        if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
+  console.log('🚀 Initializing chat...');
+  const list = await loadPersonas();
+  buildPersonas(list);
+  initPFall();
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  let userId = urlParams.get('user_id') || urlParams.get('user');
+  
+  // Prioritise URL parameter
+  if (userId && PERSONAS[userId]) {
+    // valid user
+  } else if (userId && !PERSONAS[userId]) {
+    // specified not found – fallback to first
+    const firstKey = Object.keys(PERSONAS)[0];
+    userId = firstKey || 'Sai Surya';
+  } else {
+    const firstKey = Object.keys(PERSONAS)[0];
+    userId = firstKey || 'Sai Surya';
+  }
+  
+  if (!PERSONAS[userId]) {
+    userId = Object.keys(PERSONAS)[0];
+  }
+  
+  const visitedKey = `visited_${userId}`;
+  const firstTime = !localStorage.getItem(visitedKey);
+  
+  if (PERSONAS[userId]) {
+    choose(userId, false);
+    if (firstTime) {
+      showWelcomeScreen(userId);
+      localStorage.setItem(visitedKey, 'true');
+    } else {
+      document.getElementById('picker').classList.add('hidden');
+      fillEmpty();
+      renderChatList();
+      startTimers();
+      toastText(`👋 Welcome back, ${userId}!`);
     }
+    localStorage.setItem('mammoth_last_me', userId);
+  } else {
+    openPicker();
+  }
+  
+  if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
+}
 
-    document.addEventListener('DOMContentLoaded', initApp);
+function startDiscussion() {
+  const group = byId('mammoth');
+  if (!group) { toastText('⚠️ Group chat not found.'); return; }
+  
+  const topic = prompt('What topic should the team discuss?', 'Prod deployment this weekend – who can support?');
+  if (!topic) return;
+  
+  // 1. Group message from Raissa
+  const groupMsg = M('them', topic, new Date(), { member: 'Raissa' });
+  pushMessage(group, groupMsg);
+  
+  // 2. Personal DM from Raissa to the player
+  const playerDm = CONTACTS.find(c => !c.isGroup && c.name === ME.name);
+  if (playerDm) {
+    const dmMsg = M('them', `Hi ${ME.firstName}, I just asked the team about ${topic}. Would you be able to join the discussion in the group?`, new Date(), { member: 'Raissa' });
+    pushMessage(playerDm, dmMsg);
+  }
+  
+  // 3. Sanchita asks the player in group (after delay)
+  setTimeout(() => {
+    const ask = M('them', `@${ME.name} what do you think? Are you available?`, new Date(), { member: 'Sanchita' });
+    pushMessage(group, ask);
+  }, 2000);
+  
+  // 4. Other members chime in (if AI enabled)
+  if (aiEnabled) {
+    setTimeout(() => {
+      const chars = AI().filter(n => n !== 'Raissa' && n !== 'Sanchita' && n !== ME.name);
+      if (chars.length) {
+        const randChar = chars[Math.floor(Math.random() * chars.length)];
+        const reply = M('them', `I'm ${Math.random() > 0.5 ? 'in' : 'out'} for this one.`, new Date(), { member: randChar });
+        pushMessage(group, reply);
+      }
+    }, 4000);
+  }
+}
 </script>
 </body>
 </html>
