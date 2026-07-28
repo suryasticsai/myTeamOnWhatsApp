@@ -6,250 +6,69 @@
     <title>Personasoi – Persona Manager</title>
     <style>
         /* ============================================================
-           TOKENS — Personasoi "Storm HUD" system
-           Void: near-black sky · Electric violet + volt cyan bolts
-           Paper: warm white halo for the logo/loader · Gold: rank flair
+           TOKENS — Personasoi "Storm HUD" system + SAO Overlay
         ============================================================ */
         :root {
-            --void: #05060d;
-            --void-2: #0b0f1e;
-            --storm-panel: #121a30;
-            --storm-panel-2: #182142;
-            --electric: #7c5cff;
-            --electric-glow: rgba(124, 92, 255, 0.45);
-            --volt: #00e5ff;
-            --volt-glow: rgba(0, 229, 255, 0.4);
-            --gold: #ffb547;
-            --paper: #f6f3ec;
-            --paper-dim: #dcd8cd;
-            --text-hi: #f5f6fb;
-            --text-mid: #aab0c8;
-            --text-on-paper: #1a1c27;
-            --text-on-paper-dim: #5b5f70;
-            --line: rgba(255, 255, 255, 0.12);
-            --danger: #ff5470;
-            --success: #2fe08a;
-            --font-display: 'Orbitron', sans-serif;
-            --font-head: 'Rajdhani', sans-serif;
-            --font-body: 'Inter', system-ui, sans-serif;
-            --font-mono: 'JetBrains Mono', monospace;
+            --void: #05060d; --void-2: #0b0f1e; --storm-panel: #121a30; --storm-panel-2: #182142;
+            --electric: #7c5cff; --electric-glow: rgba(124, 92, 255, 0.45);
+            --volt: #00e5ff; --volt-glow: rgba(0, 229, 255, 0.4); --gold: #ffb547;
+            --paper: #f6f3ec; --text-hi: #f5f6fb; --text-mid: #aab0c8;
+            --line: rgba(255, 255, 255, 0.12); --danger: #ff5470; --success: #2fe08a;
+            --font-display: 'Orbitron', sans-serif; --font-head: 'Rajdhani', sans-serif;
+            --font-body: 'Inter', system-ui, sans-serif; --font-mono: 'JetBrains Mono', monospace;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
         html { -webkit-tap-highlight-color: transparent; }
+        body { background: var(--void); color: var(--text-hi); min-height: 100vh; overflow-x: hidden; position: relative; font-family: var(--font-body); transition: background 0.3s, color 0.3s; }
 
-        body {
-            background: var(--void);
-            color: var(--text-hi);
-            min-height: 100vh;
-            overflow-x: hidden;
-            position: relative;
-            font-family: var(--font-body);
-        }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.001s !important; transition-duration: 0.001s !important; } }
 
-        @media (prefers-reduced-motion: reduce) {
-            *, *::before, *::after { animation-duration: 0.001s !important; animation-iteration-count: 1 !important; transition-duration: 0.001s !important; }
-        }
-
-        /* ====== SKY CANVAS (stars + storm clouds + lightning) ====== */
-        #skyCanvas {
-            position: fixed;
-            inset: 0;
-            z-index: -2;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse 120% 80% at 50% 100%, #0e1530 0%, var(--void) 65%);
-        }
-        .flash-overlay {
-            position: fixed;
-            inset: 0;
-            z-index: -1;
-            pointer-events: none;
-            background: radial-gradient(circle at 50% 20%, rgba(200, 215, 255, 0.9), transparent 65%);
-            opacity: 0;
-            mix-blend-mode: screen;
-        }
+        /* ====== SKY CANVAS & LIGHTNING ====== */
+        #skyCanvas { position: fixed; inset: 0; z-index: -2; background: radial-gradient(ellipse 120% 80% at 50% 100%, #0e1530 0%, var(--void) 65%); }
+        .flash-overlay { position: fixed; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(circle at 50% 20%, rgba(200, 215, 255, 0.9), transparent 65%); opacity: 0; mix-blend-mode: screen; }
         .flash-overlay.strike { animation: strike 0.55s ease-out; }
-        @keyframes strike {
-            0% { opacity: 0; }
-            8% { opacity: 0.9; }
-            14% { opacity: 0.15; }
-            20% { opacity: 0.7; }
-            30% { opacity: 0; }
-            100% { opacity: 0; }
-        }
+        @keyframes strike { 0% { opacity: 0; } 8% { opacity: 0.9; } 14% { opacity: 0.15; } 20% { opacity: 0.7; } 30% { opacity: 0; } 100% { opacity: 0; } }
 
-        /* ====== LOGO ORB (paper halo so any-background logos read clean) ====== */
-        .logo-orb {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            background: radial-gradient(circle at 35% 30%, #ffffff, var(--paper) 70%);
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.5) inset, 0 6px 24px rgba(0,0,0,0.35), 0 0 34px var(--electric-glow);
-            flex-shrink: 0;
-        }
-        .logo-orb img { object-fit: contain; }
-        .logo-orb.sm { width: 42px; height: 42px; }
-        .logo-orb.sm img { width: 26px; height: 26px; }
-        .logo-orb.lg { width: 132px; height: 132px; }
-        .logo-orb.lg img { width: 84px; height: 84px; }
+        /* ====== LOGO ORB ====== */
+        .logo-orb { position: relative; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff, var(--paper) 70%); box-shadow: 0 0 0 1px rgba(255,255,255,0.5) inset, 0 6px 24px rgba(0,0,0,0.35), 0 0 34px var(--electric-glow); flex-shrink: 0; cursor: pointer; transition: transform 0.2s; }
+        .logo-orb:hover { transform: scale(1.05); }
+        .logo-orb img { object-fit: contain; pointer-events: none; }
+        .logo-orb.sm { width: 42px; height: 42px; } .logo-orb.sm img { width: 26px; height: 26px; }
+        .logo-orb.lg { width: 132px; height: 132px; } .logo-orb.lg img { width: 84px; height: 84px; }
 
-        /* ====== LOADING SCREEN — "game boot" ====== */
-        #loadingScreen {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-            background: var(--void);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 1.75rem;
-            transition: opacity 0.7s ease, visibility 0.7s;
-            padding: 1.5rem;
-            text-align: center;
-        }
+        /* ====== LOADING SCREEN ====== */
+        #loadingScreen { position: fixed; inset: 0; z-index: 9999; background: var(--void); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.75rem; transition: opacity 0.7s ease, visibility 0.7s; padding: 1.5rem; text-align: center; }
         #loadingScreen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-        .radar-ring {
-            position: absolute;
-            border: 1px solid rgba(124,92,255,0.35);
-            border-radius: 50%;
-            animation: radarPulse 2.6s ease-out infinite;
-        }
-        .radar-ring.r2 { animation-delay: 0.9s; }
-        .radar-ring.r3 { animation-delay: 1.8s; }
-        @keyframes radarPulse {
-            0% { width: 132px; height: 132px; opacity: 0.7; }
-            100% { width: 340px; height: 340px; opacity: 0; }
-        }
+        .radar-ring { position: absolute; border: 1px solid rgba(124,92,255,0.35); border-radius: 50%; animation: radarPulse 2.6s ease-out infinite; }
+        .radar-ring.r2 { animation-delay: 0.9s; } .radar-ring.r3 { animation-delay: 1.8s; }
+        @keyframes radarPulse { 0% { width: 132px; height: 132px; opacity: 0.7; } 100% { width: 340px; height: 340px; opacity: 0; } }
         .logo-orb.lg { animation: bootPulse 2.2s ease-in-out infinite; }
-        @keyframes bootPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.04); }
-        }
-
-        .boot-title {
-            font-family: var(--font-display);
-            font-size: clamp(1.6rem, 6vw, 2.6rem);
-            font-weight: 900;
-            letter-spacing: 4px;
-            text-transform: uppercase;
-            background: linear-gradient(90deg, var(--text-hi), var(--volt) 50%, var(--electric));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .boot-tip {
-            font-family: var(--font-head);
-            font-size: 1rem;
-            color: var(--text-mid);
-            letter-spacing: 0.5px;
-            min-height: 1.4em;
-        }
-        .boot-track {
-            width: min(320px, 80vw);
-            height: 6px;
-            background: rgba(255,255,255,0.08);
-            border-radius: 3px;
-            overflow: hidden;
-            position: relative;
-        }
-        .boot-fill {
-            height: 100%;
-            width: 0%;
-            background: linear-gradient(90deg, var(--electric), var(--volt));
-            border-radius: 3px;
-            box-shadow: 0 0 14px var(--volt-glow);
-            transition: width 0.25s ease;
-        }
+        @keyframes bootPulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+        .boot-title { font-family: var(--font-display); font-size: clamp(1.6rem, 6vw, 2.6rem); font-weight: 900; letter-spacing: 4px; text-transform: uppercase; background: linear-gradient(90deg, var(--text-hi), var(--volt) 50%, var(--electric)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        .boot-tip { font-family: var(--font-head); font-size: 1rem; color: var(--text-mid); letter-spacing: 0.5px; min-height: 1.4em; }
+        .boot-track { width: min(320px, 80vw); height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; position: relative; }
+        .boot-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--electric), var(--volt)); border-radius: 3px; box-shadow: 0 0 14px var(--volt-glow); transition: width 0.25s ease; }
         .boot-pct { font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-mid); letter-spacing: 1px; }
-
-        .start-btn {
-            font-family: var(--font-head);
-            font-weight: 700;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-size: 1rem;
-            padding: 0.85rem 2.4rem;
-            border-radius: 999px;
-            border: 1px solid var(--volt);
-            background: transparent;
-            color: var(--volt);
-            cursor: pointer;
-            opacity: 0;
-            transform: translateY(8px);
-            transition: all 0.4s ease;
-            animation: startBlink 1.6s ease-in-out infinite;
-        }
+        .start-btn { font-family: var(--font-head); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; font-size: 1rem; padding: 0.85rem 2.4rem; border-radius: 999px; border: 1px solid var(--volt); background: transparent; color: var(--volt); cursor: pointer; opacity: 0; transform: translateY(8px); transition: all 0.4s ease; animation: startBlink 1.6s ease-in-out infinite; }
         .start-btn.show { opacity: 1; transform: translateY(0); }
         .start-btn:hover { background: var(--volt); color: #04121a; box-shadow: 0 0 30px var(--volt-glow); }
-        @keyframes startBlink {
-            0%, 100% { box-shadow: 0 0 6px var(--volt-glow); }
-            50% { box-shadow: 0 0 22px var(--volt-glow); }
-        }
+        @keyframes startBlink { 0%, 100% { box-shadow: 0 0 6px var(--volt-glow); } 50% { box-shadow: 0 0 22px var(--volt-glow); } }
 
         /* ====== MAIN APP LAYOUT ====== */
-        #appContainer {
-            opacity: 0;
-            transform: scale(0.98);
-            transition: opacity 0.7s ease, transform 0.7s ease;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
+        #appContainer { opacity: 0; transform: scale(0.98); transition: opacity 0.7s ease, transform 0.7s ease; min-height: 100vh; display: flex; flex-direction: column; }
         #appContainer.visible { opacity: 1; transform: scale(1); }
-
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            flex-wrap: wrap;
-            padding: 0.85rem 1.5rem;
-            background: linear-gradient(180deg, rgba(18,26,48,0.9), rgba(18,26,48,0.55));
-            backdrop-filter: blur(14px);
-            border-bottom: 1px solid var(--line);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        .header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 0.85rem 1.5rem; background: linear-gradient(180deg, rgba(18,26,48,0.9), rgba(18,26,48,0.55)); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; }
         .header-left { display: flex; align-items: center; gap: 0.85rem; }
-        .brand-text h1 {
-            font-family: var(--font-display);
-            font-size: 1.4rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: #fff;
-            line-height: 1;
-        }
-        .brand-text h1 .persona { color: var(--volt); }
-        .brand-text h1 .soi { color: var(--electric); }
+        .brand-text h1 { font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; letter-spacing: 1px; color: #fff; line-height: 1; }
+        .brand-text h1 .persona { color: var(--volt); } .brand-text h1 .soi { color: var(--electric); }
         .brand-text .tagline { font-family: var(--font-head); font-size: 0.7rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--text-mid); margin-top: 2px; }
-
         .header-right { display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap; }
         .user-info { display: flex; align-items: center; gap: 0.5rem; }
         .user-info img { width: 30px; height: 30px; border-radius: 50%; border: 2px solid var(--volt); }
         .username { font-size: 0.82rem; font-weight: 600; color: #fff; font-family: var(--font-head); }
-
-        .btn {
-            font-family: var(--font-head);
-            background: var(--electric);
-            color: #fff;
-            border: none;
-            padding: 0.55rem 1.15rem;
-            border-radius: 8px;
-            font-weight: 700;
-            letter-spacing: 0.3px;
-            cursor: pointer;
-            transition: all 0.2s;
-            font-size: 0.88rem;
-            box-shadow: 0 0 16px var(--electric-glow);
-        }
+        .btn { font-family: var(--font-head); background: var(--electric); color: #fff; border: none; padding: 0.55rem 1.15rem; border-radius: 8px; font-weight: 700; letter-spacing: 0.3px; cursor: pointer; transition: all 0.2s; font-size: 0.88rem; box-shadow: 0 0 16px var(--electric-glow); }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 0 26px var(--electric-glow); }
-        .btn:active { transform: translateY(0); }
         .btn-volt { background: var(--volt); color: #04121a; box-shadow: 0 0 16px var(--volt-glow); }
         .btn-danger { background: var(--danger); box-shadow: 0 0 15px rgba(255, 84, 112, 0.4); }
         .btn-secondary { background: rgba(255,255,255,0.08); border: 1px solid var(--line); box-shadow: none; }
@@ -258,351 +77,280 @@
         .btn-outline:hover { background: rgba(255,255,255,0.1); }
         .btn-icon { background: rgba(255,255,255,0.06); border: 1px solid var(--line); font-size: 1.05rem; cursor: pointer; padding: 0.45rem 0.6rem; border-radius: 8px; color: #fff; line-height: 1; }
         .btn-icon:hover { background: rgba(255,255,255,0.16); }
-
         main { max-width: 1280px; margin: 0 auto; padding: 1.75rem 1.25rem 3rem; flex: 1; width: 100%; }
-
-        .hud-status {
-            font-family: var(--font-head);
-            font-size: 0.95rem;
-            color: var(--text-mid);
-            margin: 0 0 1.1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
+        .hud-status { font-family: var(--font-head); font-size: 0.95rem; color: var(--text-mid); margin: 0 0 1.1rem; display: flex; align-items: center; gap: 0.5rem; }
         .toolbar { display: flex; gap: 0.65rem; flex-wrap: wrap; margin: 0 0 1.6rem; align-items: center; }
         .toolbar .spacer { flex: 1; }
         #countDisplay { font-family: var(--font-mono); font-size: 0.8rem; color: var(--volt); letter-spacing: 0.5px; white-space: nowrap; }
 
         /* ====== CHARACTER SELECT GRID ====== */
-        .persona-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.4rem;
+        .persona-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.4rem; }
+        @media (max-width: 700px) { .persona-grid { grid-template-columns: 1fr; } }
+        
+        .persona-card { 
+            position: relative; background: linear-gradient(160deg, var(--storm-panel), var(--storm-panel-2)); 
+            border-radius: 18px; padding: 1.4rem; border: 1px solid var(--line); 
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease; overflow: visible; 
         }
-        @media (max-width: 700px) {
-            .persona-grid { grid-template-columns: 1fr; }
-        }
-
-        .persona-card {
-            position: relative;
-            background: linear-gradient(160deg, var(--storm-panel), var(--storm-panel-2));
-            border-radius: 18px;
-            padding: 1.4rem;
-            border: 1px solid var(--line);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-            overflow: hidden;
-        }
-        .persona-card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border-radius: 18px;
-            padding: 1px;
-            background: linear-gradient(120deg, var(--electric), transparent 40%, var(--volt) 100%);
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-        }
-        .persona-card::after {
-            content: '';
-            position: absolute;
-            top: -60%; left: -20%;
-            width: 60%; height: 220%;
-            background: linear-gradient(120deg, transparent, rgba(255,255,255,0.14), transparent);
-            transform: rotate(20deg) translateX(-120%);
-            transition: transform 0.7s ease;
-            pointer-events: none;
-        }
-        .persona-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 16px 40px rgba(0,0,0,0.45), 0 0 22px var(--electric-glow);
-            border-color: transparent;
-        }
-        .persona-card:hover::before { opacity: 1; }
-        .persona-card:hover::after { transform: rotate(20deg) translateX(120%); }
-
-        .slot-tag {
-            position: absolute;
-            top: 0.9rem; right: 1rem;
-            font-family: var(--font-mono);
-            font-size: 0.68rem;
-            letter-spacing: 1px;
-            color: var(--text-mid);
-            background: rgba(0,0,0,0.25);
-            padding: 0.15rem 0.5rem;
-            border-radius: 6px;
-            border: 1px solid var(--line);
-        }
-
+        .persona-card::before { content: ''; position: absolute; inset: 0; border-radius: 18px; padding: 1px; background: linear-gradient(120deg, var(--electric), transparent 40%, var(--volt) 100%); -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+        .persona-card::after { content: ''; position: absolute; top: -60%; left: -20%; width: 60%; height: 220%; background: linear-gradient(120deg, transparent, rgba(255,255,255,0.14), transparent); transform: rotate(20deg) translateX(-120%); transition: transform 0.7s ease; pointer-events: none; }
+        .persona-card:hover { transform: translateY(-6px); box-shadow: 0 16px 40px rgba(0,0,0,0.45), 0 0 22px var(--electric-glow); border-color: transparent; }
+        .persona-card:hover::before { opacity: 1; } .persona-card:hover::after { transform: rotate(20deg) translateX(120%); }
+        
+        .slot-tag { position: absolute; top: 0.9rem; right: 1rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 1px; color: var(--text-mid); background: rgba(0,0,0,0.25); padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid var(--line); }
         .card-header { display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem; }
-        .avatar-circle {
-            width: 64px;
-            height: 64px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            background: linear-gradient(135deg, #4facfe 0%, #7c5cff 100%);
-            border: 3px solid rgba(255,255,255,0.8);
-            box-shadow: 0 4px 18px rgba(0,0,0,0.3), 0 0 0 4px rgba(255,255,255,0.05);
-            flex-shrink: 0;
-        }
+        .avatar-circle { width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2rem; background: linear-gradient(135deg, #4facfe 0%, #7c5cff 100%); border: 3px solid rgba(255,255,255,0.8); box-shadow: 0 4px 18px rgba(0,0,0,0.3), 0 0 0 4px rgba(255,255,255,0.05); flex-shrink: 0; }
         .avatar-circle.female { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
         .avatar-circle.male { background: linear-gradient(135deg, #4facfe 0%, #00d4ff 100%); }
-
         .card-title h3 { font-family: var(--font-head); font-size: 1.15rem; font-weight: 700; color: var(--text-hi); }
-        .role-badge {
-            display: inline-block;
-            margin-top: 0.3rem;
-            font-family: var(--font-mono);
-            font-size: 0.68rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            color: var(--void);
-            background: var(--gold);
-            padding: 0.15rem 0.5rem;
-            border-radius: 5px;
-            font-weight: 700;
-        }
-
+        .role-badge { display: inline-block; margin-top: 0.3rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.5px; text-transform: uppercase; color: var(--void); background: var(--gold); padding: 0.15rem 0.5rem; border-radius: 5px; font-weight: 700; }
         .field { font-size: 0.85rem; margin: 0.4rem 0; word-break: break-word; color: var(--text-mid); line-height: 1.4; }
         .field strong { color: var(--text-hi); font-family: var(--font-head); font-weight: 600; letter-spacing: 0.3px; }
-
-        .actions { margin-top: 1.1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; border-top: 1px dashed var(--line); padding-top: 0.9rem; }
+        
+        .actions { margin-top: 1.1rem; display: flex; gap: 0.5rem; flex-wrap: wrap; border-top: 1px dashed var(--line); padding-top: 0.9rem; align-items: center; }
         .actions .btn { font-size: 0.72rem; padding: 0.35rem 0.75rem; }
+        
+        /* SAO Style Green Play Button on Card */
+        .sao-play-btn {
+            width: 48px; height: 48px; border-radius: 50%; border: 2px solid var(--success);
+            background: radial-gradient(circle at 30% 30%, #00ffaa, #00cc6a);
+            color: #004d26; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.2s; margin-left: auto;
+            box-shadow: 0 0 15px rgba(47, 224, 138, 0.5);
+        }
+        .sao-play-btn:hover { transform: scale(1.1); box-shadow: 0 0 25px rgba(47, 224, 138, 0.8); }
+        .sao-play-btn svg { width: 24px; height: 24px; fill: currentColor; }
 
-        .empty-state {
-            text-align: center;
-            color: var(--text-mid);
-            padding: 5rem 1.5rem;
-            font-family: var(--font-head);
-            font-size: 1.15rem;
-            border: 1px dashed var(--line);
+        /* ====== EARTH-LIKE SPHERE JOYSTICK ====== */
+        #joystickBtn {
+            position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px;
+            z-index: 9999; cursor: pointer; user-select: none; touch-action: none;
+            perspective: 300px; transition: transform 0.2s;
+        }
+        #joystickBtn.hidden-joystick { display: none; }
+        
+        .earth-sphere {
+            width: 100%; height: 100%; position: relative; border-radius: 50%;
+            transform: rotateX(23.5deg);
+            animation: spinEarth 8s linear infinite;
+            transform-style: preserve-3d;
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3), 0 0 60px rgba(124, 92, 255, 0.2);
+            cursor: pointer;
+        }
+        .earth-sphere.paused { animation-play-state: paused; }
+        .earth-sphere.thunder {
+            animation: thunderShake 0.3s ease 3;
+            box-shadow: 0 0 60px rgba(255, 255, 200, 0.8), 0 0 120px rgba(255, 200, 100, 0.4);
+        }
+        @keyframes thunderShake {
+            0%, 100% { transform: rotateX(23.5deg) rotateY(0deg) translateX(0); }
+            25% { transform: rotateX(23.5deg) rotateY(5deg) translateX(-4px); }
+            75% { transform: rotateX(23.5deg) rotateY(-5deg) translateX(4px); }
+        }
+        
+        @keyframes spinEarth {
+            0% { transform: rotateX(23.5deg) rotateY(0deg); }
+            100% { transform: rotateX(23.5deg) rotateY(360deg); }
+        }
+        
+        .earth-surface {
+            position: absolute; inset: 0; border-radius: 50%;
+            background: radial-gradient(ellipse at 35% 40%, #1a8a5a, #0a4a3a 40%, #0a2a3a 70%, #0a1a2a);
+            overflow: hidden;
+            box-shadow: inset -10px -10px 30px rgba(0,0,0,0.6), inset 10px 10px 30px rgba(100,255,200,0.15);
+        }
+        .earth-surface::before {
+            content: ''; position: absolute; inset: 0; border-radius: 50%;
+            background: 
+                radial-gradient(ellipse 20% 15% at 40% 25%, #3a8a5a 0%, transparent 70%),
+                radial-gradient(ellipse 12% 18% at 32% 32%, #3a8a5a 0%, transparent 70%),
+                radial-gradient(ellipse 8% 10% at 58% 28%, #4a8a5a 0%, transparent 70%),
+                radial-gradient(ellipse 10% 18% at 55% 42%, #4a8a5a 0%, transparent 70%),
+                radial-gradient(ellipse 18% 12% at 65% 28%, #3a8a5a 0%, transparent 70%),
+                radial-gradient(ellipse 20% 15% at 72% 35%, #3a8a5a 0%, transparent 70%),
+                radial-gradient(ellipse 8% 6% at 78% 58%, #4a8a5a 0%, transparent 70%),
+                radial-gradient(ellipse 8% 18% at 30% 58%, #3a8a5a 0%, transparent 70%),
+                radial-gradient(ellipse 25% 6% at 50% 92%, #8a9aaa 0%, transparent 70%);
+            background-blend-mode: overlay;
+        }
+        .earth-surface::after {
+            content: ''; position: absolute; inset: 0; border-radius: 50%;
+            background: 
+                radial-gradient(ellipse 15% 8% at 45% 22%, rgba(255,255,255,0.25) 0%, transparent 70%),
+                radial-gradient(ellipse 20% 6% at 60% 35%, rgba(255,255,255,0.2) 0%, transparent 70%),
+                radial-gradient(ellipse 10% 12% at 30% 50%, rgba(255,255,255,0.15) 0%, transparent 70%),
+                radial-gradient(ellipse 25% 5% at 70% 55%, rgba(255,255,255,0.2) 0%, transparent 70%);
+            animation: cloudDrift 12s linear infinite;
+        }
+        @keyframes cloudDrift {
+            0% { transform: translateX(0%); }
+            50% { transform: translateX(5%); }
+            100% { transform: translateX(0%); }
+        }
+        
+        .glow-ring {
+            position: absolute; inset: -6px; border-radius: 50%;
+            border: 2px solid var(--volt);
+            opacity: 0.3;
+            animation: glowPulse 2s ease-in-out infinite;
+        }
+        @keyframes glowPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.05); }
+        }
+
+        .joystick-label {
+            position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+            font-family: var(--font-mono); font-size: 0.5rem; color: var(--success);
+            white-space: nowrap; text-shadow: 0 0 4px rgba(0,0,0,0.8);
+            pointer-events: none; opacity: 0.7;
+            letter-spacing: 0.5px;
+        }
+
+        /* ====== MENU MODAL (transparent glass, list style) ====== */
+        .menu-modal {
+            max-width: 320px; width: 100%;
+            background: rgba(18, 26, 48, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 16px;
+            padding: 1.5rem 0.5rem;
+            box-shadow: 0 24px 70px rgba(0,0,0,0.7), 0 0 40px var(--electric-glow);
+            animation: menuModalIn 0.25s cubic-bezier(0.3, 1.3, 0.5, 1) both;
         }
+        @keyframes menuModalIn {
+            from { opacity: 0; transform: scale(0.9) translateY(20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+        .menu-modal .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 0 1rem 0.75rem;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            margin-bottom: 0.5rem;
+        }
+        .menu-modal .modal-header h2 {
+            font-family: var(--font-display); font-size: 1rem; color: #fff;
+            letter-spacing: 1px; opacity: 0.8;
+        }
+        .menu-modal .modal-header button {
+            background: none; border: none; color: var(--text-mid); font-size: 1.2rem;
+            cursor: pointer; padding: 0.3rem; transition: color 0.2s;
+        }
+        .menu-modal .modal-header button:hover { color: #fff; }
+        .menu-item {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.7rem 1rem; margin: 0.2rem 0.5rem;
+            border-radius: 10px; cursor: pointer;
+            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+            color: var(--text-hi); font-family: var(--font-head);
+            font-size: 0.9rem; letter-spacing: 0.3px;
+            border: none; background: transparent; width: calc(100% - 1rem);
+            text-align: left;
+        }
+        .menu-item:hover { background: rgba(255,255,255,0.08); transform: translateX(4px); }
+        .menu-item:active {
+            transform: scale(0.97);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 20px var(--electric-glow);
+        }
+        .menu-item .icon { font-size: 1.1rem; width: 28px; text-align: center; flex-shrink: 0; }
+        .menu-item .shortcut { margin-left: auto; color: var(--text-mid); font-size: 0.65rem; font-family: var(--font-mono); opacity: 0.5; }
 
-        /* ====== MODALS (glass HUD panels) ====== */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(3, 4, 10, 0.82);
-            backdrop-filter: blur(6px);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 1rem;
-        }
+        /* ====== MODALS ====== */
+        .empty-state { text-align: center; color: var(--text-mid); padding: 5rem 1.5rem; font-family: var(--font-head); font-size: 1.15rem; border: 1px dashed var(--line); border-radius: 16px; }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(3, 4, 10, 0.82); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 1rem; }
         .modal-overlay.active { display: flex; }
-
-        .modal {
-            background: linear-gradient(165deg, var(--storm-panel), var(--storm-panel-2));
-            border-radius: 20px;
-            padding: 1.75rem;
-            max-width: 700px;
-            width: 100%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--line);
-            box-shadow: 0 24px 70px rgba(0,0,0,0.6), 0 0 40px var(--electric-glow);
-        }
+        .modal { background: linear-gradient(165deg, var(--storm-panel), var(--storm-panel-2)); border-radius: 20px; padding: 1.75rem; max-width: 700px; width: 100%; max-height: 90vh; overflow-y: auto; border: 1px solid var(--line); box-shadow: 0 24px 70px rgba(0,0,0,0.6), 0 0 40px var(--electric-glow); }
         .modal h2 { font-family: var(--font-display); font-size: 1.2rem; letter-spacing: 1px; color: #fff; margin-bottom: 0.25rem; }
         .modal .sub { font-family: var(--font-head); font-size: 0.8rem; color: var(--text-mid); margin-bottom: 1rem; letter-spacing: 0.4px; }
         .modal label { display: block; font-family: var(--font-head); font-weight: 600; letter-spacing: 0.3px; margin: 0.85rem 0 0.3rem; font-size: 0.85rem; color: var(--text-mid); text-transform: uppercase; }
-        .modal input, .modal textarea, .modal select {
-            width: 100%;
-            padding: 0.65rem 0.75rem;
-            border: 1px solid var(--line);
-            border-radius: 9px;
-            font-size: 0.9rem;
-            font-family: var(--font-body);
-            background: rgba(255,255,255,0.06);
-            color: var(--text-hi);
-            transition: border-color 0.3s, box-shadow 0.3s;
-        }
-        .modal input::placeholder, .modal textarea::placeholder { color: rgba(255,255,255,0.3); }
-        .modal input:focus, .modal textarea:focus, .modal select:focus {
-            outline: none;
-            border-color: var(--volt);
-            box-shadow: 0 0 0 3px var(--volt-glow);
-        }
-        .modal select option { background: var(--storm-panel); color: var(--text-hi); }
+        .modal input, .modal textarea, .modal select { width: 100%; padding: 0.65rem 0.75rem; border: 1px solid var(--line); border-radius: 9px; font-size: 0.9rem; font-family: var(--font-body); background: rgba(255,255,255,0.06); color: var(--text-hi); transition: border-color 0.3s, box-shadow 0.3s; }
+        .modal input:focus, .modal textarea:focus, .modal select:focus { outline: none; border-color: var(--volt); box-shadow: 0 0 0 3px var(--volt-glow); }
         .modal textarea { min-height: 70px; resize: vertical; }
         .modal-actions { display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end; }
-
-        /* Sims-style gender/avatar selector */
         .avatar-selector { display: flex; gap: 1rem; margin: 0.5rem 0 1rem; }
-        .avatar-option {
-            flex: 1;
-            padding: 1.1rem 0.75rem;
-            border: 2px solid var(--line);
-            border-radius: 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.25s;
-            background: rgba(255,255,255,0.04);
-            position: relative;
-        }
+        .avatar-option { flex: 1; padding: 1.1rem 0.75rem; border: 2px solid var(--line); border-radius: 16px; text-align: center; cursor: pointer; transition: all 0.25s; background: rgba(255,255,255,0.04); position: relative; }
         .avatar-option:hover { border-color: var(--electric); background: rgba(124,92,255,0.1); }
-        .avatar-option.selected {
-            border-color: var(--volt);
-            background: rgba(0,229,255,0.1);
-            box-shadow: 0 0 0 3px var(--volt-glow), 0 0 24px var(--volt-glow);
-        }
-        .avatar-option .avatar-preview {
-            width: 68px; height: 68px;
-            margin: 0 auto 0.6rem;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.1rem;
-            border: 3px solid rgba(255,255,255,0.7);
-            transition: transform 0.25s ease;
-        }
+        .avatar-option.selected { border-color: var(--volt); background: rgba(0,229,255,0.1); box-shadow: 0 0 0 3px var(--volt-glow), 0 0 24px var(--volt-glow); }
+        .avatar-option .avatar-preview { width: 68px; height: 68px; margin: 0 auto 0.6rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.1rem; border: 3px solid rgba(255,255,255,0.7); transition: transform 0.25s ease; }
         .avatar-option[data-gender="male"] .avatar-preview { background: linear-gradient(135deg, #4facfe 0%, #00d4ff 100%); }
         .avatar-option[data-gender="female"] .avatar-preview { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
         .avatar-option.selected .avatar-preview { transform: scale(1.08) rotate(-3deg); }
         .avatar-option .label { font-family: var(--font-head); font-size: 0.85rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; color: var(--text-hi); }
         .avatar-option .check { position: absolute; top: 0.5rem; right: 0.6rem; font-size: 0.9rem; color: var(--volt); opacity: 0; transition: opacity 0.2s; }
         .avatar-option.selected .check { opacity: 1; }
-
-        .ai-section {
-            background: linear-gradient(135deg, rgba(124,92,255,0.12), rgba(0,229,255,0.06));
-            padding: 1rem;
-            border-radius: 14px;
-            margin-bottom: 1rem;
-            border: 1px dashed var(--electric);
-        }
+        .ai-section { background: linear-gradient(135deg, rgba(124,92,255,0.12), rgba(0,229,255,0.06)); padding: 1rem; border-radius: 14px; margin-bottom: 1rem; border: 1px dashed var(--electric); }
         .ai-section-title { font-family: var(--font-head); font-weight: 700; letter-spacing: 0.5px; color: var(--volt); font-size: 0.9rem; }
         .ai-row { display: flex; gap: 0.5rem; align-items: flex-start; margin-top: 0.5rem; }
         .ai-row textarea { flex: 1; min-height: 60px; }
-
         .field-with-tag { display: flex; align-items: center; gap: 0.5rem; }
-        .ai-tag {
-            font-family: var(--font-mono);
-            font-size: 0.65rem;
-            background: var(--electric);
-            color: #fff;
-            padding: 0.1rem 0.5rem;
-            border-radius: 10px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
+        .ai-tag { font-family: var(--font-mono); font-size: 0.65rem; background: var(--electric); color: #fff; padding: 0.1rem 0.5rem; border-radius: 10px; opacity: 0; transition: opacity 0.3s; }
         .ai-tag.show { opacity: 1; }
         .ai-highlight { border-color: var(--electric) !important; box-shadow: 0 0 0 3px var(--electric-glow) !important; }
-
         .pref-row { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid var(--line); }
         .pref-row:last-child { border-bottom: none; }
         .pref-row label { margin: 0; text-transform: none; font-size: 0.9rem; color: var(--text-hi); }
         .toggle-group { display: flex; align-items: center; gap: 0.75rem; }
+        .toggle-group input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--volt); cursor: pointer; }
 
         /* ====== TOAST ====== */
-        .toast {
-            position: fixed;
-            bottom: 1.75rem;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(18, 26, 48, 0.95);
-            color: #fff;
-            padding: 0.75rem 1.5rem;
-            border-radius: 10px;
-            font-family: var(--font-head);
-            font-weight: 600;
-            letter-spacing: 0.3px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 2000;
-            pointer-events: none;
-            border: 1px solid var(--line);
-            max-width: 90vw;
-            text-align: center;
-        }
-        .toast.show { opacity: 1; }
-        .toast.error { background: rgba(255, 84, 112, 0.95); }
-        .toast.success { background: rgba(47, 224, 138, 0.95); color: #04211a; }
-
+        .toast { position: fixed; bottom: 1.75rem; left: 50%; transform: translateX(-50%); background: rgba(18, 26, 48, 0.95); color: #fff; padding: 0.75rem 1.5rem; border-radius: 10px; font-family: var(--font-head); font-weight: 600; letter-spacing: 0.3px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); opacity: 0; transition: opacity 0.3s; z-index: 2000; pointer-events: none; border: 1px solid var(--line); max-width: 90vw; text-align: center; }
+        .toast.show { opacity: 1; } .toast.error { background: rgba(255, 84, 112, 0.95); } .toast.success { background: rgba(47, 224, 138, 0.95); color: #04211a; }
         .file-input-wrapper { display: inline-block; position: relative; }
         .file-input-wrapper input[type="file"] { position: absolute; left: 0; top: 0; opacity: 0; width: 100%; height: 100%; cursor: pointer; }
-
-        footer {
-            background: linear-gradient(180deg, rgba(11,15,30,0.4), rgba(5,6,13,0.95));
-            backdrop-filter: blur(10px);
-            color: var(--text-mid);
-            padding: 2rem 1.5rem;
-            margin-top: auto;
-            border-top: 1px solid var(--line);
-        }
+        footer { background: linear-gradient(180deg, rgba(11,15,30,0.4), rgba(5,6,13,0.95)); backdrop-filter: blur(10px); color: var(--text-mid); padding: 2rem 1.5rem; margin-top: auto; border-top: 1px solid var(--line); }
         .footer-inner { max-width: 1280px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem; }
-        .footer-logo { display: flex; align-items: center; gap: 0.75rem; }
+        .footer-logo { display: flex; align-items: center; gap: 0.75rem; cursor: pointer; }
         .footer-logo span { font-family: var(--font-display); font-weight: 800; letter-spacing: 0.5px; color: #fff; }
         .footer-socials { display: flex; gap: 1.1rem; flex-wrap: wrap; }
         .footer-socials a { color: var(--text-mid); text-decoration: none; font-size: 0.82rem; display: flex; align-items: center; gap: 0.4rem; transition: color 0.2s; font-family: var(--font-head); }
         .footer-socials a:hover { color: var(--volt); }
         .footer-socials svg { width: 17px; height: 17px; fill: currentColor; }
-
-        @media (max-width: 640px) {
-            .ai-row { flex-direction: column; }
-            .header { flex-direction: column; align-items: stretch; }
-            .header-right { justify-content: flex-start; }
-            .footer-inner { flex-direction: column; text-align: center; }
-            .footer-socials { justify-content: center; }
+        @media (max-width: 640px) { .ai-row { flex-direction: column; } .header { flex-direction: column; align-items: stretch; } .header-right { justify-content: flex-start; } .footer-inner { flex-direction: column; text-align: center; } .footer-socials { justify-content: center; } }
+        
+        /* Character Select Modal Overlay */
+        #charSelectModal { 
+            position: fixed; inset: 0; z-index: 10000; background: rgba(5,6,13,0.95); backdrop-filter: blur(8px);
+            display: none; align-items: center; justify-content: center; padding: 2rem; overflow-y: auto;
         }
-
-        /* ====== STICKY PLAY BUTTON ====== */
-        .sticky-play-btn {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 9998;
-            background: var(--electric);
-            color: #fff;
-            border: none;
-            padding: 0.85rem 2rem;
-            border-radius: 999px;
-            font-family: var(--font-head);
-            font-weight: 700;
-            font-size: 1.05rem;
-            letter-spacing: 1px;
-            cursor: pointer;
-            box-shadow: 0 0 25px var(--electric-glow), 0 8px 32px rgba(0,0,0,0.5);
-            transition: all 0.3s ease;
-            animation: pulseGlow 2s ease-in-out infinite;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        #charSelectModal.active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .cs-container { max-width: 1000px; width: 100%; }
+        .cs-header { text-align: center; margin-bottom: 2rem; }
+        .cs-header h2 { font-family: var(--font-display); font-size: 2rem; color: #fff; margin-bottom: 0.5rem; }
+        .cs-header p { color: var(--text-mid); font-family: var(--font-head); }
+        .cs-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.25rem; }
+        .cs-card { 
+            background: linear-gradient(160deg, var(--storm-panel), var(--storm-panel-2)); border-radius: 16px; padding: 1.5rem;
+            border: 1px solid var(--line); transition: all 0.3s; cursor: pointer; text-align: center;
         }
-        .sticky-play-btn:hover {
-            transform: scale(1.08) translateY(-3px);
-            box-shadow: 0 0 45px var(--volt-glow), 0 12px 40px rgba(0,0,0,0.6);
-            background: var(--volt);
-            color: #04121a;
+        .cs-card:hover { transform: translateY(-5px); border-color: var(--volt); box-shadow: 0 0 20px var(--volt-glow); }
+        .cs-avatar { width: 70px; height: 70px; border-radius: 50%; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; font-size: 2.2rem; border: 3px solid rgba(255,255,255,0.8); }
+        .cs-name { font-family: var(--font-head); font-size: 1.3rem; font-weight: 700; color: #fff; margin-bottom: 0.25rem; }
+        .cs-role { font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; font-weight: 700; }
+        .cs-play { 
+            width: 100%; padding: 0.7rem; border: none; border-radius: 8px; background: var(--electric); color: #fff;
+            font-family: var(--font-head); font-weight: 700; font-size: 0.95rem; cursor: pointer; transition: all 0.2s;
         }
-        .sticky-play-btn:active { transform: scale(0.96); }
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 25px var(--electric-glow), 0 8px 32px rgba(0,0,0,0.5); }
-            50% { box-shadow: 0 0 45px var(--volt-glow), 0 0 70px var(--electric-glow), 0 8px 32px rgba(0,0,0,0.5); }
+        .cs-play:hover { background: var(--volt); color: #04121a; transform: scale(1.03); }
+        .cs-close { 
+            position: absolute; top: 1.5rem; right: 1.5rem; background: transparent; border: 1px solid var(--line);
+            color: var(--text-mid); width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 1.2rem;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
         }
-        @media (max-width: 640px) {
-            .sticky-play-btn { bottom: 1.25rem; right: 1.25rem; padding: 0.7rem 1.5rem; font-size: 0.9rem; }
-        }
+        .cs-close:hover { background: rgba(255,255,255,0.1); color: #fff; border-color: #fff; }
     </style>
 </head>
 <body>
-    <!-- ====== ANIMATED SKY (stars, storm clouds, lightning) ====== -->
+    <!-- ====== ANIMATED SKY ====== -->
     <canvas id="skyCanvas"></canvas>
     <div class="flash-overlay" id="flashOverlay"></div>
 
     <!-- ====== LOADING SCREEN ====== -->
     <div id="loadingScreen">
         <div style="position:relative; display:flex; align-items:center; justify-content:center;">
-            <div class="radar-ring"></div>
-            <div class="radar-ring r2"></div>
-            <div class="radar-ring r3"></div>
+            <div class="radar-ring"></div><div class="radar-ring r2"></div><div class="radar-ring r3"></div>
             <div class="logo-orb lg"><img src="personasoi.png" alt="Personasoi logo" /></div>
         </div>
         <div class="boot-title">Personasoi</div>
@@ -629,8 +377,8 @@
                 </div>
                 <button class="btn btn-secondary" id="loginBtn">🔑 Sign in</button>
                 <button class="btn btn-danger" id="logoutBtn" style="display:none;">Sign out</button>
-                <button class="btn" id="pushToGithubBtn" style="display:none;" title="Save personas to GitHub">💾 Save to Repo</button>
-                <button class="btn-icon" id="settingsBtn" title="Preferences">️⚙️</button>
+                <button class="btn" id="pushToGithubBtn" style="display:none;" title="Save personas to GitHub">💾 Auto Save</button>
+                <button class="btn-icon" id="settingsBtn" title="Preferences">⚙️</button>
             </div>
         </header>
 
@@ -639,8 +387,8 @@
             <div class="toolbar">
                 <button class="btn" id="addBtn">➕ New Character</button>
                 <button class="btn btn-secondary" id="autoCreateBtn">🎲 Quick Sample</button>
-                <button class="btn" id="batchBtn">📋 Batch Import</button>
-                <button class="btn btn-outline" id="exportBtn">📥 Export JSON</button>
+                <button class="btn" id="batchBtn"> Batch Import</button>
+                <button class="btn btn-outline" id="exportBtn"> Export JSON</button>
                 <span class="file-input-wrapper">
                     <button class="btn btn-outline">📤 Import JSON</button>
                     <input type="file" id="importInput" accept=".json" />
@@ -653,12 +401,13 @@
 
         <footer>
             <div class="footer-inner">
-                <div class="footer-logo">
+                <div class="footer-logo" id="footerLogo">
                     <div class="logo-orb sm"><img src="personasoi.png" alt="Personasoi" /></div>
                     <span><span class="persona" style="color:var(--volt)">Persona</span><span class="soi" style="color:var(--electric)">soi</span></span>
                 </div>
                 <div class="footer-socials">
                     <a href="https://github.com/suryasticsai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg> GitHub</a>
+                    <a href="https://linkedin.com/in/suryasticsai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg> LinkedIn</a>
                     <a href="https://instagram.com/suryasticsai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg> Instagram</a>
                     <a href="https://medium.com/@suryasticsai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12zM20.96 12c0 3.54-1.51 6.42-3.38 6.42s-3.38-2.88-3.38-6.42 1.51-6.42 3.38-6.42 3.38 2.88 3.38 6.42zM24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12z"/></svg> Medium</a>
                     <a href="https://huggingface.co/suryasticsai" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="8.5" cy="10" r="1.5" fill="currentColor"/><circle cx="15.5" cy="10" r="1.5" fill="currentColor"/><path d="M9 14c1 1.5 5 1.5 6 0" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> HuggingFace</a>
@@ -668,96 +417,82 @@
         </footer>
     </div>
 
-    <!-- ====== STICKY PLAY BUTTON ====== -->
-    <button class="sticky-play-btn" id="playGameBtn" title="Launch the full simulation">
-        ▶ Play Game
-    </button>
+    <!-- ====== EARTH SPHERE JOYSTICK ====== -->
+    <div id="joystickBtn" title="System Menu">
+        <div class="joystick-label">SYSTEM</div>
+        <div class="earth-sphere" id="earthSphere">
+            <div class="glow-ring"></div>
+            <div class="earth-surface"></div>
+        </div>
+    </div>
 
-    <!-- ====== MODALS ====== -->
+    <!-- ====== MENU MODAL (click on sphere) ====== -->
+    <div class="modal-overlay" id="menuModalOverlay">
+        <div class="menu-modal">
+            <div class="modal-header">
+                <h2>⚙️ SYSTEM</h2>
+                <button id="closeMenuModalBtn" title="Close">✕</button>
+            </div>
+            <button class="menu-item" data-action="home"><span class="icon">🏠</span>Simulation</button>
+            <button class="menu-item" data-action="settings"><span class="icon">⚙️</span> Settings</button>
+            <button class="menu-item" data-action="sound"><span class="icon">🔊</span> Sound <span class="shortcut" id="soundStatus">On</span></button>
+            <button class="menu-item" data-action="toggleSphere"><span class="icon">🌀</span> <span id="sphereToggleLabel">Hide Sphere</span> <span class="shortcut" id="sphereStatus">Visible</span></button>
+            <button class="menu-item" data-action="inbox"><span class="icon">📥</span> Inbox <span class="shortcut" id="inboxBadge">0</span></button>
+            <button class="menu-item" data-action="stats"><span class="icon">📊</span> Stats</button>
+            <button class="menu-item" data-action="about"><span class="icon">ℹ️</span> About Us</button>
+        </div>
+    </div>
+
+    <!-- ====== CHARACTER SELECT MODAL ====== -->
+    <div id="charSelectModal">
+        <button class="cs-close" onclick="closeCharSelect()">✕</button>
+        <div class="cs-container">
+            <div class="cs-header">
+                <h2> Choose Your Character</h2>
+                <p>Select a persona to launch the simulation</p>
+            </div>
+            <div class="cs-grid" id="charSelectGrid">
+                <!-- Characters injected here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== OTHER MODALS (Add/Edit, Batch, Prefs) ====== -->
     <div class="modal-overlay" id="modalOverlay">
         <div class="modal">
             <h2 id="modalTitle">Create New Character</h2>
             <div class="sub">Build a persona for the simulation — pick an avatar, then fill in the details.</div>
             <form id="personaForm">
                 <input type="hidden" id="editId" />
-
                 <label>Character Avatar</label>
                 <div class="avatar-selector">
-                    <div class="avatar-option selected" data-gender="male" onclick="selectGender('male')">
-                        <span class="check">✔</span>
-                        <div class="avatar-preview">👨‍💻</div>
-                        <div class="label">Male</div>
-                    </div>
-                    <div class="avatar-option" data-gender="female" onclick="selectGender('female')">
-                        <span class="check">✔</span>
-                        <div class="avatar-preview">‍💻</div>
-                        <div class="label">Female</div>
-                    </div>
+                    <div class="avatar-option selected" data-gender="male" onclick="selectGender('male')"><span class="check">✔</span><div class="avatar-preview">👨‍</div><div class="label">Male</div></div>
+                    <div class="avatar-option" data-gender="female" onclick="selectGender('female')"><span class="check">✔</span><div class="avatar-preview">‍</div><div class="label">Female</div></div>
                 </div>
                 <input type="hidden" id="editGender" value="male" />
-
                 <div class="ai-section">
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;flex-wrap:wrap;">
-                        <span class="ai-section-title">✨ RAGina Auto-fill</span>
-                        <span style="font-size:0.78rem;color:var(--text-mid);">Paste a bio to auto-extract fields</span>
-                    </div>
-                    <div class="ai-row">
-                        <textarea id="contextInput" placeholder="E.g.: Riya — Loves K-dramas, sharp with Python..."></textarea>
-                        <button type="button" class="btn" id="autoFillBtn">✨ Auto-fill</button>
-                    </div>
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:0.5rem;flex-wrap:wrap;"><span class="ai-section-title">✨ RAGina Auto-fill</span><span style="font-size:0.78rem;color:var(--text-mid);">Paste a bio to auto-extract fields</span></div>
+                    <div class="ai-row"><textarea id="contextInput" placeholder="E.g.: Riya — Loves K-dramas, sharp with Python..."></textarea><button type="button" class="btn" id="autoFillBtn">✨ Auto-fill</button></div>
                 </div>
-
-                <div class="field-with-tag"><label for="editName" style="flex:1;">Name *</label><span class="ai-tag" id="tagName">✨ AI</span></div>
-                <input type="text" id="editName" required />
-
-                <div class="field-with-tag"><label for="editFlag">Flag (emoji)</label><span class="ai-tag" id="tagFlag">✨ AI</span></div>
-                <input type="text" id="editFlag" placeholder="🏳️" />
-
-                <div class="field-with-tag"><label for="editRole">Role *</label><span class="ai-tag" id="tagRole">✨ AI</span></div>
-                <input type="text" id="editRole" required />
-
-                <div class="field-with-tag"><label for="editNativeLang">Native Language</label><span class="ai-tag" id="tagNativeLang">✨ AI</span></div>
-                <input type="text" id="editNativeLang" />
-
-                <div class="field-with-tag"><label for="editVibe">Vibe</label><span class="ai-tag" id="tagVibe">✨ AI</span></div>
-                <input type="text" id="editVibe" />
-
-                <div class="field-with-tag"><label for="editCatchphrase">Catchphrase</label><span class="ai-tag" id="tagCatchphrase">✨ AI</span></div>
-                <input type="text" id="editCatchphrase" />
-
-                <div class="field-with-tag"><label for="editPersonalStyle">Personal Style</label><span class="ai-tag" id="tagPersonalStyle">✨ AI</span></div>
-                <input type="text" id="editPersonalStyle" />
-
-                <div class="field-with-tag"><label for="editMemeVocab">Meme Vocabulary (comma separated)</label><span class="ai-tag" id="tagMemeVocab">✨ AI</span></div>
-                <textarea id="editMemeVocab" placeholder='e.g. "Arrey yaar!", "Keka"'></textarea>
-
-                <div class="field-with-tag"><label for="editQuirks">Quirks (comma separated)</label><span class="ai-tag" id="tagQuirks">✨ AI</span></div>
-                <textarea id="editQuirks" placeholder='e.g. "Uses yaar often", "Tells stories"'></textarea>
-
-                <div class="modal-actions">
-                    <button type="button" class="btn btn-secondary" id="modalCancelBtn">Cancel</button>
-                    <button type="submit" class="btn btn-volt" id="modalSaveBtn"> Save Character</button>
-                </div>
+                <div class="field-with-tag"><label for="editName" style="flex:1;">Name *</label><span class="ai-tag" id="tagName">✨ AI</span></div><input type="text" id="editName" required />
+                <div class="field-with-tag"><label for="editFlag">Flag (emoji)</label><span class="ai-tag" id="tagFlag">✨ AI</span></div><input type="text" id="editFlag" placeholder="️" />
+                <div class="field-with-tag"><label for="editRole">Role *</label><span class="ai-tag" id="tagRole">✨ AI</span></div><input type="text" id="editRole" required />
+                <div class="field-with-tag"><label for="editNativeLang">Native Language</label><span class="ai-tag" id="tagNativeLang">✨ AI</span></div><input type="text" id="editNativeLang" />
+                <div class="field-with-tag"><label for="editVibe">Vibe</label><span class="ai-tag" id="tagVibe">✨ AI</span></div><input type="text" id="editVibe" />
+                <div class="field-with-tag"><label for="editCatchphrase">Catchphrase</label><span class="ai-tag" id="tagCatchphrase">✨ AI</span></div><input type="text" id="editCatchphrase" />
+                <div class="field-with-tag"><label for="editPersonalStyle">Personal Style</label><span class="ai-tag" id="tagPersonalStyle">✨ AI</span></div><input type="text" id="editPersonalStyle" />
+                <div class="field-with-tag"><label for="editMemeVocab">Meme Vocabulary (comma separated)</label><span class="ai-tag" id="tagMemeVocab">✨ AI</span></div><textarea id="editMemeVocab" placeholder='e.g. "Arrey yaar!", "Keka"'></textarea>
+                <div class="field-with-tag"><label for="editQuirks">Quirks (comma separated)</label><span class="ai-tag" id="tagQuirks">✨ AI</span></div><textarea id="editQuirks" placeholder='e.g. "Uses yaar often", "Tells stories"'></textarea>
+                <div class="modal-actions"><button type="button" class="btn btn-secondary" id="modalCancelBtn">Cancel</button><button type="submit" class="btn btn-volt" id="modalSaveBtn"> Save Character</button></div>
             </form>
         </div>
     </div>
-
     <div class="modal-overlay" id="batchModalOverlay">
-        <div class="modal">
-            <h2>📋 Batch Import Bios</h2>
-            <p style="font-size:0.85rem;color:var(--text-mid);margin-bottom:1rem;">Paste each bio on a new line. Click "Generate" to create characters.</p>
-            <label for="batchInput">Bios (one per line)</label>
-            <textarea id="batchInput" style="min-height:140px;" placeholder="Riya — Loves K-dramas, sharp with Python...&#10;Arjun — Cricket fanatic, solid in C++..."></textarea>
-            <div class="modal-actions">
-                <button type="button" class="btn btn-secondary" id="batchCancelBtn">Cancel</button>
-                <button type="button" class="btn btn-volt" id="batchGenerateBtn"> Generate Characters</button>
-            </div>
-        </div>
+        <div class="modal"><h2> Batch Import Bios</h2><p style="font-size:0.85rem;color:var(--text-mid);margin-bottom:1rem;">Paste each bio on a new line.</p><label for="batchInput">Bios (one per line)</label><textarea id="batchInput" style="min-height:140px;" placeholder="Riya — Loves K-dramas...&#10;Arjun — Cricket fanatic..."></textarea><div class="modal-actions"><button type="button" class="btn btn-secondary" id="batchCancelBtn">Cancel</button><button type="button" class="btn btn-volt" id="batchGenerateBtn"> Generate</button></div></div>
     </div>
-
     <div class="modal-overlay" id="prefModalOverlay">
         <div class="modal">
-            <h2>⚙️ Preferences</h2>
+            <h2> Preferences</h2>
             <div class="pref-row">
                 <label for="themeColor">Theme Color</label>
                 <select id="themeColor">
@@ -768,7 +503,15 @@
             </div>
             <div class="pref-row">
                 <label for="darkModeToggle">Dark Mode</label>
-                <div class="toggle-group"><input type="checkbox" id="darkModeToggle" checked disabled /><span id="darkModeLabel">On (Always)</span></div>
+                <div class="toggle-group"><input type="checkbox" id="darkModeToggle" checked /><span id="darkModeLabel">On</span></div>
+            </div>
+            <div class="pref-row">
+                <label for="sphereAnimToggle">Earth Spin</label>
+                <div class="toggle-group"><input type="checkbox" id="sphereAnimToggle" checked /><span id="sphereAnimLabel">Enabled</span></div>
+            </div>
+            <div class="pref-row">
+                <label for="sphereVisibleToggle">Show Sphere</label>
+                <div class="toggle-group"><input type="checkbox" id="sphereVisibleToggle" checked /><span id="sphereVisibleLabel">Visible</span></div>
             </div>
             <div class="pref-row">
                 <label for="soundsToggle">Enable Sounds</label>
@@ -776,787 +519,633 @@
             </div>
             <div class="modal-actions">
                 <button type="button" class="btn btn-secondary" id="prefCloseBtn">Close</button>
-                <button type="button" class="btn btn-volt" id="prefSaveBtn">💾 Save Preferences</button>
+                <button type="button" class="btn btn-volt" id="prefSaveBtn">💾 Save</button>
             </div>
         </div>
     </div>
-
     <div class="toast" id="toast"></div>
 
     <script>
-        // ====== CONFIGURATION ======
-        const CONFIG = {
-            workerUrl: 'https://personasoi.varakala-saisurya.workers.dev',
-            repoOwner: 'suryasticsai',
-            repoName: 'myTeamOnWhatsApp',
-            filePath: 'persona.json',
-            branch: 'main',
-        };
-
-        // ====== STATE ======
-        let personas = [];
-        let editingIndex = -1;
-        let accessToken = null;
-        let currentUser = null;
-        let currentFileSha = null;
-        let prefs = { themeColor: '#7c5cff', darkMode: true, soundsEnabled: true };
-        let selectedGender = 'male';
-
-        // ====== DOM REFS ======
-        const $ = (id) => document.getElementById(id);
-        const statusMsg = $('statusMessage'), container = $('personaContainer');
-        const addBtn = $('addBtn'), autoCreateBtn = $('autoCreateBtn'), batchBtn = $('batchBtn');
-        const exportBtn = $('exportBtn'), importInput = $('importInput'), countDisplay = $('countDisplay');
-        const modalOverlay = $('modalOverlay'), batchModalOverlay = $('batchModalOverlay'), prefModalOverlay = $('prefModalOverlay');
-        const modalTitle = $('modalTitle'), personaForm = $('personaForm'), editId = $('editId');
-        const editName = $('editName'), editFlag = $('editFlag'), editRole = $('editRole');
-        const editNativeLang = $('editNativeLang'), editVibe = $('editVibe'), editCatchphrase = $('editCatchphrase');
-        const editPersonalStyle = $('editPersonalStyle'), editMemeVocab = $('editMemeVocab'), editQuirks = $('editQuirks');
-        const editGender = $('editGender');
-        const modalCancelBtn = $('modalCancelBtn'), toast = $('toast');
-        const contextInput = $('contextInput'), autoFillBtn = $('autoFillBtn');
-        const batchInput = $('batchInput'), batchCancelBtn = $('batchCancelBtn'), batchGenerateBtn = $('batchGenerateBtn');
-        const loginBtn = $('loginBtn'), logoutBtn = $('logoutBtn'), pushToGithubBtn = $('pushToGithubBtn');
-        const avatar = $('avatar'), usernameDisplay = $('usernameDisplay'), userInfo = $('userInfo');
-        const settingsBtn = $('settingsBtn'), themeColorSelect = $('themeColor');
-        const darkModeToggle = $('darkModeToggle'), darkModeLabel = $('darkModeLabel');
-        const soundsToggle = $('soundsToggle'), soundsLabel = $('soundsLabel');
-        const prefCloseBtn = $('prefCloseBtn'), prefSaveBtn = $('prefSaveBtn');
-        const tags = {
-            name: $('tagName'), flag: $('tagFlag'), role: $('tagRole'), nativeLang: $('tagNativeLang'),
-            vibe: $('tagVibe'), catchphrase: $('tagCatchphrase'), personalStyle: $('tagPersonalStyle'),
-            memeVocab: $('tagMemeVocab'), quirks: $('tagQuirks')
-        };
-
-        // ====== SOUND EFFECTS ENGINE ======
-        let audioCtx = null;
-        function getAudioCtx() {
-            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            return audioCtx;
-        }
-
-        // Thunder sound: deep rumbling with multiple oscillators
-        function playThunder() {
-            if (!prefs.soundsEnabled) return;
-            try {
-                const ctx = getAudioCtx();
-                const now = ctx.currentTime;
-                
-                // Main rumble oscillator
-                const osc1 = ctx.createOscillator();
-                const gain1 = ctx.createGain();
-                osc1.type = 'sawtooth';
-                osc1.frequency.setValueAtTime(40, now);
-                osc1.frequency.exponentialRampToValueAtTime(20, now + 2.5);
-                gain1.gain.setValueAtTime(0, now);
-                gain1.gain.linearRampToValueAtTime(0.3, now + 0.1);
-                gain1.gain.exponentialRampToValueAtTime(0.001, now + 3);
-                osc1.connect(gain1).connect(ctx.destination);
-                osc1.start(now);
-                osc1.stop(now + 3);
-
-                // Secondary crackle
-                const osc2 = ctx.createOscillator();
-                const gain2 = ctx.createGain();
-                osc2.type = 'square';
-                osc2.frequency.setValueAtTime(120, now);
-                osc2.frequency.exponentialRampToValueAtTime(30, now + 1.5);
-                gain2.gain.setValueAtTime(0, now);
-                gain2.gain.linearRampToValueAtTime(0.15, now + 0.05);
-                gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
-                osc2.connect(gain2).connect(ctx.destination);
-                osc2.start(now);
-                osc2.stop(now + 1.8);
-
-                // Low sub-bass roll
-                const osc3 = ctx.createOscillator();
-                const gain3 = ctx.createGain();
-                osc3.type = 'sine';
-                osc3.frequency.setValueAtTime(25, now);
-                osc3.frequency.linearRampToValueAtTime(15, now + 2);
-                gain3.gain.setValueAtTime(0, now);
-                gain3.gain.linearRampToValueAtTime(0.25, now + 0.2);
-                gain3.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
-                osc3.connect(gain3).connect(ctx.destination);
-                osc3.start(now);
-                osc3.stop(now + 3.5);
-            } catch (e) { /* silently fail */ }
-        }
-
-        // Arcade/UI click sound
-        function playArcadeSound() {
-            if (!prefs.soundsEnabled) return;
-            try {
-                const ctx = getAudioCtx();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'square';
-                osc.frequency.setValueAtTime(880, ctx.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.15, ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-                osc.connect(gain).connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.2);
-            } catch (e) { /* silently fail */ }
-        }
-
-        // Toast notification sound
-        function playToastSound(type) {
-            if (!prefs.soundsEnabled) return;
-            try {
-                const ctx = getAudioCtx();
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                if (type === 'success') {
-                    osc.type = 'sine';
-                    osc.frequency.setValueAtTime(523, ctx.currentTime);
-                    osc.frequency.setValueAtTime(659, ctx.currentTime + 0.08);
-                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
-                } else {
-                    osc.type = 'sawtooth';
-                    osc.frequency.setValueAtTime(200, ctx.currentTime);
-                    osc.frequency.linearRampToValueAtTime(150, ctx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-                }
-                osc.connect(gain).connect(ctx.destination);
-                osc.start();
-                osc.stop(ctx.currentTime + 0.3);
-            } catch (e) {}
-        }
-
-        // ====== SKY CANVAS: stars, drifting storm clouds, real lightning ======
-        (function sky() {
-            const canvas = $('skyCanvas');
-            const ctx = canvas.getContext('2d');
-            const flashEl = $('flashOverlay');
-            let w, h, stars = [], clouds = [], bolts = [];
-
-            function resize() {
-                w = canvas.width = window.innerWidth;
-                h = canvas.height = window.innerHeight;
-                stars = Array.from({ length: Math.floor((w * h) / 6000) }, () => ({
-                    x: Math.random() * w, y: Math.random() * h,
-                    r: Math.random() * 1.4 + 0.3,
-                    tw: Math.random() * Math.PI * 2,
-                    speed: Math.random() * 0.015 + 0.005
-                }));
-                clouds = Array.from({ length: 5 }, (_, i) => ({
-                    x: Math.random() * w, y: h * (0.05 + Math.random() * 0.3),
-                    rx: 180 + Math.random() * 220, ry: 40 + Math.random() * 30,
-                    speed: 0.06 + Math.random() * 0.08,
-                    alpha: 0.05 + Math.random() * 0.06
-                }));
-            }
-            window.addEventListener('resize', resize);
-            resize();
-
-            function drawStars(t) {
-                for (const s of stars) {
-                    const tw = 0.5 + 0.5 * Math.sin(t * s.speed + s.tw);
-                    ctx.beginPath();
-                    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-                    ctx.fillStyle = `rgba(255,255,255,${0.25 + tw * 0.65})`;
-                    ctx.fill();
-                }
-            }
-
-            function drawClouds() {
-                for (const c of clouds) {
-                    c.x += c.speed;
-                    if (c.x - c.rx > w) c.x = -c.rx;
-                    const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.rx);
-                    grad.addColorStop(0, `rgba(140,150,190,${c.alpha})`);
-                    grad.addColorStop(1, 'rgba(140,150,190,0)');
-                    ctx.fillStyle = grad;
-                    ctx.beginPath();
-                    ctx.ellipse(c.x, c.y, c.rx, c.ry, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                }
-            }
-
-            function makeBolt() {
-                const startX = Math.random() * w * 0.8 + w * 0.1;
-                let x = startX, y = 0;
-                const segs = [{ x, y }];
-                const targetY = h * (0.35 + Math.random() * 0.35);
-                while (y < targetY) {
-                    y += Math.random() * 26 + 14;
-                    x += (Math.random() - 0.5) * 46;
-                    segs.push({ x, y });
-                }
-                bolts.push({ segs, life: 1 });
-                flashEl.classList.remove('strike'); void flashEl.offsetWidth; flashEl.classList.add('strike');
-                // Play thunder sound on every lightning strike
-                playThunder();
-            }
-
-            function drawBolts() {
-                for (let i = bolts.length - 1; i >= 0; i--) {
-                    const b = bolts[i];
-                    ctx.save();
-                    ctx.strokeStyle = `rgba(220,230,255,${b.life})`;
-                    ctx.lineWidth = 2;
-                    ctx.shadowColor = 'rgba(150,180,255,0.9)';
-                    ctx.shadowBlur = 12;
-                    ctx.beginPath();
-                    b.segs.forEach((p, idx) => idx === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
-                    ctx.stroke();
-                    ctx.restore();
-                    b.life -= 0.06;
-                    if (b.life <= 0) bolts.splice(i, 1);
-                }
-            }
-
-            function scheduleLightning() {
-                setTimeout(() => { makeBolt(); scheduleLightning(); }, 4000 + Math.random() * 9000);
-            }
-            scheduleLightning();
-
-            function loop(t) {
-                ctx.clearRect(0, 0, w, h);
-                drawClouds();
-                drawStars(t * 0.001);
-                drawBolts();
-                requestAnimationFrame(loop);
-            }
-            requestAnimationFrame(loop);
-        })();
-
-        // ====== BOOT SEQUENCE (game-style loader) ======
-        const bootTips = [
-            'Waking up your characters…',
-            'Calibrating vibes and catchphrases…',
-            'Loading meme vocabulary packs…',
-            'Rendering avatars…',
-            'Syncing with the group chat…',
-            'Charging the RAGina auto-fill engine…',
-            'Almost there — polishing quirks…'
-        ];
-        function runLoadingSequence() {
-            const fill = $('progressFill'), pct = $('progressPct'), tip = $('bootTip'), startBtn = $('startBtn');
-            const screen = $('loadingScreen'), app = $('appContainer');
-            let progress = 0, tipIdx = 0;
-            tip.textContent = bootTips[0];
-            const tipTimer = setInterval(() => { tipIdx = (tipIdx + 1) % bootTips.length; tip.textContent = bootTips[tipIdx]; }, 900);
-            const interval = setInterval(() => {
-                progress += Math.random() * 12 + 6;
-                if (progress >= 100) {
-                    progress = 100;
-                    clearInterval(interval);
-                    clearInterval(tipTimer);
-                    tip.textContent = 'Ready to create.';
-                    startBtn.classList.add('show');
-                }
-                fill.style.width = progress + '%';
-                pct.textContent = Math.floor(progress) + '%';
-            }, 220);
-
-            function enter() {
-                playArcadeSound();
-                screen.classList.add('hidden');
-                app.classList.add('visible');
-            }
-            startBtn.addEventListener('click', enter);
-        }
-
-        // ====== AVATAR SELECTION ======
-        window.selectGender = function(gender) {
-            selectedGender = gender;
-            editGender.value = gender;
-            document.querySelectorAll('.avatar-option').forEach(el => {
-                el.classList.toggle('selected', el.dataset.gender === gender);
-            });
-        };
-
-        // ====== TOAST ======
-        let toastTimer = null;
-        function showToast(msg, type = 'success') {
-            toast.textContent = msg;
-            toast.className = 'toast ' + type + ' show';
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
-            playToastSound(type);
-        }
-
-        // ====== PREFERENCES ======
-        function loadPreferences() {
-            const s = localStorage.getItem('personasoi_prefs');
-            if (s) { try { prefs = { ...prefs, ...JSON.parse(s) }; } catch (e) {} }
-            applyPreferences();
-        }
-        function applyPreferences() {
-            document.documentElement.style.setProperty('--electric', prefs.themeColor);
-            document.documentElement.style.setProperty('--electric-glow', prefs.themeColor + '73');
-            soundsToggle.checked = prefs.soundsEnabled;
-            soundsLabel.textContent = prefs.soundsEnabled ? 'On' : 'Off';
-            themeColorSelect.value = prefs.themeColor;
-        }
-        function savePreferences() {
-            prefs.themeColor = themeColorSelect.value;
-            prefs.soundsEnabled = soundsToggle.checked;
-            localStorage.setItem('personasoi_prefs', JSON.stringify(prefs));
-            applyPreferences();
-            showToast('✅ Preferences saved', 'success');
-            prefModalOverlay.classList.remove('active');
-        }
-
-        // ====== GITHUB AUTH ======
-        function handleOAuthCallback() {
-            const hash = window.location.hash;
-            if (hash && hash.startsWith('#access_token=')) {
-                const token = hash.substring(14);
-                if (token) {
-                    accessToken = token;
-                    sessionStorage.setItem('gh_token', accessToken);
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    fetchUserAndData();
-                    return true;
-                }
-            }
-            const saved = sessionStorage.getItem('gh_token');
-            if (saved) { accessToken = saved; fetchUserAndData(); return true; }
-            return false;
-        }
-
-        async function fetchUserAndData() {
-            try {
-                const res = await fetch('https://api.github.com/user', {
-                    headers: { 'Authorization': `Bearer ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' }
-                });
-                if (!res.ok) throw new Error('Failed to fetch user');
-                const user = await res.json();
-                currentUser = user;
-                avatar.src = user.avatar_url;
-                usernameDisplay.textContent = user.login;
-                userInfo.style.display = 'flex';
-                loginBtn.style.display = 'none';
-                logoutBtn.style.display = 'inline-block';
-                pushToGithubBtn.style.display = 'inline-block';
-                showToast(`👋 Welcome, ${user.login}!`, 'success');
-                loadFromGitHub();
-            } catch (e) {
-                console.error('Auth error:', e);
-                showToast('❌ Session expired. Please sign in again.', 'error');
-                logout();
-            }
-        }
-
-        function triggerLogin() {
-            const redirectUri = encodeURIComponent(window.location.href.split('?')[0]);
-            window.location.href = `${CONFIG.workerUrl}/login?redirect_uri=${redirectUri}`;
-        }
-
-        function logout() {
-            accessToken = null; currentFileSha = null;
-            sessionStorage.removeItem('gh_token'); currentUser = null;
-            userInfo.style.display = 'none';
-            loginBtn.style.display = 'inline-block';
-            logoutBtn.style.display = 'none';
-            pushToGithubBtn.style.display = 'none';
-            showToast('Signed out', 'success');
-        }
-
-        // ====== UTF-8 Safe Base64 ======
-        function utf8ToBase64(str) {
-            const utf8Bytes = new TextEncoder().encode(str);
-            let binary = '';
-            for (let i = 0; i < utf8Bytes.length; i++) binary += String.fromCharCode(utf8Bytes[i]);
-            return btoa(binary);
-        }
-
-        function base64ToUtf8(base64) {
-            const binary = atob(base64);
-            const bytes = new Uint8Array(binary.length);
-            for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-            return new TextDecoder().decode(bytes);
-        }
-
-        // ====== GITHUB API ======
-        async function saveToGitHub() {
-            if (!accessToken || !currentUser) { showToast('⚠️ Please sign in first.', 'error'); return; }
-            try {
-                const content = utf8ToBase64(JSON.stringify(personas, null, 2));
-                const url = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${CONFIG.filePath}`;
-                const payload = { message: `Update personas.json [${new Date().toISOString()}]`, content, branch: CONFIG.branch };
-                if (currentFileSha) payload.sha = currentFileSha;
-                const res = await fetch(url, {
-                    method: 'PUT',
-                    headers: { 'Authorization': `Bearer ${accessToken}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!res.ok) { const err = await res.json(); throw new Error(err.message || 'GitHub API Error'); }
-                const result = await res.json();
-                currentFileSha = result.content.sha;
-                showToast('☁️ Saved to GitHub!', 'success');
-            } catch (err) {
-                console.error('GitHub Save Error:', err);
-                showToast('⚠️ Failed to save to GitHub: ' + err.message, 'error');
-            }
-        }
-
-        async function loadFromGitHub() {
-            try {
-                const url = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${CONFIG.filePath}?ref=${CONFIG.branch}`;
-                const res = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' } });
-                if (res.status === 404) { currentFileSha = null; return; }
-                if (!res.ok) throw new Error('Failed to fetch file');
-                const data = await res.json();
-                currentFileSha = data.sha;
-                const decoded = base64ToUtf8(data.content);
-                const parsed = JSON.parse(decoded);
-                if (Array.isArray(parsed)) personas = parsed;
-                else if (parsed.personas && Array.isArray(parsed.personas)) personas = parsed.personas;
-                render();
-                showToast('☁️ Loaded latest version from GitHub', 'success');
-            } catch (err) {
-                console.error('GitHub Load Error:', err);
-                loadFromLocalStorage();
-            }
-        }
-
-        // ====== RENDER PERSONAS (character-select cards) ======
-        function render() {
-            if (!personas.length) {
-                container.innerHTML = `<div class="empty-state">🕹️ No characters yet. Create your first persona to populate the roster!</div>`;
-                countDisplay.textContent = '0 characters';
-                return;
-            }
-            container.innerHTML = personas.map((p, idx) => {
-                const genderClass = p.gender === 'female' ? 'female' : 'male';
-                const avatarIcon = p.gender === 'female' ? '👩‍💻' : '‍💻';
-                return `
-                <div class="persona-card" data-index="${idx}">
-                    <span class="slot-tag">SLOT ${String(idx + 1).padStart(2, '0')}</span>
-                    <div class="card-header">
-                        <div class="avatar-circle ${genderClass}">${avatarIcon}</div>
-                        <div class="card-title">
-                            <h3>${p.flag || ''} ${p.name}</h3>
-                            <span class="role-badge">${p.role || 'No role'}</span>
-                        </div>
-                    </div>
-                    ${p.native_language ? `<div class="field"><strong>Native:</strong> ${p.native_language}</div>` : ''}
-                    ${p.vibe ? `<div class="field"><strong>Vibe:</strong> ${p.vibe}</div>` : ''}
-                    ${p.catchphrase ? `<div class="field"><strong>Catchphrase:</strong> "${p.catchphrase}"</div>` : ''}
-                    ${p.personal_style ? `<div class="field"><strong>Style:</strong> ${p.personal_style}</div>` : ''}
-                    ${p.meme_vocabulary?.length ? `<div class="field"><strong>Memes:</strong> ${p.meme_vocabulary.join(', ')}</div>` : ''}
-                    ${p.quirks?.length ? `<div class="field"><strong>Quirks:</strong> ${p.quirks.join(', ')}</div>` : ''}
-                    <div class="actions">
-                        <button class="btn btn-outline" onclick="editPersona(${idx})">️ Edit</button>
-                        <button class="btn btn-outline" onclick="clonePersona(${idx})">📋 Clone</button>
-                        <button class="btn btn-danger" onclick="deletePersona(${idx})">🗑️</button>
-                    </div>
-                </div>`;
-            }).join('');
-            countDisplay.textContent = `${personas.length} character${personas.length !== 1 ? 's' : ''}`;
-            statusMsg.textContent = `✅ ${personas.length} characters loaded`;
-        }
-
-        // ====== CRUD OPERATIONS ======
-        function getPersonaFromForm() {
-            const memeVocab = editMemeVocab.value.split(',').map(s => s.trim()).filter(Boolean);
-            const quirks = editQuirks.value.split(',').map(s => s.trim()).filter(Boolean);
-            return {
-                id: editId.value || generateId(editName.value),
-                name: editName.value.trim(),
-                flag: editFlag.value.trim() || '',
-                role: editRole.value.trim(),
-                native_language: editNativeLang.value.trim(),
-                vibe: editVibe.value.trim(),
-                catchphrase: editCatchphrase.value.trim(),
-                personal_style: editPersonalStyle.value.trim(),
-                meme_vocabulary: memeVocab,
-                quirks,
-                gender: editGender.value || 'male'
+        document.addEventListener('DOMContentLoaded', function() {
+            // ====== CONFIGURATION ======
+            const CONFIG = {
+                workerUrl: 'https://personasoi.varakala-saisurya.workers.dev',
+                repoOwner: 'suryasticsai', repoName: 'myTeamOnWhatsApp', filePath: 'persona.json', branch: 'main',
+                gameUrl: 'https://suryasticsai.github.io/myTeamOnWhatsApp/index.html'
             };
-        }
 
-        function fillForm(persona) {
-            editId.value = persona.id || '';
-            editName.value = persona.name || '';
-            editFlag.value = persona.flag || '';
-            editRole.value = persona.role || '';
-            editNativeLang.value = persona.native_language || '';
-            editVibe.value = persona.vibe || '';
-            editCatchphrase.value = persona.catchphrase || '';
-            editPersonalStyle.value = persona.personal_style || '';
-            editMemeVocab.value = (persona.meme_vocabulary || []).join(', ');
-            editQuirks.value = (persona.quirks || []).join(', ');
-            editGender.value = persona.gender || 'male';
-            selectGender(persona.gender || 'male');
-            contextInput.value = '';
-            Object.values(tags).forEach(el => el.classList.remove('show'));
-            document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight'));
-        }
+            // ====== STATE ======
+            let personas = []; let editingIndex = -1; let accessToken = null; let currentUser = null;
+            let currentFileSha = null; 
+            let prefs = { themeColor: '#7c5cff', darkMode: true, soundsEnabled: true, sphereAnim: true, sphereVisible: true };
+            let selectedGender = 'male'; let isSaving = false;
 
-        function generateId(name) { return name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now().toString(36); }
+            // ====== DOM REFS ======
+            const $ = (id) => document.getElementById(id);
+            const statusMsg = $('statusMessage'), container = $('personaContainer');
+            const addBtn = $('addBtn'), autoCreateBtn = $('autoCreateBtn'), batchBtn = $('batchBtn');
+            const exportBtn = $('exportBtn'), importInput = $('importInput'), countDisplay = $('countDisplay');
+            const modalOverlay = $('modalOverlay'), batchModalOverlay = $('batchModalOverlay'), prefModalOverlay = $('prefModalOverlay');
+            const modalTitle = $('modalTitle'), personaForm = $('personaForm'), editId = $('editId');
+            const editName = $('editName'), editFlag = $('editFlag'), editRole = $('editRole');
+            const editNativeLang = $('editNativeLang'), editVibe = $('editVibe'), editCatchphrase = $('editCatchphrase');
+            const editPersonalStyle = $('editPersonalStyle'), editMemeVocab = $('editMemeVocab'), editQuirks = $('editQuirks');
+            const editGender = $('editGender');
+            const modalCancelBtn = $('modalCancelBtn'), toast = $('toast');
+            const contextInput = $('contextInput'), autoFillBtn = $('autoFillBtn');
+            const batchInput = $('batchInput'), batchCancelBtn = $('batchCancelBtn'), batchGenerateBtn = $('batchGenerateBtn');
+            const loginBtn = $('loginBtn'), logoutBtn = $('logoutBtn'), pushToGithubBtn = $('pushToGithubBtn');
+            const avatar = $('avatar'), usernameDisplay = $('usernameDisplay'), userInfo = $('userInfo');
+            const settingsBtn = $('settingsBtn'), themeColorSelect = $('themeColor');
+            const darkModeToggle = $('darkModeToggle'), darkModeLabel = $('darkModeLabel');
+            const sphereAnimToggle = $('sphereAnimToggle'), sphereAnimLabel = $('sphereAnimLabel');
+            const sphereVisibleToggle = $('sphereVisibleToggle'), sphereVisibleLabel = $('sphereVisibleLabel');
+            const soundsToggle = $('soundsToggle'), soundsLabel = $('soundsLabel');
+            const prefCloseBtn = $('prefCloseBtn'), prefSaveBtn = $('prefSaveBtn');
+            const tags = { name: $('tagName'), flag: $('tagFlag'), role: $('tagRole'), nativeLang: $('tagNativeLang'), vibe: $('tagVibe'), catchphrase: $('tagCatchphrase'), personalStyle: $('tagPersonalStyle'), memeVocab: $('tagMemeVocab'), quirks: $('tagQuirks') };
+            const joystickBtn = $('joystickBtn');
+            const earthSphere = $('earthSphere');
+            const menuModalOverlay = $('menuModalOverlay');
+            const closeMenuModalBtn = $('closeMenuModalBtn');
+            const soundStatus = $('soundStatus');
+            const sphereStatus = $('sphereStatus');
+            const sphereToggleLabel = $('sphereToggleLabel');
+            const inboxBadge = $('inboxBadge');
+            const charSelectModal = $('charSelectModal');
+            const charSelectGrid = $('charSelectGrid');
+            const footerLogo = $('footerLogo');
 
-        function openModal(persona, index, isEdit = false) {
-            if (persona) {
-                fillForm(persona);
-                modalTitle.textContent = isEdit ? '✏️ Edit Character' : '📋 Clone Character';
-            } else {
-                modalTitle.textContent = 'Create New Character';
-                personaForm.reset();
-                editId.value = '';
-                contextInput.value = '';
-                editGender.value = 'male';
-                selectGender('male');
-                Object.values(tags).forEach(el => el.classList.remove('show'));
-                document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight'));
-            }
-            editingIndex = index;
-            modalOverlay.classList.add('active');
-        }
-
-        function closeModal() { modalOverlay.classList.remove('active'); editingIndex = -1; }
-        window.editPersona = function(idx) { openModal(personas[idx], idx, true); };
-        window.clonePersona = function(idx) {
-            const p = personas[idx];
-            openModal({ ...p, id: generateId(p.name + '_copy'), name: p.name + ' (copy)' }, -1, false);
-        };
-        window.deletePersona = function(idx) {
-            if (!confirm(`Delete "${personas[idx].name}"?`)) return;
-            personas.splice(idx, 1);
-            syncAndRender();
-            showToast('️ Character deleted', 'success');
-        };
-
-        personaForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const data = getPersonaFromForm();
-            if (!data.name || !data.role) { showToast('❌ Name and Role are required.', 'error'); return; }
-            if (editingIndex >= 0 && editingIndex < personas.length) {
-                personas[editingIndex] = data;
-                showToast('✅ Character updated', 'success');
-            } else {
-                personas.push(data);
-                showToast('✅ Character created', 'success');
-            }
-            closeModal();
-            syncAndRender();
-        });
-
-        modalCancelBtn.addEventListener('click', closeModal);
-        modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
-
-        function syncAndRender() {
-            saveToLocalStorage();
-            if (accessToken) saveToGitHub();
-            render();
-        }
-
-        // ====== BUTTONS ======
-        addBtn.addEventListener('click', () => openModal(null, -1, false));
-        autoCreateBtn.addEventListener('click', function() {
-            const isFemale = Math.random() < 0.5;
-            personas.push({
-                id: 'sample_' + Date.now().toString(36), name: isFemale ? 'Sample Persona (F)' : 'Sample Persona', flag: '🌟',
-                role: 'Team Lead', native_language: 'English & Hindi', vibe: 'Friendly and motivating',
-                catchphrase: "Let's get this done!", personal_style: 'Casual but professional',
-                meme_vocabulary: ['vibe', 'flex', 'no cap'], quirks: ['Always early', 'Loves coffee'],
-                gender: isFemale ? 'female' : 'male'
-            });
-            syncAndRender();
-            showToast('🤖 Sample character created', 'success');
-        });
-        pushToGithubBtn.addEventListener('click', () => {
-            if (!accessToken) { showToast('⚠️ Please sign in first.', 'error'); return; }
-            saveToGitHub();
-        });
-
-        // ====== EXPORT / IMPORT ======
-        exportBtn.addEventListener('click', function() {
-            if (!personas.length) { showToast('❌ No characters to export.', 'error'); return; }
-            const json = JSON.stringify({ personas }, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = 'personas.json';
-            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-            showToast('📥 Exported personas.json', 'success');
-        });
-        importInput.addEventListener('change', function(e) {
-            const file = e.target.files[0]; if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(ev) {
+            // ====== SOUND EFFECTS ENGINE ======
+            let audioCtx = null;
+            function getAudioCtx() { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); return audioCtx; }
+            function playThunder() {
+                if (!prefs.soundsEnabled) return;
                 try {
-                    const data = JSON.parse(ev.target.result);
-                    if (Array.isArray(data)) personas = data;
-                    else if (data.personas && Array.isArray(data.personas)) personas = data.personas;
-                    else { showToast('❌ Invalid JSON format.', 'error'); return; }
-                    syncAndRender();
-                    showToast(`📤 Imported ${personas.length} characters`, 'success');
-                } catch (err) { showToast('❌ Failed to parse JSON: ' + err.message, 'error'); }
-                importInput.value = '';
-            };
-            reader.readAsText(file);
-        });
+                    const ctx = getAudioCtx(); const now = ctx.currentTime;
+                    const osc1 = ctx.createOscillator(); const gain1 = ctx.createGain();
+                    osc1.type = 'sawtooth'; osc1.frequency.setValueAtTime(40, now); osc1.frequency.exponentialRampToValueAtTime(20, now + 2.5);
+                    gain1.gain.setValueAtTime(0, now); gain1.gain.linearRampToValueAtTime(0.3, now + 0.1); gain1.gain.exponentialRampToValueAtTime(0.001, now + 3);
+                    osc1.connect(gain1).connect(ctx.destination); osc1.start(now); osc1.stop(now + 3);
+                    const osc2 = ctx.createOscillator(); const gain2 = ctx.createGain();
+                    osc2.type = 'square'; osc2.frequency.setValueAtTime(120, now); osc2.frequency.exponentialRampToValueAtTime(30, now + 1.5);
+                    gain2.gain.setValueAtTime(0, now); gain2.gain.linearRampToValueAtTime(0.15, now + 0.05); gain2.gain.exponentialRampToValueAtTime(0.001, now + 1.8);
+                    osc2.connect(gain2).connect(ctx.destination); osc2.start(now); osc2.stop(now + 1.8);
+                    const osc3 = ctx.createOscillator(); const gain3 = ctx.createGain();
+                    osc3.type = 'sine'; osc3.frequency.setValueAtTime(25, now); osc3.frequency.linearRampToValueAtTime(15, now + 2);
+                    gain3.gain.setValueAtTime(0, now); gain3.gain.linearRampToValueAtTime(0.25, now + 0.2); gain3.gain.exponentialRampToValueAtTime(0.001, now + 3.5);
+                    osc3.connect(gain3).connect(ctx.destination); osc3.start(now); osc3.stop(now + 3.5);
+                } catch (e) {}
+            }
+            function playArcadeSound() {
+                if (!prefs.soundsEnabled) return;
+                try {
+                    const ctx = getAudioCtx(); const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                    osc.type = 'square'; osc.frequency.setValueAtTime(880, ctx.currentTime); osc.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.15, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+                    osc.connect(gain).connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.2);
+                } catch (e) {}
+            }
+            function playToastSound(type) {
+                if (!prefs.soundsEnabled) return;
+                try {
+                    const ctx = getAudioCtx(); const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                    if (type === 'success') { osc.type = 'sine'; osc.frequency.setValueAtTime(523, ctx.currentTime); osc.frequency.setValueAtTime(659, ctx.currentTime + 0.08); gain.gain.setValueAtTime(0.12, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25); } 
+                    else { osc.type = 'sawtooth'; osc.frequency.setValueAtTime(200, ctx.currentTime); osc.frequency.linearRampToValueAtTime(150, ctx.currentTime + 0.15); gain.gain.setValueAtTime(0.1, ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2); }
+                    osc.connect(gain).connect(ctx.destination); osc.start(); osc.stop(ctx.currentTime + 0.3);
+                } catch (e) {}
+            }
 
-        // ====== BATCH IMPORT ======
-        batchBtn.addEventListener('click', () => { batchInput.value = ''; batchModalOverlay.classList.add('active'); });
-        batchCancelBtn.addEventListener('click', () => batchModalOverlay.classList.remove('active'));
-        batchModalOverlay.addEventListener('click', (e) => { if (e.target === batchModalOverlay) batchModalOverlay.classList.remove('active'); });
-        batchGenerateBtn.addEventListener('click', function() {
-            const bios = batchInput.value.split('\n').filter(line => line.trim());
-            if (!bios.length) { showToast('❌ No bios to process.', 'error'); return; }
-            let created = 0;
-            for (let bio of bios) {
-                const persona = extractPersonaFromBio(bio);
-                if (persona.name && persona.role) { personas.push(persona); created++; }
-            }
-            if (created === 0) showToast('❌ Could not extract valid characters.', 'error');
-            else { syncAndRender(); showToast(`✅ Created ${created} character${created > 1 ? 's' : ''} from batch.`, 'success'); }
-            batchModalOverlay.classList.remove('active');
-        });
-
-        // ====== RAGINA AUTO-FILL EXTRACTOR ======
-        function extractPersonaFromBio(text) {
-            function extractName(txt) {
-                let m = txt.match(/(?:my name is|i am|i'm|call me)\s+([A-Z][a-z]+)/i); if (m) return m[1];
-                m = txt.match(/^([A-Z][a-z]+)\s*[—\-–]/); if (m) return m[1];
-                m = txt.match(/^([A-Z][a-z]+)\s+/); if (m) return m[1]; return '';
-            }
-            function extractRole(txt) {
-                let m = txt.match(/(?:sharp with|solid in|strong in|good at|good with|expert in|skilled in)\s+([a-zA-Z\s,]+)(?:[.,;]|$)/i);
-                if (m) { let s = m[1].split(',').map(x => x.trim()).filter(Boolean); if (s.length > 1) return s.join('/') + ' Developer'; if (s.length === 1) return s[0] + ' Developer'; }
-                const roles = ['developer','lead','manager','designer','engineer','analyst','architect','tester','devops','product','owner','scrum master','coach','consultant','strategist','marketing','sales','support','hr','finance','legal'];
-                for (let r of roles) if (txt.toLowerCase().includes(r)) return r.replace(/\b\w/g, c => c.toUpperCase());
-                return '';
-            }
-            function extractLanguages(txt) {
-                const langs = ['hindi','telugu','tamil','kannada','malayalam','english','spanish','french','german','japanese','chinese','korean','russian','arabic','portuguese','italian','dutch','marathi','gujarati','urdu','punjabi','bengali','nagpuri'];
-                let found = []; const lower = txt.toLowerCase();
-                for (let l of langs) if (lower.includes(l)) found.push(l.charAt(0).toUpperCase() + l.slice(1));
-                if (found.length > 2) return found.join(', '); if (found.length === 2) return found.join(' & '); if (found.length === 1) return found[0]; return '';
-            }
-            function extractVibe(txt) {
-                let m = txt.match(/[Vv]ibe\s*[:：]\s*([^.,;]+)/); if (m) return m[1].trim();
-                const vibes = ['chill','introvert','extrovert','ambivert','friendly','motivating','calm','energetic','creative','analytical','strategic','empathetic','confident','humble','funny','viber','quiet observer','deep thinker','dry humor','hustler'];
-                for (let v of vibes) if (txt.toLowerCase().includes(v)) return v.charAt(0).toUpperCase() + v.slice(1);
-                return '';
-            }
-            function extractCatchphrase(txt) {
-                let m = txt.match(/"([^"]+)"/); if (m) return m[1];
-                const common = ['cool','chill','awesome',"let's go",'no problem','alright','yeah','bet'];
-                for (let c of common) if (txt.toLowerCase().includes(c)) return c.charAt(0).toUpperCase() + c.slice(1);
-                return '';
-            }
-            function extractPersonalStyle(txt) {
-                const styles = ['orator','casual','professional','formal','creative','concise','elaborate','direct','diplomatic','humorous','inspiring','motivational','supportive','deep thinker','dry humor','quiet observer'];
-                for (let s of styles) if (txt.toLowerCase().includes(s)) return s.charAt(0).toUpperCase() + s.slice(1);
-                return '';
-            }
-            function extractMemeVocab(txt) {
-                const memes = ['vibe','flex','no cap','bet','yeet','sus','pog','based','cringe','lit','fire','goat','oof','smh','fr','af','lowkey','highkey','slay','periodt','bestie','cool','chill','✨','🔥','🚀','','🙌','🤙'];
-                let found = []; const lower = txt.toLowerCase();
-                for (let m of memes) if (lower.includes(m) || txt.includes(m)) found.push(m);
-                const emojiRegex = /([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]|✨|🔥|🚀|💯|🙌|🤙)/gu;
-                const emojis = txt.match(emojiRegex);
-                if (emojis) for (let e of emojis) if (!found.includes(e)) found.push(e);
-                return found.slice(0, 5);
-            }
-            function extractQuirks(txt) {
-                const quirks = [];
-                let m = txt.match(/(?:Loves|Enjoys|Obsessed with|Fan of)\s+([^.,;]+)/i); if (m) quirks.push('Loves ' + m[1].trim());
-                m = txt.match(/Into\s+([^.,;]+)/i); if (m) quirks.push('Into ' + m[1].trim());
-                if (txt.toLowerCase().includes('secretly a meme lord')) quirks.push('Secretly a meme lord');
-                if (txt.toLowerCase().includes('natural hype-man')) quirks.push('Natural hype-man');
-                if (txt.toLowerCase().includes('low-key philosopher')) quirks.push('Low-key philosopher');
-                if (txt.toLowerCase().includes('motivational speaker')) quirks.push('Motivational speaker');
-                if (txt.toLowerCase().includes('drops one-liners')) quirks.push('Drops one-liners');
-                if (txt.toLowerCase().includes('comeback story')) quirks.push('Always has a comeback story');
-                if (txt.toLowerCase().includes('life advice')) quirks.push('Drops random life advice');
-                if (txt.toLowerCase().includes('introvert')) quirks.push('Introvert');
-                if (txt.toLowerCase().includes('extrovert')) quirks.push('Extrovert');
-                if (txt.toLowerCase().includes('quiet observer')) quirks.push('Quiet observer');
-                if (txt.toLowerCase().includes('deep thinker')) quirks.push('Deep thinker');
-                if (txt.toLowerCase().includes('dry humor')) quirks.push('Dry humor');
-                if (txt.toLowerCase().includes('hustler')) quirks.push('Hustler');
-                return quirks.slice(0, 5);
-            }
-            const name = extractName(text), role = extractRole(text), nativeLang = extractLanguages(text);
-            const vibe = extractVibe(text), catchphrase = extractCatchphrase(text), style = extractPersonalStyle(text);
-            const memes = extractMemeVocab(text), quirks = extractQuirks(text);
-            let flag = ''; const langLower = nativeLang.toLowerCase();
-            if (langLower.includes('telugu')||langLower.includes('hindi')||langLower.includes('marathi')||langLower.includes('gujarati')||langLower.includes('urdu')||langLower.includes('punjabi')||langLower.includes('bengali')||langLower.includes('nagpuri')) flag = '🇮🇳';
-            else if (langLower.includes('japanese')) flag = '🇯🇵'; else if (langLower.includes('spanish')) flag = '🇪🇸'; else if (langLower.includes('french')) flag = '🇷';
-            else if (langLower.includes('german')) flag = '🇩'; else if (langLower.includes('chinese')) flag = '🇨🇳'; else if (langLower.includes('korean')) flag = '🇰🇷'; else if (langLower.includes('english')) flag = '🇬🇧';
-            return { id: name ? generateId(name) : 'unknown_'+Date.now().toString(36), name: name||'Unknown', flag: flag||'', role: role||'Unspecified', native_language: nativeLang, vibe, catchphrase, personal_style: style, meme_vocabulary: memes, quirks, gender: Math.random() < 0.5 ? 'female' : 'male' };
-        }
-
-        autoFillBtn.addEventListener('click', function() {
-            const text = contextInput.value.trim();
-            if (!text) { showToast(' Please enter a description first.', 'error'); return; }
-            Object.values(tags).forEach(el => el.classList.remove('show'));
-            document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight'));
-            const persona = extractPersonaFromBio(text);
-            function showTag(fieldId, tagId) {
-                const el = document.getElementById(fieldId), tag = document.getElementById(tagId);
-                if (el && tag) { el.classList.add('ai-highlight'); tag.classList.add('show'); setTimeout(() => el.classList.remove('ai-highlight'), 3000); }
-            }
-            if (persona.name && persona.name !== 'Unknown') { editName.value = persona.name; showTag('editName','tagName'); }
-            if (persona.role && persona.role !== 'Unspecified') { editRole.value = persona.role; showTag('editRole','tagRole'); }
-            if (persona.native_language) { editNativeLang.value = persona.native_language; showTag('editNativeLang','tagNativeLang'); }
-            if (persona.vibe) { editVibe.value = persona.vibe; showTag('editVibe','tagVibe'); }
-            if (persona.catchphrase) { editCatchphrase.value = persona.catchphrase; showTag('editCatchphrase','tagCatchphrase'); }
-            if (persona.personal_style) { editPersonalStyle.value = persona.personal_style; showTag('editPersonalStyle','tagPersonalStyle'); }
-            if (persona.meme_vocabulary.length) { editMemeVocab.value = persona.meme_vocabulary.join(', '); showTag('editMemeVocab','tagMemeVocab'); }
-            if (persona.quirks.length) { editQuirks.value = persona.quirks.join(', '); showTag('editQuirks','tagQuirks'); }
-            if (persona.flag && persona.flag !== '👤') { editFlag.value = persona.flag; showTag('editFlag','tagFlag'); }
-            if (persona.name && persona.name !== 'Unknown') editId.value = generateId(persona.name);
-            selectGender(persona.gender);
-            const filled = [];
-            if (persona.name) filled.push('Name'); if (persona.role) filled.push('Role'); if (persona.native_language) filled.push('Native Language');
-            if (persona.vibe) filled.push('Vibe'); if (persona.catchphrase) filled.push('Catchphrase'); if (persona.personal_style) filled.push('Style');
-            if (persona.meme_vocabulary.length) filled.push('Memes'); if (persona.quirks.length) filled.push('Quirks'); if (persona.flag) filled.push('Flag');
-            if (filled.length) showToast(`✨ Auto-filled: ${filled.join(', ')}`, 'success');
-            else showToast('⚠️ Could not extract any fields. Try a more descriptive prompt.', 'error');
-        });
-
-        // ====== LOCAL STORAGE PERSISTENCE ======
-        function saveToLocalStorage() { localStorage.setItem('personasoi_data', JSON.stringify(personas)); }
-        function loadFromLocalStorage() {
-            const s = localStorage.getItem('personasoi_data');
-            if (s) { try { const p = JSON.parse(s); if (Array.isArray(p)) { personas = p; render(); showToast('📂 Loaded from local storage', 'success'); } } catch (e) {} }
-        }
-
-        // ====== EVENT LISTENERS ======
-        loginBtn.addEventListener('click', triggerLogin);
-        logoutBtn.addEventListener('click', logout);
-        settingsBtn.addEventListener('click', () => {
-            themeColorSelect.value = prefs.themeColor;
-            soundsToggle.checked = prefs.soundsEnabled;
-            soundsLabel.textContent = prefs.soundsEnabled ? 'On' : 'Off';
-            prefModalOverlay.classList.add('active');
-        });
-        soundsToggle.addEventListener('change', function() { soundsLabel.textContent = this.checked ? 'On' : 'Off'; });
-        prefCloseBtn.addEventListener('click', () => prefModalOverlay.classList.remove('active'));
-        prefModalOverlay.addEventListener('click', (e) => { if (e.target === prefModalOverlay) prefModalOverlay.classList.remove('active'); });
-        prefSaveBtn.addEventListener('click', savePreferences);
-
-        // ====== STICKY PLAY BUTTON HANDLER ======
-        $('playGameBtn').addEventListener('click', function() {
-            playArcadeSound();
-            setTimeout(() => {
-                window.open('https://suryasticsai.github.io/MyTeamOnWhatsApp', '_blank');
-            }, 200);
-        });
-
-        // ====== INIT ======
-        (function init() {
-            runLoadingSequence();
-            loadPreferences();
-            const handled = handleOAuthCallback();
-            if (!handled) {
-                loadFromLocalStorage();
-                if (!personas.length) {
-                    render();
-                    statusMsg.textContent = '💡 Ready. Create your first character.';
+            // ====== SKY CANVAS ======
+            (function sky() {
+                const canvas = $('skyCanvas'); const ctx = canvas.getContext('2d'); const flashEl = $('flashOverlay');
+                let w, h, stars = [], clouds = [], bolts = [];
+                function resize() {
+                    w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight;
+                    stars = Array.from({ length: Math.floor((w * h) / 6000) }, () => ({ x: Math.random() * w, y: Math.random() * h, r: Math.random() * 1.4 + 0.3, tw: Math.random() * Math.PI * 2, speed: Math.random() * 0.015 + 0.005 }));
+                    clouds = Array.from({ length: 5 }, (_, i) => ({ x: Math.random() * w, y: h * (0.05 + Math.random() * 0.3), rx: 180 + Math.random() * 220, ry: 40 + Math.random() * 30, speed: 0.06 + Math.random() * 0.08, alpha: 0.05 + Math.random() * 0.06 }));
                 }
+                window.addEventListener('resize', resize); resize();
+                function drawStars(t) { for (const s of stars) { const tw = 0.5 + 0.5 * Math.sin(t * s.speed + s.tw); ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(255,255,255,${0.25 + tw * 0.65})`; ctx.fill(); } }
+                function drawClouds() { for (const c of clouds) { c.x += c.speed; if (c.x - c.rx > w) c.x = -c.rx; const grad = ctx.createRadialGradient(c.x, c.y, 0, c.x, c.y, c.rx); grad.addColorStop(0, `rgba(140,150,190,${c.alpha})`); grad.addColorStop(1, 'rgba(140,150,190,0)'); ctx.fillStyle = grad; ctx.beginPath(); ctx.ellipse(c.x, c.y, c.rx, c.ry, 0, 0, Math.PI * 2); ctx.fill(); } }
+                function makeBolt() {
+                    const startX = Math.random() * w * 0.8 + w * 0.1; let x = startX, y = 0; const segs = [{ x, y }]; const targetY = h * (0.35 + Math.random() * 0.35);
+                    while (y < targetY) { y += Math.random() * 26 + 14; x += (Math.random() - 0.5) * 46; segs.push({ x, y }); }
+                    bolts.push({ segs, life: 1 }); flashEl.classList.remove('strike'); void flashEl.offsetWidth; flashEl.classList.add('strike'); playThunder();
+                }
+                function drawBolts() { for (let i = bolts.length - 1; i >= 0; i--) { const b = bolts[i]; ctx.save(); ctx.strokeStyle = `rgba(220,230,255,${b.life})`; ctx.lineWidth = 2; ctx.shadowColor = 'rgba(150,180,255,0.9)'; ctx.shadowBlur = 12; ctx.beginPath(); b.segs.forEach((p, idx) => idx === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y)); ctx.stroke(); ctx.restore(); b.life -= 0.06; if (b.life <= 0) bolts.splice(i, 1); } }
+                function scheduleLightning() { setTimeout(() => { makeBolt(); scheduleLightning(); }, 4000 + Math.random() * 9000); }
+                scheduleLightning();
+                function loop(t) { ctx.clearRect(0, 0, w, h); drawClouds(); drawStars(t * 0.001); drawBolts(); requestAnimationFrame(loop); }
+                requestAnimationFrame(loop);
+            })();
+
+            // ====== BOOT SEQUENCE ======
+            const bootTips = ['Waking up your characters…', 'Calibrating vibes…', 'Loading meme packs…', 'Rendering avatars…', 'Syncing with group chat…', 'Charging RAGina engine…', 'Polishing quirks…'];
+            function runLoadingSequence() {
+                const fill = $('progressFill'), pct = $('progressPct'), tip = $('bootTip'), startBtn = $('startBtn');
+                const screen = $('loadingScreen'), app = $('appContainer');
+                let progress = 0, tipIdx = 0; tip.textContent = bootTips[0];
+                const tipTimer = setInterval(() => { tipIdx = (tipIdx + 1) % bootTips.length; tip.textContent = bootTips[tipIdx]; }, 900);
+                const interval = setInterval(() => {
+                    progress += Math.random() * 12 + 6;
+                    if (progress >= 100) { progress = 100; clearInterval(interval); clearInterval(tipTimer); tip.textContent = 'Ready to create.'; startBtn.classList.add('show'); }
+                    fill.style.width = progress + '%'; pct.textContent = Math.floor(progress) + '%';
+                }, 220);
+                function enter() { playArcadeSound(); screen.classList.add('hidden'); app.classList.add('visible'); }
+                startBtn.addEventListener('click', enter);
             }
-        })();
+
+            // ====== AVATAR SELECTION ======
+            window.selectGender = function(gender) {
+                selectedGender = gender; editGender.value = gender;
+                document.querySelectorAll('.avatar-option').forEach(el => el.classList.toggle('selected', el.dataset.gender === gender));
+            };
+
+            // ====== TOAST ======
+            let toastTimer = null;
+            function showToast(msg, type = 'success') {
+                toast.textContent = msg; toast.className = 'toast ' + type + ' show';
+                clearTimeout(toastTimer); toastTimer = setTimeout(() => toast.classList.remove('show'), 3500);
+                playToastSound(type);
+            }
+
+            // ====== PREFERENCES ======
+            function loadPreferences() {
+                const s = localStorage.getItem('personasoi_prefs');
+                if (s) { try { prefs = { ...prefs, ...JSON.parse(s) }; } catch (e) {} }
+                applyPreferences();
+            }
+            function applyPreferences() {
+                document.documentElement.style.setProperty('--electric', prefs.themeColor);
+                document.documentElement.style.setProperty('--electric-glow', prefs.themeColor + '73');
+                
+                if (prefs.darkMode) {
+                    document.body.style.background = 'var(--void)';
+                    document.body.style.color = 'var(--text-hi)';
+                    darkModeToggle.checked = true; darkModeLabel.textContent = 'On';
+                } else {
+                    document.body.style.background = '#f0f2f5';
+                    document.body.style.color = '#111b21';
+                    darkModeToggle.checked = false; darkModeLabel.textContent = 'Off';
+                }
+                
+                if (prefs.sphereAnim) {
+                    earthSphere.classList.remove('paused');
+                    sphereAnimToggle.checked = true; sphereAnimLabel.textContent = 'Enabled';
+                } else {
+                    earthSphere.classList.add('paused');
+                    sphereAnimToggle.checked = false; sphereAnimLabel.textContent = 'Disabled';
+                }
+                
+                // Sphere visibility
+                if (prefs.sphereVisible) {
+                    joystickBtn.classList.remove('hidden-joystick');
+                    sphereStatus.textContent = 'Visible';
+                    sphereToggleLabel.textContent = 'Hide Sphere';
+                    sphereVisibleToggle.checked = true;
+                    sphereVisibleLabel.textContent = 'Visible';
+                } else {
+                    joystickBtn.classList.add('hidden-joystick');
+                    sphereStatus.textContent = 'Hidden';
+                    sphereToggleLabel.textContent = 'Show Sphere';
+                    sphereVisibleToggle.checked = false;
+                    sphereVisibleLabel.textContent = 'Hidden';
+                }
+                
+                soundsToggle.checked = prefs.soundsEnabled; soundsLabel.textContent = prefs.soundsEnabled ? 'On' : 'Off';
+                soundStatus.textContent = prefs.soundsEnabled ? 'On' : 'Off';
+                themeColorSelect.value = prefs.themeColor;
+            }
+            function savePreferences() {
+                prefs.themeColor = themeColorSelect.value; 
+                prefs.darkMode = darkModeToggle.checked;
+                prefs.sphereAnim = sphereAnimToggle.checked;
+                prefs.sphereVisible = sphereVisibleToggle.checked;
+                prefs.soundsEnabled = soundsToggle.checked;
+                localStorage.setItem('personasoi_prefs', JSON.stringify(prefs)); 
+                applyPreferences();
+                showToast('✅ Preferences saved', 'success'); prefModalOverlay.classList.remove('active');
+            }
+
+            // ====== GITHUB AUTH ======
+            function handleOAuthCallback() {
+                const hash = window.location.hash;
+                if (hash && hash.startsWith('#access_token=')) {
+                    const token = hash.substring(14);
+                    if (token) { accessToken = token; sessionStorage.setItem('gh_token', accessToken); window.history.replaceState({}, document.title, window.location.pathname); fetchUserAndData(); return true; }
+                }
+                const saved = sessionStorage.getItem('gh_token');
+                if (saved) { accessToken = saved; fetchUserAndData(); return true; }
+                return false;
+            }
+            async function fetchUserAndData() {
+                try {
+                    const res = await fetch('https://api.github.com/user', { headers: { 'Authorization': `Bearer ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' } });
+                    if (!res.ok) throw new Error('Failed to fetch user');
+                    const user = await res.json(); currentUser = user; avatar.src = user.avatar_url; usernameDisplay.textContent = user.login;
+                    userInfo.style.display = 'flex'; loginBtn.style.display = 'none'; logoutBtn.style.display = 'inline-block'; pushToGithubBtn.style.display = 'inline-block';
+                    showToast(` Welcome, ${user.login}!`, 'success'); 
+                    await loadFromGitHub();
+                } catch (e) { console.error('Auth error:', e); showToast('❌ Session expired.', 'error'); logout(); }
+            }
+            function triggerLogin() { const redirectUri = encodeURIComponent(window.location.href.split('?')[0]); window.location.href = `${CONFIG.workerUrl}/login?redirect_uri=${redirectUri}`; }
+            function logout() { accessToken = null; currentFileSha = null; sessionStorage.removeItem('gh_token'); currentUser = null; userInfo.style.display = 'none'; loginBtn.style.display = 'inline-block'; logoutBtn.style.display = 'none'; pushToGithubBtn.style.display = 'none'; showToast('Signed out', 'success'); }
+
+            // ====== UTF-8 Safe Base64 ======
+            function utf8ToBase64(str) { const utf8Bytes = new TextEncoder().encode(str); let binary = ''; for (let i = 0; i < utf8Bytes.length; i++) binary += String.fromCharCode(utf8Bytes[i]); return btoa(binary); }
+            function base64ToUtf8(base64) { const binary = atob(base64); const bytes = new Uint8Array(binary.length); for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i); return new TextDecoder().decode(bytes); }
+
+            // ====== GITHUB API ======
+            async function saveToGitHub(showToastMsg = true) {
+                if (!accessToken || !currentUser) { 
+                    localStorage.setItem('personasoi_data', JSON.stringify(personas));
+                    if(showToastMsg) showToast('️ Not signed in. Saved locally as draft.', 'error');
+                    return; 
+                }
+                if (isSaving) return;
+                isSaving = true;
+                if(showToastMsg) showToast('️ Saving to persona.json...', 'success');
+
+                try {
+                    const content = utf8ToBase64(JSON.stringify(personas, null, 2));
+                    const url = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${CONFIG.filePath}`;
+                    const payload = { message: `Auto-save: Updated personas.json [${new Date().toISOString()}]`, content, branch: CONFIG.branch };
+                    if (currentFileSha) payload.sha = currentFileSha;
+                    
+                    const res = await fetch(url, { method: 'PUT', headers: { 'Authorization': `Bearer ${accessToken}`, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                    if (!res.ok) { const err = await res.json(); throw new Error(err.message || 'GitHub API Error'); }
+                    const result = await res.json();
+                    currentFileSha = result.content.sha;
+                    localStorage.setItem('personasoi_data', JSON.stringify(personas));
+                    if(showToastMsg) showToast('✅ Successfully saved to persona.json!', 'success');
+                } catch (err) {
+                    console.error('GitHub Save Error:', err);
+                    localStorage.setItem('personasoi_data', JSON.stringify(personas));
+                    if(showToastMsg) showToast('️ Failed to save to GitHub: ' + err.message, 'error');
+                } finally { isSaving = false; }
+            }
+
+            async function loadFromGitHub() {
+                try {
+                    const url = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${CONFIG.filePath}?ref=${CONFIG.branch}`;
+                    const res = await fetch(url, { headers: { 'Authorization': `Bearer ${accessToken}`, 'Accept': 'application/vnd.github.v3+json' } });
+                    if (res.status === 404) { currentFileSha = null; return false; }
+                    if (!res.ok) throw new Error('Failed to fetch file');
+                    const data = await res.json(); currentFileSha = data.sha;
+                    const decoded = base64ToUtf8(data.content); const parsed = JSON.parse(decoded);
+                    if (Array.isArray(parsed)) personas = parsed; else if (parsed.personas && Array.isArray(parsed.personas)) personas = parsed.personas;
+                    render(); 
+                    if(arguments.length === 0) showToast('️ Loaded latest version from persona.json', 'success');
+                    return true;
+                } catch (err) { console.error('GitHub Load Error:', err); return false; }
+            }
+
+            // ====== RENDER PERSONAS ======
+            function render() {
+                if (!personas.length) { container.innerHTML = `<div class="empty-state">️ No characters yet. Create your first persona!</div>`; countDisplay.textContent = '0 characters'; return; }
+                container.innerHTML = personas.map((p, idx) => {
+                    const genderClass = p.gender === 'female' ? 'female' : 'male';
+                    const avatarIcon = p.gender === 'female' ? '👩💻' : '👨';
+                    const userId = p.id || generateId(p.name);
+                    
+                    return `
+                    <div class="persona-card" data-index="${idx}">
+                        <span class="slot-tag">SLOT ${String(idx + 1).padStart(2, '0')}</span>
+                        <div class="card-header">
+                            <div class="avatar-circle ${genderClass}">${avatarIcon}</div>
+                            <div class="card-title">
+                                <h3>${p.flag || ''} ${p.name}</h3>
+                                <span class="role-badge">${p.role || 'No role'}</span>
+                            </div>
+                        </div>
+                        ${p.native_language ? `<div class="field"><strong>Native:</strong> ${p.native_language}</div>` : ''}
+                        ${p.vibe ? `<div class="field"><strong>Vibe:</strong> ${p.vibe}</div>` : ''}
+                        ${p.catchphrase ? `<div class="field"><strong>Catchphrase:</strong> "${p.catchphrase}"</div>` : ''}
+                        ${p.personal_style ? `<div class="field"><strong>Style:</strong> ${p.personal_style}</div>` : ''}
+                        ${p.meme_vocabulary?.length ? `<div class="field"><strong>Memes:</strong> ${p.meme_vocabulary.join(', ')}</div>` : ''}
+                        ${p.quirks?.length ? `<div class="field"><strong>Quirks:</strong> ${p.quirks.join(', ')}</div>` : ''}
+                        
+                        <div class="actions">
+                            <button class="btn btn-outline" onclick="editPersona(${idx})">✏️ Edit</button>
+                            <button class="btn btn-outline" onclick="clonePersona(${idx})">📋 Clone</button>
+                            <button class="btn btn-danger" onclick="deletePersona(${idx})">️🗑️ </button>
+                            
+                            <!-- SAO Green Play Button -->
+                            <div class="sao-play-btn" onclick="launchGame('${userId}', '${p.name}')" title="Launch Game">
+                                <svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+                countDisplay.textContent = `${personas.length} character${personas.length !== 1 ? 's' : ''}`;
+                statusMsg.textContent = `✅ ${personas.length} characters loaded from persona.json`;
+            }
+
+            // ====== LAUNCH GAME ======
+            window.launchGame = function(userId, charName) {
+                playArcadeSound();
+                const encodedId = encodeURIComponent(userId);
+                window.location.href = `${CONFIG.gameUrl}?user_id=${encodedId}`;
+            };
+
+            // ====== CRUD OPERATIONS ======
+            function getPersonaFromForm() {
+                const memeVocab = editMemeVocab.value.split(',').map(s => s.trim()).filter(Boolean);
+                const quirks = editQuirks.value.split(',').map(s => s.trim()).filter(Boolean);
+                return { id: editId.value || generateId(editName.value), name: editName.value.trim(), flag: editFlag.value.trim() || '', role: editRole.value.trim(), native_language: editNativeLang.value.trim(), vibe: editVibe.value.trim(), catchphrase: editCatchphrase.value.trim(), personal_style: editPersonalStyle.value.trim(), meme_vocabulary: memeVocab, quirks, gender: editGender.value || 'male' };
+            }
+            function fillForm(persona) {
+                editId.value = persona.id || ''; editName.value = persona.name || ''; editFlag.value = persona.flag || ''; editRole.value = persona.role || '';
+                editNativeLang.value = persona.native_language || ''; editVibe.value = persona.vibe || ''; editCatchphrase.value = persona.catchphrase || '';
+                editPersonalStyle.value = persona.personal_style || ''; editMemeVocab.value = (persona.meme_vocabulary || []).join(', '); editQuirks.value = (persona.quirks || []).join(', ');
+                editGender.value = persona.gender || 'male'; selectGender(persona.gender || 'male');
+                contextInput.value = ''; Object.values(tags).forEach(el => el.classList.remove('show')); document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight'));
+            }
+            function generateId(name) { return name.toLowerCase().replace(/\s+/g, '_') + '_' + Date.now().toString(36); }
+            function openModal(persona, index, isEdit = false) {
+                if (persona) { fillForm(persona); modalTitle.textContent = isEdit ? '✏️ Edit Character' : ' Clone Character'; }
+                else { modalTitle.textContent = 'Create New Character'; personaForm.reset(); editId.value = ''; contextInput.value = ''; editGender.value = 'male'; selectGender('male'); Object.values(tags).forEach(el => el.classList.remove('show')); document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight')); }
+                editingIndex = index; modalOverlay.classList.add('active');
+            }
+            function closeModal() { modalOverlay.classList.remove('active'); editingIndex = -1; }
+            window.editPersona = function(idx) { openModal(personas[idx], idx, true); };
+            window.clonePersona = function(idx) { const p = personas[idx]; openModal({ ...p, id: generateId(p.name + '_copy'), name: p.name + ' (copy)' }, -1, false); };
+            window.deletePersona = function(idx) { if (!confirm(`Delete "${personas[idx].name}"?`)) return; personas.splice(idx, 1); syncAndRender(); showToast('️ Character deleted', 'success'); };
+            personaForm.addEventListener('submit', function(e) {
+                e.preventDefault(); const data = getPersonaFromForm();
+                if (!data.name || !data.role) { showToast('❌ Name and Role are required.', 'error'); return; }
+                if (editingIndex >= 0 && editingIndex < personas.length) { personas[editingIndex] = data; showToast('✅ Character updated', 'success'); }
+                else { personas.push(data); showToast('✅ Character created', 'success'); }
+                closeModal(); syncAndRender();
+            });
+            modalCancelBtn.addEventListener('click', closeModal);
+            modalOverlay.addEventListener('click', (e) => { if (e.target === modalOverlay) closeModal(); });
+            
+            function syncAndRender() {
+                render();
+                localStorage.setItem('personasoi_data', JSON.stringify(personas));
+                if (accessToken && currentUser) saveToGitHub(false);
+            }
+
+            // ====== BUTTONS ======
+            addBtn.addEventListener('click', () => openModal(null, -1, false));
+            autoCreateBtn.addEventListener('click', function() {
+                const isFemale = Math.random() < 0.5;
+                personas.push({ id: 'sample_' + Date.now().toString(36), name: isFemale ? 'Sample Persona (F)' : 'Sample Persona', flag: '🌟', role: 'Team Lead', native_language: 'English & Hindi', vibe: 'Friendly and motivating', catchphrase: "Let's get this done!", personal_style: 'Casual but professional', meme_vocabulary: ['vibe', 'flex', 'no cap'], quirks: ['Always early', 'Loves coffee'], gender: isFemale ? 'female' : 'male' });
+                syncAndRender(); showToast(' Sample character created', 'success');
+                if (accessToken && currentUser) saveToGitHub(true);
+            });
+            pushToGithubBtn.addEventListener('click', () => { if (!accessToken) { showToast('️ Please sign in first.', 'error'); return; } saveToGitHub(true); });
+
+            // ====== EXPORT / IMPORT ======
+            exportBtn.addEventListener('click', function() {
+                if (!personas.length) { showToast(' No characters to export.', 'error'); return; }
+                const json = JSON.stringify({ personas }, null, 2); const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'personas.json';
+                document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+                showToast(' Exported personas.json', 'success');
+            });
+            importInput.addEventListener('change', function(e) {
+                const file = e.target.files[0]; if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        if (Array.isArray(data)) personas = data; else if (data.personas && Array.isArray(data.personas)) personas = data.personas;
+                        else { showToast('❌ Invalid JSON format.', 'error'); return; }
+                        syncAndRender(); showToast(` Imported ${personas.length} characters`, 'success');
+                        if (accessToken && currentUser) saveToGitHub(true);
+                    } catch (err) { showToast('❌ Failed to parse JSON: ' + err.message, 'error'); }
+                    importInput.value = '';
+                };
+                reader.readAsText(file);
+            });
+
+            // ====== BATCH IMPORT ======
+            batchBtn.addEventListener('click', () => { batchInput.value = ''; batchModalOverlay.classList.add('active'); });
+            batchCancelBtn.addEventListener('click', () => batchModalOverlay.classList.remove('active'));
+            batchModalOverlay.addEventListener('click', (e) => { if (e.target === batchModalOverlay) batchModalOverlay.classList.remove('active'); });
+            batchGenerateBtn.addEventListener('click', function() {
+                const bios = batchInput.value.split('\n').filter(line => line.trim());
+                if (!bios.length) { showToast('❌ No bios to process.', 'error'); return; }
+                let created = 0;
+                for (let bio of bios) { const persona = extractPersonaFromBio(bio); if (persona.name && persona.role) { personas.push(persona); created++; } }
+                if (created === 0) showToast(' Could not extract valid characters.', 'error');
+                else { 
+                    syncAndRender(); 
+                    showToast(`✅ Created ${created} character${created > 1 ? 's' : ''} from batch.`, 'success'); 
+                    if (accessToken && currentUser) saveToGitHub(true);
+                }
+                batchModalOverlay.classList.remove('active');
+            });
+
+            // ====== RAGINA AUTO-FILL EXTRACTOR ======
+            function extractPersonaFromBio(text) {
+                function extractName(txt) { let m = txt.match(/(?:my name is|i am|i'm|call me)\s+([A-Z][a-z]+)/i); if (m) return m[1]; m = txt.match(/^([A-Z][a-z]+)\s*[—\-–]/); if (m) return m[1]; m = txt.match(/^([A-Z][a-z]+)\s+/); if (m) return m[1]; return ''; }
+                function extractRole(txt) { let m = txt.match(/(?:sharp with|solid in|strong in|good at|good with|expert in|skilled in)\s+([a-zA-Z\s,]+)(?:[.,;]|$)/i); if (m) { let s = m[1].split(',').map(x => x.trim()).filter(Boolean); if (s.length > 1) return s.join('/') + ' Developer'; if (s.length === 1) return s[0] + ' Developer'; } const roles = ['developer','lead','manager','designer','engineer','analyst','architect','tester','devops','product','owner','scrum master','coach','consultant','strategist','marketing','sales','support','hr','finance','legal']; for (let r of roles) if (txt.toLowerCase().includes(r)) return r.replace(/\b\w/g, c => c.toUpperCase()); return ''; }
+                function extractLanguages(txt) { const langs = ['hindi','telugu','tamil','kannada','malayalam','english','spanish','french','german','japanese','chinese','korean','russian','arabic','portuguese','italian','dutch','marathi','gujarati','urdu','punjabi','bengali','nagpuri']; let found = []; const lower = txt.toLowerCase(); for (let l of langs) if (lower.includes(l)) found.push(l.charAt(0).toUpperCase() + l.slice(1)); if (found.length > 2) return found.join(', '); if (found.length === 2) return found.join(' & '); if (found.length === 1) return found[0]; return ''; }
+                function extractVibe(txt) { let m = txt.match(/[Vv]ibe\s*[:：]\s*([^.,;]+)/); if (m) return m[1].trim(); const vibes = ['chill','introvert','extrovert','ambivert','friendly','motivating','calm','energetic','creative','analytical','strategic','empathetic','confident','humble','funny','viber','quiet observer','deep thinker','dry humor','hustler']; for (let v of vibes) if (txt.toLowerCase().includes(v)) return v.charAt(0).toUpperCase() + v.slice(1); return ''; }
+                function extractCatchphrase(txt) { let m = txt.match(/"([^"]+)"/); if (m) return m[1]; const common = ['cool','chill','awesome',"let's go",'no problem','alright','yeah','bet']; for (let c of common) if (txt.toLowerCase().includes(c)) return c.charAt(0).toUpperCase() + c.slice(1); return ''; }
+                function extractPersonalStyle(txt) { const styles = ['orator','casual','professional','formal','creative','concise','elaborate','direct','diplomatic','humorous','inspiring','motivational','supportive','deep thinker','dry humor','quiet observer']; for (let s of styles) if (txt.toLowerCase().includes(s)) return s.charAt(0).toUpperCase() + s.slice(1); return ''; }
+                function extractMemeVocab(txt) { const memes = ['vibe','flex','no cap','bet','yeet','sus','pog','based','cringe','lit','fire','goat','oof','smh','fr','af','lowkey','highkey','slay','periodt','bestie','cool','chill','✨','🔥','🚀','','🙌','']; let found = []; const lower = txt.toLowerCase(); for (let m of memes) if (lower.includes(m) || txt.includes(m)) found.push(m); const emojiRegex = /([\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]|✨|🔥|||🙌|)/gu; const emojis = txt.match(emojiRegex); if (emojis) for (let e of emojis) if (!found.includes(e)) found.push(e); return found.slice(0, 5); }
+                function extractQuirks(txt) { const quirks = []; let m = txt.match(/(?:Loves|Enjoys|Obsessed with|Fan of)\s+([^.,;]+)/i); if (m) quirks.push('Loves ' + m[1].trim()); m = txt.match(/Into\s+([^.,;]+)/i); if (m) quirks.push('Into ' + m[1].trim()); if (txt.toLowerCase().includes('secretly a meme lord')) quirks.push('Secretly a meme lord'); if (txt.toLowerCase().includes('natural hype-man')) quirks.push('Natural hype-man'); if (txt.toLowerCase().includes('low-key philosopher')) quirks.push('Low-key philosopher'); if (txt.toLowerCase().includes('motivational speaker')) quirks.push('Motivational speaker'); if (txt.toLowerCase().includes('drops one-liners')) quirks.push('Drops one-liners'); if (txt.toLowerCase().includes('comeback story')) quirks.push('Always has a comeback story'); if (txt.toLowerCase().includes('life advice')) quirks.push('Drops random life advice'); if (txt.toLowerCase().includes('introvert')) quirks.push('Introvert'); if (txt.toLowerCase().includes('extrovert')) quirks.push('Extrovert'); if (txt.toLowerCase().includes('quiet observer')) quirks.push('Quiet observer'); if (txt.toLowerCase().includes('deep thinker')) quirks.push('Deep thinker'); if (txt.toLowerCase().includes('dry humor')) quirks.push('Dry humor'); if (txt.toLowerCase().includes('hustler')) quirks.push('Hustler'); return quirks.slice(0, 5); }
+                const name = extractName(text), role = extractRole(text), nativeLang = extractLanguages(text);
+                const vibe = extractVibe(text), catchphrase = extractCatchphrase(text), style = extractPersonalStyle(text);
+                const memes = extractMemeVocab(text), quirks = extractQuirks(text);
+                let flag = ''; const langLower = nativeLang.toLowerCase();
+                if (langLower.includes('telugu')||langLower.includes('hindi')||langLower.includes('marathi')||langLower.includes('gujarati')||langLower.includes('urdu')||langLower.includes('punjabi')||langLower.includes('bengali')||langLower.includes('nagpuri')) flag = '';
+                else if (langLower.includes('japanese')) flag = ''; else if (langLower.includes('spanish')) flag = ''; else if (langLower.includes('french')) flag = '';
+                else if (langLower.includes('german')) flag = '🇪'; else if (langLower.includes('chinese')) flag = ''; else if (langLower.includes('korean')) flag = '🇰🇷'; else if (langLower.includes('english')) flag = '🇧';
+                return { id: name ? generateId(name) : 'unknown_'+Date.now().toString(36), name: name||'Unknown', flag: flag||'', role: role||'Unspecified', native_language: nativeLang, vibe, catchphrase, personal_style: style, meme_vocabulary: memes, quirks, gender: Math.random() < 0.5 ? 'female' : 'male' };
+            }
+            autoFillBtn.addEventListener('click', function() {
+                const text = contextInput.value.trim(); if (!text) { showToast(' Please enter a description first.', 'error'); return; }
+                Object.values(tags).forEach(el => el.classList.remove('show')); document.querySelectorAll('.ai-highlight').forEach(el => el.classList.remove('ai-highlight'));
+                const persona = extractPersonaFromBio(text);
+                function showTag(fieldId, tagId) { const el = document.getElementById(fieldId), tag = document.getElementById(tagId); if (el && tag) { el.classList.add('ai-highlight'); tag.classList.add('show'); setTimeout(() => el.classList.remove('ai-highlight'), 3000); } }
+                if (persona.name && persona.name !== 'Unknown') { editName.value = persona.name; showTag('editName','tagName'); }
+                if (persona.role && persona.role !== 'Unspecified') { editRole.value = persona.role; showTag('editRole','tagRole'); }
+                if (persona.native_language) { editNativeLang.value = persona.native_language; showTag('editNativeLang','tagNativeLang'); }
+                if (persona.vibe) { editVibe.value = persona.vibe; showTag('editVibe','tagVibe'); }
+                if (persona.catchphrase) { editCatchphrase.value = persona.catchphrase; showTag('editCatchphrase','tagCatchphrase'); }
+                if (persona.personal_style) { editPersonalStyle.value = persona.personal_style; showTag('editPersonalStyle','tagPersonalStyle'); }
+                if (persona.meme_vocabulary.length) { editMemeVocab.value = persona.meme_vocabulary.join(', '); showTag('editMemeVocab','tagMemeVocab'); }
+                if (persona.quirks.length) { editQuirks.value = persona.quirks.join(', '); showTag('editQuirks','tagQuirks'); }
+                if (persona.flag && persona.flag !== '') { editFlag.value = persona.flag; showTag('editFlag','tagFlag'); }
+                if (persona.name && persona.name !== 'Unknown') editId.value = generateId(persona.name);
+                selectGender(persona.gender);
+                const filled = [];
+                if (persona.name) filled.push('Name'); if (persona.role) filled.push('Role'); if (persona.native_language) filled.push('Native Language');
+                if (persona.vibe) filled.push('Vibe'); if (persona.catchphrase) filled.push('Catchphrase'); if (persona.personal_style) filled.push('Style');
+                if (persona.meme_vocabulary.length) filled.push('Memes'); if (persona.quirks.length) filled.push('Quirks'); if (persona.flag) filled.push('Flag');
+                if (filled.length) showToast(`✨ Auto-filled: ${filled.join(', ')}`, 'success'); else showToast('⚠️ Could not extract any fields.', 'error');
+            });
+
+            // ====== MENU MODAL (click on sphere) ======
+            function openMenuModal() {
+                menuModalOverlay.classList.add('active');
+            }
+            function closeMenuModal() {
+                menuModalOverlay.classList.remove('active');
+            }
+            closeMenuModalBtn.addEventListener('click', closeMenuModal);
+            menuModalOverlay.addEventListener('click', (e) => { if (e.target === menuModalOverlay) closeMenuModal(); });
+
+            // Menu item actions
+            menuModalOverlay.addEventListener('click', function(e) {
+                const item = e.target.closest('.menu-item');
+                if (!item) return;
+                const action = item.dataset.action;
+                playArcadeSound();
+                closeMenuModal();
+                
+                switch(action) {
+                    case 'home':
+                        window.location.href = 'https://suryasticsai.github.io/myTeamOnWhatsApp/';
+                        break;
+                    case 'settings':
+                        settingsBtn.click();
+                        break;
+                    case 'sound':
+                        prefs.soundsEnabled = !prefs.soundsEnabled;
+                        localStorage.setItem('personasoi_prefs', JSON.stringify(prefs));
+                        applyPreferences();
+                        showToast(`🔊 Sound ${prefs.soundsEnabled ? 'On' : 'Off'}`, 'success');
+                        break;
+                    case 'toggleSphere':
+                        prefs.sphereVisible = !prefs.sphereVisible;
+                        localStorage.setItem('personasoi_prefs', JSON.stringify(prefs));
+                        applyPreferences();
+                        showToast(`🌀 Sphere ${prefs.sphereVisible ? 'Visible' : 'Hidden'}`, 'success');
+                        break;
+                    case 'inbox':
+                        showToast('📥 Inbox: No new messages.', 'info');
+                        break;
+                    case 'stats':
+                        alert(`📊 Personasoi Stats\n\nTotal Characters: ${personas.length}\nLast Updated: ${new Date().toLocaleString()}\nGitHub Sync: ${accessToken ? '✅ Connected' : '❌ Not signed in'}`);
+                        break;
+                    case 'about':
+                        alert('🧠 Personasoi v2.0\n\nCreated by Sai Varakala (@suryasticsai)\nSAO Style Interface\nEarth Sphere Joystick\nRAGina Auto-fill\nGitHub Sync');
+                        break;
+                }
+            });
+
+            // ====== EARTH SPHERE INTERACTIONS ======
+            let longPressTimer = null;
+            let isLongPress = false;
+
+            function startLongPress(e) {
+                longPressTimer = setTimeout(() => {
+                    isLongPress = true;
+                    // Thunderstorm!
+                    playThunder();
+                    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+                    earthSphere.classList.add('thunder');
+                    setTimeout(() => earthSphere.classList.remove('thunder'), 900);
+                    const flash = $('flashOverlay');
+                    flash.classList.remove('strike');
+                    void flash.offsetWidth;
+                    flash.classList.add('strike');
+                    showToast('⚡ Thunderstorm!', 'error');
+                }, 500);
+            }
+
+            function endLongPress() {
+                clearTimeout(longPressTimer);
+                if (!isLongPress) {
+                    // Short click – open menu modal
+                    openMenuModal();
+                }
+                isLongPress = false;
+            }
+
+            // Mouse events
+            joystickBtn.addEventListener('mousedown', startLongPress);
+            joystickBtn.addEventListener('mouseup', endLongPress);
+            joystickBtn.addEventListener('mouseleave', function() {
+                clearTimeout(longPressTimer);
+                isLongPress = false;
+            });
+
+            // Touch events
+            joystickBtn.addEventListener('touchstart', startLongPress, { passive: true });
+            joystickBtn.addEventListener('touchend', endLongPress, { passive: true });
+
+            // ====== FOOTER LOGO TOGGLE SPHERE ======
+            footerLogo.addEventListener('click', function() {
+                // Toggle sphere visibility
+                prefs.sphereVisible = !prefs.sphereVisible;
+                localStorage.setItem('personasoi_prefs', JSON.stringify(prefs));
+                applyPreferences();
+                showToast(`🌀 Sphere ${prefs.sphereVisible ? 'Visible' : 'Hidden'}`, 'success');
+                // Play a soft sound
+                playArcadeSound();
+            });
+
+            // ====== CHARACTER SELECT MODAL ======
+            function openCharSelect() {
+                const stored = localStorage.getItem('personasoi_data');
+                if (stored) { try { const parsed = JSON.parse(stored); if (Array.isArray(parsed) && parsed.length) personas = parsed; } catch (e) {} }
+                const grid = charSelectGrid;
+                if (!personas.length) {
+                    grid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--text-mid);">No characters found.<br>Create some in the manager first!</div>`;
+                } else {
+                    grid.innerHTML = personas.map(p => {
+                        const genderClass = p.gender === 'female' ? 'female' : 'male';
+                        const avatarIcon = p.gender === 'female' ? '‍💻' : '👨💻';
+                        const userId = p.id || generateId(p.name);
+                        return `<div class="cs-card"><div class="cs-avatar ${genderClass}" style="background: ${genderClass === 'female' ? 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' : 'linear-gradient(135deg, #4facfe 0%, #00d4ff 100%)'}">${p.flag || avatarIcon}</div><div class="cs-name">${p.name}</div><div class="cs-role">${p.role || 'Unspecified'}</div><button class="cs-play" onclick="launchGame('${userId}', '${p.name}')">▶ Play As ${p.name.split(' ')[0]}</button></div>`;
+                    }).join('');
+                }
+                charSelectModal.classList.add('active');
+            }
+            function closeCharSelect() { charSelectModal.classList.remove('active'); }
+            charSelectModal.addEventListener('click', (e) => { if (e.target === charSelectModal) closeCharSelect(); });
+
+            // ====== EVENT LISTENERS (settings, etc.) ======
+            loginBtn.addEventListener('click', triggerLogin); logoutBtn.addEventListener('click', logout);
+            settingsBtn.addEventListener('click', () => { 
+                themeColorSelect.value = prefs.themeColor; 
+                soundsToggle.checked = prefs.soundsEnabled; 
+                soundsLabel.textContent = prefs.soundsEnabled ? 'On' : 'Off';
+                sphereVisibleToggle.checked = prefs.sphereVisible;
+                sphereVisibleLabel.textContent = prefs.sphereVisible ? 'Visible' : 'Hidden';
+                prefModalOverlay.classList.add('active'); 
+            });
+            soundsToggle.addEventListener('change', function() { soundsLabel.textContent = this.checked ? 'On' : 'Off'; });
+            sphereVisibleToggle.addEventListener('change', function() {
+                sphereVisibleLabel.textContent = this.checked ? 'Visible' : 'Hidden';
+            });
+            prefCloseBtn.addEventListener('click', () => prefModalOverlay.classList.remove('active'));
+            prefModalOverlay.addEventListener('click', (e) => { if (e.target === prefModalOverlay) prefModalOverlay.classList.remove('active'); });
+            prefSaveBtn.addEventListener('click', savePreferences);
+
+            // ====== INIT ======
+            (async function init() {
+                runLoadingSequence(); loadPreferences();
+                const handled = handleOAuthCallback();
+                let loadedFromJson = false;
+                if (accessToken && currentUser) { loadedFromJson = await loadFromGitHub(); } 
+                else {
+                    try {
+                        const resp = await fetch(`https://raw.githubusercontent.com/${CONFIG.repoOwner}/${CONFIG.repoName}/${CONFIG.branch}/${CONFIG.filePath}`);
+                        if (resp.ok) {
+                            const data = await resp.json();
+                            const list = Array.isArray(data) ? data : (data.personas || []);
+                            if (list.length) { personas = list; loadedFromJson = true; render(); statusMsg.textContent = `✅ ${personas.length} characters loaded from persona.json (Public)`; }
+                        }
+                    } catch (e) { console.log('Public JSON fetch failed, falling back to localStorage'); }
+                }
+                if (!loadedFromJson) {
+                    const s = localStorage.getItem('personasoi_data');
+                    if (s) { try { const p = JSON.parse(s); if (Array.isArray(p) && p.length) { personas = p; render(); statusMsg.textContent = `✅ ${personas.length} characters loaded from local drafts`; } } catch (e) {} }
+                }
+                if (!personas.length) { render(); statusMsg.textContent = '💡 Ready. Create your first character.'; }
+
+                // Update inbox badge (placeholder)
+                inboxBadge.textContent = '0';
+            })();
+        });
     </script>
 </body>
 </html>
