@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     <title>WhatsApp — Personasoi 🦣</title>
     <style>
+        /* ====== ROOT VARIABLES ====== */
         :root {
             --bg: #ffffff; --panel: #ffffff; --panel-2: #f0f2f5; --hover: #f5f6f6; --active: #f0f2f5;
             --txt: #111b21; --txt-2: #667781; --accent: #00a884; --accent-text: #008069; --accent-deep: #d9fdd3;
             --bubble-in: #ffffff; --bubble-out: #d9fdd3; --chat-bg: #efeae2; --blue: #3b9ae1;
             --border: #e9edef; --border-2: #d9dfe3; --icon: #54656f; --danger: #ea4335; --badge: #25d366;
             --shadow: 0 6px 24px rgba(0, 0, 0, .14);
+            --gold: #ffb547;
+            --success: #2fe08a;
         }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body { height: 100%; margin: 0; }
@@ -26,6 +29,150 @@
         .hidden { display: none !important; }
         .flex1 { flex: 1; }
 
+        /* ====== PICKER / WELCOME ====== */
+      #picker { position: fixed; inset: 0; z-index: 200; background: linear-gradient(160deg, #eafaf4, #eef1f2); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn .25s ease both; }
+#picker.hidden { display: none; }
+.pk-card { background: #fff; border-radius: 22px; box-shadow: 0 24px 70px rgba(0,0,0,.18); width: min(560px,94vw); max-height: 88vh; display: flex; flex-direction: column; overflow-y: auto; animation: modalIn .3s cubic-bezier(.3,1.3,.5,1) both; }
+.pk-head { padding: 26px 28px 12px; text-align: center; }
+.pk-head .mascot { font-size: 44px; width: 80px; height: 80px; margin: 0 auto; object-fit: contain; }
+.pk-head h1 { margin: 6px 0 0; font-size: 23px; font-weight: 700; color: var(--txt); }
+.pk-head p { margin: 8px auto 0; color: var(--txt-2); font-size: 13.5px; line-height: 1.5; max-width: 380px; }
+.pk-list { overflow-y: auto; padding: 6px 14px 20px; }
+.slide-container { margin-top: auto; }
+        /* ====== SLIDE TO CONFIRM ====== */
+        .slide-container {
+            position: relative; background: var(--panel-2); border-radius: 999px; height: 52px;
+            display: flex; align-items: center; cursor: pointer; user-select: none;
+            overflow: hidden; border: 1px solid var(--border); margin-top: 0.5rem;
+        }
+        .slide-thumb {
+            position: absolute; left: 4px; width: 44px; height: 44px; border-radius: 50%;
+            background: var(--accent); display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 1.2rem; transition: left 0.1s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            will-change: left;
+        }
+        .slide-thumb.dragging { transition: none; }
+        .slide-label {
+            position: absolute; left: 50%; transform: translateX(-50%);
+            font-size: 0.9rem; color: var(--txt-2); font-weight: 500; pointer-events: none;
+        }
+        .slide-label.completed { color: var(--accent-text); }
+
+        /* ====== TASK INBOX STYLES ====== */
+        .task-item {
+            background: var(--panel-2);
+            border-radius: 12px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.75rem;
+            border-left: 4px solid var(--accent);
+            transition: background 0.2s;
+        }
+        .task-item.completed {
+            opacity: 0.7;
+            border-left-color: var(--txt-2);
+        }
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+            color: var(--txt-2);
+        }
+        .task-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .task-header input[type="checkbox"] {
+            margin-top: 0.2rem;
+            width: 18px; height: 18px;
+            accent-color: var(--accent);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .task-title {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--txt);
+        }
+        .task-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            margin-top: 0.4rem;
+            font-size: 0.8rem;
+            color: var(--txt-2);
+        }
+        .task-meta .priority-high { color: var(--danger); font-weight: 600; }
+        .task-meta .priority-critical { color: var(--danger); font-weight: 700; }
+        .task-meta .priority-medium { color: var(--gold); }
+        .task-meta .priority-low { color: var(--success); }
+        .task-desc {
+            font-size: 0.85rem;
+            color: var(--txt-2);
+            margin-top: 0.3rem;
+            line-height: 1.4;
+        }
+        .task-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.3rem;
+            margin-top: 0.4rem;
+        }
+        .task-tag {
+            background: rgba(0,0,0,0.06);
+            padding: 0.1rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            color: var(--txt-2);
+            border: 1px solid var(--border);
+        }
+        .task-empty {
+            text-align: center; color: var(--txt-2); padding: 2rem 0;
+            font-size: 1rem;
+        }
+
+        /* ====== AGREE CHECKBOX ====== */
+        .agree-row {
+            padding: 1rem 1.5rem;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin: 0.5rem 0;
+        }
+        .agree-row label {
+            display: flex; align-items: center; gap: 0.75rem;
+            cursor: pointer; font-size: 0.85rem; color: var(--txt-2);
+        }
+        .agree-row input[type="checkbox"] {
+            width: 18px; height: 18px; accent-color: var(--accent);
+            cursor: pointer; flex-shrink: 0;
+        }
+
+        /* ====== WELCOME NOTE INSIDE PICKER ====== */
+        .welcome-note {
+            padding: 0.5rem 1.5rem 0.5rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--txt);
+        }
+        .welcome-note strong { color: var(--accent-text); }
+        .welcome-note .inbox-reminder {
+            font-size: 0.85rem;
+            color: var(--txt-2);
+            background: var(--panel-2);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            margin-top: 0.5rem;
+        }
+        .admin-sig {
+            text-align: right;
+            font-size: 0.85rem;
+            color: var(--txt-2);
+            margin-top: 0.3rem;
+            padding-top: 0.3rem;
+            border-top: 1px solid var(--border);
+        }
+        .admin-sig strong { color: var(--accent-text); }
+
+        /* ====== EXISTING STYLES (unchanged) ====== */
         #app { display: flex; height: 100vh; height: 100dvh; width: 100%; animation: appIn .35s ease both; }
         @keyframes appIn { from { opacity: 0; transform: scale(.995); } to { opacity: 1; transform: none; } }
 
@@ -82,7 +229,7 @@
         .list-empty { padding: 40px 24px; text-align: center; color: var(--txt-2); font-size: 14px; }
 
         .fab-stack { position: absolute; right: 16px; bottom: 76px; display: flex; flex-direction: column; gap: 14px; z-index: 9; align-items: flex-end; }
-        .fab-ai { width: 50px; height: 50px; border-radius: 16px; background: #fff; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; transition: transform .12s; }
+        .fab-ai { width: 50px; height: 50px; border-radius: 16px; background: #fff; box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; transition: transform .12s; cursor: pointer; }
         .fab-ai:active { transform: scale(.93); }
         .fab-ai svg { width: 30px; height: 30px; }
         .fab-new { width: 56px; height: 56px; border-radius: 18px; background: var(--accent); box-shadow: var(--shadow); display: flex; align-items: center; justify-content: center; transition: transform .12s, filter .12s; }
@@ -258,82 +405,8 @@
         .nc-row:hover { background: var(--hover); }
         .msg-count { font-size: 12px; color: var(--txt-2); padding: 0 6px; white-space: nowrap; }
 
-        /* identity picker */
-        #picker { position: fixed; inset: 0; z-index: 200; background: linear-gradient(160deg, #eafaf4, #eef1f2); display: flex; align-items: center; justify-content: center; padding: 20px; animation: fadeIn .25s ease both; }
-        #picker.hidden { display: none; }
-        .pk-card { background: #fff; border-radius: 22px; box-shadow: 0 24px 70px rgba(0, 0, 0, .18); width: min(560px, 94vw); max-height: 88vh; display: flex; flex-direction: column; overflow: hidden; animation: modalIn .3s cubic-bezier(.3, 1.3, .5, 1) both; }
-        .pk-head { padding: 26px 28px 12px; text-align: center; }
-        .pk-head .mascot { font-size: 44px; }
-        .pk-head h1 { margin: 6px 0 0; font-size: 23px; font-weight: 700; color: var(--txt); }
-        .pk-head p { margin: 8px auto 0; color: var(--txt-2); font-size: 13.5px; line-height: 1.5; max-width: 380px; }
-        .pk-list { overflow-y: auto; padding: 6px 14px 20px; }
-        .pk-row { display: flex; align-items: center; gap: 14px; padding: 10px 12px; border-radius: 14px; cursor: pointer; transition: background .12s; }
-        .pk-row:hover { background: var(--hover); }
-        .pk-row.sel { background: var(--accent-deep); }
-        .pk-row .avatar { width: 48px; height: 48px; }
-        .pk-meta { flex: 1; min-width: 0; }
-        .pk-name { font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .pk-role { font-size: 13px; color: var(--txt-2); margin-top: 1px; }
-        .pk-tag { font-size: 12.5px; color: var(--accent-text); margin-top: 3px; }
-        .pk-row .go { color: var(--txt-2); font-size: 20px; }
-
-        /* Welcome Mission Modal */
-        .welcome-mission {
-            max-width: 500px;
-            text-align: left;
-            border: 1px solid var(--accent);
-            box-shadow: 0 0 30px rgba(0, 168, 132, .3);
-        }
-        .welcome-mission .onboarding-header {
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: var(--accent-text);
-            margin-bottom: 0.5rem;
-            text-align: center;
-            border-bottom: 2px solid var(--accent-deep);
-            padding-bottom: 0.5rem;
-        }
-        .welcome-mission .system-msg {
-            background: var(--panel-2);
-            border-radius: 12px;
-            padding: 1rem 1.2rem;
-            margin: 1rem 0;
-            border-left: 4px solid var(--accent);
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: var(--txt);
-        }
-        .welcome-mission .admin-sig {
-            text-align: right;
-            font-size: 0.85rem;
-            color: var(--txt-2);
-            margin-top: 0.5rem;
-            padding-top: 0.5rem;
-            border-top: 1px solid var(--border);
-        }
-        .welcome-mission .admin-sig strong {
-            color: var(--accent-text);
-        }
-        .welcome-mission .mission-btn {
-            display: block;
-            width: 100%;
-            margin-top: 1.5rem;
-            padding: 0.9rem;
-            border-radius: 999px;
-            background: var(--accent);
-            color: #fff;
-            font-size: 1.1rem;
-            font-weight: 700;
-            letter-spacing: 0.5px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-            box-shadow: 0 0 20px rgba(0, 168, 132, .3);
-        }
-        .welcome-mission .mission-btn:hover {
-            transform: scale(1.02);
-            box-shadow: 0 0 30px rgba(0, 168, 132, .5);
-        }
+        /* ====== AI TASK MODAL ====== */
+        #aiModal .modal { max-width: 600px; }
 
         @media (max-width: 880px) {
             #sidebar { flex: 1 1 auto; max-width: none; min-width: 0; width: 100%; }
@@ -353,7 +426,7 @@
     </style>
 </head>
 <body>
- <div id="app">
+<div id="app">
     <!-- ====== SIDEBAR ====== -->
     <aside id="sidebar">
         <header class="s-head">
@@ -366,10 +439,10 @@
             <div class="menu" id="menuDrop">
                 <button data-act="home">🏠 Back to Home</button> 
                 <button data-act="standup">🦣 Run a standup in the group</button>
-                <button data-act="knowledge"> Load team knowledge (RAGina)</button>
-                <button data-act="export"> Export active chat (.txt)</button>
+                <button data-act="knowledge">📚 Load team knowledge (RAGina)</button>
+                <button data-act="export">📥 Export active chat (.txt)</button>
                 <button data-act="clear">🗑️ Clear active chat</button>
-                <button data-act="ai">✨ About the AI</button>
+                <button data-act="ai">📥 Inbox</button>
                 <button data-act="profile" id="menuProfileBtn">👤 Profile</button>
                 <button data-act="switch" id="menuSwitchBtn">🔄 Switch identity</button>
             </div>
@@ -397,7 +470,7 @@
         <div class="chat-list" id="chatList"></div>
 
         <div class="fab-stack">
-            <button class="fab-ai" id="aiModal" data-demo="Meta AI · demo only ✨" title="Meta AI">
+            <button class="fab-ai" id="fabAiBtn" title="Inbox / Tasks">
                 <svg viewBox="0 0 32 32"><defs><radialGradient id="aiG" cx="50%" cy="40%" r="70%"><stop offset="0%" stop-color="#7b61ff"/><stop offset="55%" stop-color="#a033d8"/><stop offset="100%" stop-color="#e0479a"/></radialGradient></defs><path fill="url(#aiG)" d="M16 3c.7 4.6 2.4 6.3 7 7-4.6.7-6.3 2.4-7 7-.7-4.6-2.4-6.3-7-7 4.6-.7 6.3-2.4 7-7zM24 17c.4 2.4 1.2 3.2 3.6 3.6-2.4.4-3.2 1.2-3.6 3.6-.4-2.4-1.2-3.2-3.6-3.6 2.4-.4 3.2-1.2 3.6-3.6z"/></svg>
             </button>
             <button class="fab-new" id="newChatBtn" title="New chat">
@@ -432,7 +505,7 @@
             <div id="ncList" style="overflow-y:auto;flex:1;min-height:0"></div>
         </section>
     </aside>
-        <!-- ====== CHAT AREA ====== -->
+    <!-- ====== CHAT AREA ====== -->
     <main id="chatArea">
         <div id="emptyState">
             <svg width="230" height="150" viewBox="0 0 240 160" fill="none">
@@ -531,71 +604,58 @@
         </div>
     </div>
 
-    <!-- ====== IDENTITY PICKER ====== -->
+    <!-- ====== IDENTITY PICKER / WELCOME ====== -->
     <div id="picker">
         <div class="pk-card">
             <div class="pk-head">
-                <div class="mascot">🦣</div>
-                <h1>Who are you today?</h1>
-                <p>Pick a persona to role‑play in Team Mammoth. Everyone else becomes your AI teammate — and they'll chat with <b>you</b>. You can switch anytime.</p>
+                <img class="mascot" id="pickerMascot" src="personasoi.png" alt="Personasoi logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                <span style="display:none; font-size:44px;">🦣</span>
+                <h1 id="pickerTitle">Welcome, <span id="pickerUserName">Guest</span>!</h1>
+                <p id="pickerSub">It might take some time to blend in, but believe me, you'll have great fun while you work with us.</p>
+                <div class="inbox-reminder" style="font-size:0.85rem;color:var(--txt-2);background:var(--panel-2);border-radius:8px;padding:0.6rem 1rem;margin-top:0.5rem;">
+                    📥 Remember: all tasks will be in your inbox. Ensure you regularly check inbox and complete assigned tickets.
+                </div>
             </div>
-            <div class="pk-list" id="pickerList"></div>
+
+            <div class="welcome-note" id="welcomeNote">
+                <!-- filled by JS -->
+            </div>
+
+            <div class="agree-row">
+                <label>
+                    <input type="checkbox" id="agreeCheck" />
+                    I agree to the terms and conditions, and I'm ready to join the team diplomatically.
+                </label>
+            </div>
+
+            <div style="padding:0 1.5rem 1.5rem;">
+                <div class="slide-container" id="slideContainer">
+                    <div class="slide-thumb" id="slideThumb">▶</div>
+                    <span class="slide-label" id="slideLabel">Slide to enter the team →</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- ====== WELCOME MISSION MODAL ====== -->
-    <div class="modal-overlay" id="welcomeModal">
-        <div class="modal welcome-mission">
-            <div class="onboarding-header" id="welcomeTitle">Onboarding: <span id="welcomeName"></span></div>
-            <div class="system-msg" id="welcomeMessage">
-                Hey <span id="welcomeName2"></span>,<br><br>
-                Welcome to our group! You'll be meeting many people here. You were already part of this team quite some time, so you can chat accordingly.<br><br>
-                All the best 😇
+    <!-- ====== AI / TASK INBOX MODAL ====== -->
+    <div class="modal-overlay" id="aiModal">
+        <div class="modal" style="max-width:600px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.5rem;">
+                <h2 style="margin:0;">📥 Your Inbox</h2>
+                <button onclick="closeAiModal()" style="background:none;border:none;color:var(--text-mid);font-size:1.4rem;cursor:pointer;">✕</button>
             </div>
-            <div class="admin-sig">
-                <strong>Best regards,</strong><br>
-                Sai Varakala ☀️<br>
-                <span style="font-size:0.8rem;">From Admin @suryasticsai</span>
+            <div class="sub" style="margin-bottom:1rem;">Tasks assigned to you. Check them off as you complete them.</div>
+            <div id="taskList" style="max-height:60vh;overflow-y:auto;padding-right:0.5rem;">
+                <div class="task-empty">Loading tasks…</div>
             </div>
-            <button class="mission-btn" id="acceptMissionBtn">✅ Accept Mission & Enter Chat</button>
-        </div>
-    </div>
-</div>
-<!-- ====== AI TASKS MODAL ====== -->
-<div class="modal-overlay" id="aiModal">
-    <div class="modal" style="max-width: 500px;">
-        <h2>🤖 AI Assistant</h2>
-        <div class="sub" style="margin-bottom: 1rem;">Welcome to the AI task centre.</div>
-
-        <!-- Welcome Note -->
-        <div style="background: var(--panel-2); border-radius: 12px; padding: 1rem; margin-bottom: 1.2rem; border-left: 4px solid var(--accent);">
-            <strong>👋 Hey there!</strong><br>
-            This is your AI command hub. In the future, you’ll be able to run tasks like:<br>
-            • Generate a standup summary<br>
-            • Draft a retro board<br>
-            • Suggest team icebreakers<br>
-            • Analyse chat sentiment<br>
-            <span style="color: var(--txt-2); font-size: 0.9rem;">Stay tuned – more tasks are coming!</span>
-        </div>
-
-        <!-- Future Tasks (placeholders) -->
-        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-top: 0.5rem;">
-            <button class="btn btn-outline" style="text-align:left;" onclick="toastText('⏳ Task coming soon: Standup summary')">
-                📋 Generate Standup Summary
-            </button>
-            <button class="btn btn-outline" style="text-align:left;" onclick="toastText('⏳ Task coming soon: Retro board')">
-                📊 Draft Retro Board
-            </button>
-            <button class="btn btn-outline" style="text-align:left;" onclick="toastText('⏳ Task coming soon: Icebreaker')">
-                🧊 Suggest Icebreaker
-            </button>
-        </div>
-
-        <div class="modal-actions" style="margin-top: 1.5rem;">
-            <button class="btn btn-secondary" onclick="closeAiModal()">Close</button>
+            <div class="modal-actions" style="margin-top:1.5rem;">
+                <button class="btn btn-secondary" onclick="closeAiModal()">Close</button>
+                <button class="btn btn-volt" onclick="loadTasks()">🔄 Refresh</button>
+            </div>
         </div>
     </div>
 </div>
+
 <script>
     'use strict';
 
@@ -614,7 +674,6 @@
             title: 'Onboarding: Sanchita',
             message: `Hey Sanchita,\n\nWelcome to our group! You'll be meeting many people here. You were already part of this team quite some time, so you can chat accordingly.\n\nAll the best 😇`
         },
-        // Add more users here for custom messages
     };
     function getWelcomeMessage(name) {
         if (WELCOME_MESSAGES[name]) return WELCOME_MESSAGES[name];
@@ -678,661 +737,853 @@
         if (member === 'Sunkul Pradeep') return bi.active ? `FYI ${bi.phrase} — that's YOUR birthday 🎂; feel free to playfully mention it or thank people for wishes.` : '';
         return bi.active ? `FYI ${bi.phrase}; you may casually mention it when relevant (a canteen cake, a gift, planning).` : '';
     }
-    
+
     /* ============ RAGina RAG LAYER ============ */
-const wait = ms => new Promise(r => setTimeout(r, ms));
-let KNOWLEDGE = { chunks: [], idf: {}, ready: false };
-function buildIndex(pages) {
-    const chunks = [];
-    for (const p of pages) {
-        const text = (p.content || '').replace(/\s+/g, ' ').trim();
-        if (text.length < 30) continue;
-        const sentences = text.split(/(?<=[.!?])\s+/);
-        let cur = '';
-        for (const s of sentences) { if ((cur + s).length > 220 && cur) { chunks.push({ text: cur.trim(), source: p.url }); cur = ''; } cur += s + ' '; }
-        if (cur.trim()) chunks.push({ text: cur.trim(), source: p.url });
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+    let KNOWLEDGE = { chunks: [], idf: {}, ready: false };
+    function buildIndex(pages) {
+        const chunks = [];
+        for (const p of pages) {
+            const text = (p.content || '').replace(/\s+/g, ' ').trim();
+            if (text.length < 30) continue;
+            const sentences = text.split(/(?<=[.!?])\s+/);
+            let cur = '';
+            for (const s of sentences) { if ((cur + s).length > 220 && cur) { chunks.push({ text: cur.trim(), source: p.url }); cur = ''; } cur += s + ' '; }
+            if (cur.trim()) chunks.push({ text: cur.trim(), source: p.url });
+        }
+        const idf = {}; const total = chunks.length || 1;
+        for (const ch of chunks) for (const w of new Set(ch.text.toLowerCase().match(/\w+/g) || [])) idf[w] = (idf[w] || 0) + 1;
+        for (const w in idf) idf[w] = Math.log(total / (1 + idf[w]));
+        KNOWLEDGE = { chunks, idf, ready: chunks.length > 0 };
     }
-    const idf = {}; const total = chunks.length || 1;
-    for (const ch of chunks) for (const w of new Set(ch.text.toLowerCase().match(/\w+/g) || [])) idf[w] = (idf[w] || 0) + 1;
-    for (const w in idf) idf[w] = Math.log(total / (1 + idf[w]));
-    KNOWLEDGE = { chunks, idf, ready: chunks.length > 0 };
-}
-function retrieve(q, k = 3) {
-    if (!KNOWLEDGE.ready) return [];
-    const qw = q.toLowerCase().match(/\w+/g) || []; const qtf = {};
-    for (const w of qw) qtf[w] = (qtf[w] || 0) + 1;
-    const scored = KNOWLEDGE.chunks.map((ch, i) => {
-        const cw = ch.text.toLowerCase().match(/\w+/g) || []; const ctf = {};
-        for (const w of cw) ctf[w] = (ctf[w] || 0) + 1;
-        let s = 0; for (const w of Object.keys(qtf)) if (ctf[w] && KNOWLEDGE.idf[w]) s += qtf[w] * ctf[w] * KNOWLEDGE.idf[w];
-        return { i, s };
-    });
-    return scored.sort((a, b) => b.s - a.s).slice(0, k).filter(x => x.s > 0).map(x => KNOWLEDGE.chunks[x.i]);
-}
-async function loadKnowledge(url) {
-    toastText(' Crawling team knowledge via ragina-crawler…');
-    try {
-        const res = await fetch(CRAWL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
-        const d = await res.json();
-        if (d.error) throw new Error(d.error);
-        if (!d.pages || !d.pages.length) throw new Error('no pages returned');
-        buildIndex(d.pages);
-        toastText(KNOWLEDGE.ready ? `✅ Loaded ${KNOWLEDGE.chunks.length} knowledge snippets — the team now answers from them!` : '⚠️ Could not read that page.');
-    } catch (e) { toastText('⚠️ Knowledge load failed: ' + e.message + ' — chat still works without it.'); }
-}
-function knowledgeContext(t) { const h = retrieve(t, 3); if (!h.length) return ''; return `\n\nTeam knowledge (use ONLY if relevant; weave in naturally; stay in character; never mention "documents"/"sources"):\n` + h.map((x, i) => `[${i + 1}] ${x.text}`).join('\n'); }
-async function askLLM(prompt, tries = 3) {
-    for (let i = 0; i < tries; i++) {
+    function retrieve(q, k = 3) {
+        if (!KNOWLEDGE.ready) return [];
+        const qw = q.toLowerCase().match(/\w+/g) || []; const qtf = {};
+        for (const w of qw) qtf[w] = (qtf[w] || 0) + 1;
+        const scored = KNOWLEDGE.chunks.map((ch, i) => {
+            const cw = ch.text.toLowerCase().match(/\w+/g) || []; const ctf = {};
+            for (const w of cw) ctf[w] = (ctf[w] || 0) + 1;
+            let s = 0; for (const w of Object.keys(qtf)) if (ctf[w] && KNOWLEDGE.idf[w]) s += qtf[w] * ctf[w] * KNOWLEDGE.idf[w];
+            return { i, s };
+        });
+        return scored.sort((a, b) => b.s - a.s).slice(0, k).filter(x => x.s > 0).map(x => KNOWLEDGE.chunks[x.i]);
+    }
+    async function loadKnowledge(url) {
+        toastText(' 📚 Crawling team knowledge via ragina-crawler…');
         try {
-            const res = await fetch(ASK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
-            if (!res.ok) throw new Error('HTTP ' + res.status);
-            const d = await res.json(); if (d.error) throw new Error(d.error);
-            const t = (d.text || '').trim(); if (t) return t; throw new Error('empty');
-        } catch (e) { if (i === tries - 1) throw e; await wait(800 * (i + 1)); }
+            const res = await fetch(CRAWL_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ url }) });
+            const d = await res.json();
+            if (d.error) throw new Error(d.error);
+            if (!d.pages || !d.pages.length) throw new Error('no pages returned');
+            buildIndex(d.pages);
+            toastText(KNOWLEDGE.ready ? `✅ Loaded ${KNOWLEDGE.chunks.length} knowledge snippets — the team now answers from them!` : '⚠️ Could not read that page.');
+        } catch (e) { toastText('⚠️ Knowledge load failed: ' + e.message + ' — chat still works without it.'); }
     }
-}
-const PFALL = {};
-function initPFall() {
-    Object.keys(PERSONAS).forEach(k => {
-        PFALL[k] = ['got it 👍', 'hmm let me check 👀', 'noted ✅'];
-    });
-}
-function personaFallback(m) { const a = PFALL[m] || ["got it 👍", "hmm let me check 👀", "noted ✅"]; return a[Math.floor(Math.random() * a.length)]; }
-
-/* ============ DOM helpers ============ */
-const $ = s => document.querySelector(s);
-const $$ = s => [...document.querySelectorAll(s)];
-const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const fmtTime = d => d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-const fmtDur = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
-const sameDay = (a, b) => a.toDateString() === b.toDateString();
-function dayLabel(d) { const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d); x.setHours(0, 0, 0, 0); const diff = Math.round((t - x) / 86400000); if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday'; if (diff < 7) return d.toLocaleDateString([], { weekday: 'long' }); return d.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' }); }
-function listTime(d) { const t = new Date(); if (sameDay(d, t)) return fmtTime(d); const y = new Date(t); y.setDate(y.getDate() - 1); if (sameDay(d, y)) return 'Yesterday'; return d.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' }); }
-
-const AV = ['#e17076', '#7bc862', '#65aadd', '#a695e7', '#ee7aae', '#6ec9cb', '#faa774', '#00a884'];
-const MV = ['#c23b46', '#177a44', '#2574a8', '#6a45b8', '#b23d80', '#0d7d80', '#b3572a', '#007a5e'];
-const hash = s => [...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0);
-const colorFor = n => AV[hash(n) % AV.length];
-const memberColor = n => MV[hash(n) % MV.length];
-function avatarFor(name) { const c = colorFor(name); const ini = name.replace(/[^\w ]/g, '').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'MM'; return 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='${c}'/><text x='48' y='61' font-family='Arial' font-size='38' font-weight='600' fill='rgba(255,255,255,.92)' text-anchor='middle'>${ini}</text></svg>`); }
-function groupAvatar() { return 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='#cfd8db'/><text x='48' y='66' font-size='48' text-anchor='middle'>🦣</text></svg>`); }
-function chatAvatar(c) { return c.isGroup ? groupAvatar() : avatarFor(c.name); }
-
-const state = { active: null, tab: 'all', q: '', replyTo: null, ctxId: null };
-const byId = id => CONTACTS.find(c => c.id === id);
-const activeChat = () => byId(state.active);
-const AI = () => Object.keys(PERSONAS).filter(n => !ME || n !== ME.name);
-const chatListEl = $('#chatList'), messagesEl = $('#messages'), input = $('#msgInput'), composer = $('#composer');
-const emptyState = $('#emptyState'), chatView = $('#chatView'), cvName = $('#cvName'), cvStatus = $('#cvStatus');
-const cvAvatar = $('#cvAvatar'), replyBar = $('#replyBar'), ctxMenu = $('#ctxMenu'), emojiTray = $('#emojiTray');
-const menuDrop = $('#menuDrop'), toastsEl = $('#toasts'), scrollFab = $('#scrollDown'), msgCount = $('#msgCount');
-const smartChips = $('#smartChips');
-
-// Welcome modal elements
-const welcomeModal = $('#welcomeModal');
-const welcomeName = $('#welcomeName');
-const welcomeName2 = $('#welcomeName2');
-const welcomeMessage = $('#welcomeMessage');
-const acceptBtn = $('#acceptMissionBtn');
-
-/* ============ persona prompt builder using JSON ============ */
-function getLangGroup(name) {
-    const meta = window._teamMeta;
-    if (!meta) return 'english_primary';
-    if (meta.language_groups.hindi_speakers.includes(name)) return 'hindi_speakers';
-    if (meta.language_groups.telugu_speakers.includes(name)) return 'telugu_speakers';
-    if (meta.language_groups.english_primary.includes(name)) return 'english_primary';
-    return 'multilingual_unknown';
-}
-
-function buildPromptFromJSON(persona, mode, otherName, history, userMsg, short, replyToMsg) {
-    const tpl = persona.system_prompt_template;
-    const tc = timeCtx();
-    const tb = timeBucket(new Date().getHours());
-    const hints = persona.time_contexts[tb] || [];
-    const activityHint = hints.length ? hints[Math.floor(Math.random() * hints.length)] : 'working';
-    const birthday = bdayLine(persona.name);
-    
-    let quoteCtx = '';
-    if (replyToMsg) {
-        const who = replyToMsg.from === 'me' ? ME.name : (replyToMsg.member || otherName);
-        quoteCtx = `\nYou are replying to this specific message from ${who}: "${replyToMsg.text || mediaLabel(replyToMsg.type)}"\nMake your reply a direct, relevant response to that exact message.`;
-    }
-
-    let prompt = tpl
-        .replace(/{{NAME}}/g, persona.name)
-        .replace(/{{FLAG}}/g, persona.flag)
-        .replace(/{{ROLE}}/g, persona.role)
-        .replace(/{{OTHER_NAME}}/g, otherName)
-        .replace(/{{OTHER_FLAG}}/g, ME.flag)
-        .replace(/{{OTHER_ROLE}}/g, ME.role)
-        .replace(/{{VIBE}}/g, persona.vibe)
-        .replace(/{{MEME_VOCABULARY}}/g, persona.meme_vocabulary.join(', '))
-        .replace(/{{OFFTOPIC_TOPICS}}/g, persona.offtopic_topics.join(', '))
-        .replace(/{{LIFE_HACKS}}/g, persona.life_hacks.join(', '))
-        .replace(/{{TIME}}/g, tc)
-        .replace(/{{ACTIVITY_HINT}}/g, activityHint)
-        .replace(/{{BIRTHDAY}}/g, birthday)
-        .replace(/{{TAGGED}}/g, persona.name)
-        .replace(/{{HISTORY}}/g, history)
-        .replace(/{{USER_MSG}}/g, userMsg)
-        .replace(/{{QUOTE_CONTEXT}}/g, quoteCtx);
-
-    if (short) prompt += '\nKeep this reply VERY short (a single short line) — you are just chiming into the group conversation.';
-    return prompt;
-}
-
-function historyText(c) {
-    return c.messages.slice(-14).map(m => {
-        if (m.from === 'me') return `${ME.name} (you): ${m.text || mediaLabel(m.type)}`;
-        const who = c.isGroup ? (m.member || c.name) : c.name;
-        return `${who}: ${m.text || mediaLabel(m.type)}`;
-    }).join('\n');
-}
-function lastUserText(c) { for (let i = c.messages.length - 1; i >= 0; i--) if (c.messages[i].from === 'me') return c.messages[i].text || mediaLabel(c.messages[i].type); return ''; }
-
-function cleanLines(raw, member) {
-    const names = Object.keys(PERSONAS).map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
-    const re = new RegExp(`^(?:${names})\\s*:\\s*`, 'i');
-    return raw.split(/\n+/).map(s => s.trim()).map(s => s.replace(/^["'`]+|["'`]+$/g, '')).map(s => s.replace(re, '')).map(s => s.trim()).filter(Boolean).slice(0, PERSONAS[member].structured ? 10 : 4);
-}
-
-/* ============ who replies ============ */
-function firstMention(text) {
-    if (!ME || !text) return null;
-    const re = /@([A-Za-z][A-Za-z ]*?)(?=[\s.,!?:;@]|$)/g; let m;
-    while ((m = re.exec(text)) !== null) {
-        const q = m[1].trim().toLowerCase(); if (!q) continue;
-        const found = Object.keys(PERSONAS).find(n => n !== ME.name && (n.toLowerCase() === q || n.toLowerCase().startsWith(q)));
-        if (found) return found;
-    }
-    return null;
-}
-function pickGroupResponder(text) {
-    const t = (text || '').toLowerCase();
-    const ai = AI();
-    const safe = n => n === ME.name ? ai[Math.floor(Math.random() * ai.length)] : n;
-    if (/status|test|performance|load|defect|bug|tps|sla|lag|jmeter/.test(t)) return safe('Rambabu');
-    if (/story|stories|requirement|acceptance|backlog|refin|process|jira|sign[- ]?off|criteria/.test(t)) return safe('Sanchita');
-    if (/why|explain|domain|insurance|pharmacy|healthcare|eligib|claim|adjudic|rule/.test(t)) return safe('Raissa');
-    if (/databricks|data\b|pipeline|spark|notebook|etl/.test(t)) return safe('Sunkul Pradeep');
-    if (/intern|ci\/cd|ci-cd|learn|mentor/.test(t)) return safe('Shivani Kumar');
-    if (/access|approv|senior|platform|prod\b|deploy|whom|who to/.test(t)) return safe('Nidhi');
-    if (/yar|yaar|bhai|chill|acha|relax/.test(t)) return safe('Laik');
-    if (/regress|qa\b|suite|test case/.test(t)) return safe(Math.random() < .5 ? 'Sivaram' : 'Rambabu');
-    if (/help|stuck|ui\b|kafka|config|code|api|pick|lunch|canteen|coffee|home|lift|tired|bored/.test(t)) return safe(Math.random() < .5 ? 'Satya' : (Math.random() < .5 ? 'Laik' : 'Sai Surya'));
-    const pool = ['Sanchita', 'Raissa', 'Satya', 'Nidhi', 'Rambabu', 'Sivaram', 'Sunkul Pradeep', 'Shivani Kumar', 'Laik', 'Sai Surya', 'Satya', 'Laik', 'Sanchita'].filter(n => n !== ME.name);
-    return pool[Math.floor(Math.random() * pool.length)];
-}
-
-/* ============ scenarios for autonomous pings ============ */
-function pickScenario(member) {
-    const h = new Date().getHours(), b = timeBucket(h);
-    const evergreen = [
-        `ask ${ME.firstName} what they're up to right now and if they're free`,
-        `ask if ${ME.firstName} is in the canteen / wants to grab coffee or lunch together`,
-        `ask ${ME.firstName} for a small favor or quick help with something at work`,
-        `ask if ${ME.firstName} can give you a lift / drop you home today`,
-        `share a tiny personal update (what you ate, a funny thing, your mood) and ask how ${ME.firstName} is`,
-        `ping about a small work thing (a build, a config, a story) but keep it casual and friendly`,
-        `send a random warm 'hey, you alive?' type check-in to ${ME.firstName}`,
-        `mention the weather / weekend plans / a show you're watching and ask ${ME.firstName}`,
-    ];
-    const timeScen = {
-        'morning': [`complain playfully about being sleepy and ask if ${ME.firstName} had coffee`, `mention standup is soon and ask if ${ME.firstName} is ready`],
-        'lunch_time': [`ask ${ME.firstName} what they're eating / if they want to go to the canteen together`, `say you're starving and ask ${ME.firstName} to order in with you`],
-        'afternoon': [`say the post-lunch slump is hitting and ask how ${ME.firstName} is holding up`, `ask ${ME.firstName} if they want a coffee break`],
-        'evening': [`say you're wrapping up and ask ${ME.firstName} about their evening / a lift home`, `ask ${ME.firstName} if they're tired too after a long day`],
-        'night': [`ask ${ME.firstName} why they're still up and joke about late-night coding`, `wish ${ME.firstName} good night / tell them to sleep`],
-        'late_night': [`ask ${ME.firstName} if they're also up late and commiserate`, `send a sleepy random thought to ${ME.firstName}`],
-    };
-    const pool = evergreen.concat(timeScen[b] || []);
-    const bi = bdayInfo();
-    if (bi.active) {
-        if (member === 'Sunkul Pradeep') pool.push(`playfully hint your birthday (27 July) is ${bi.diff === 0 ? 'today' : 'coming up'} and joke about cake/treats with ${ME.firstName}`);
-        else if (member !== 'Sai Surya') pool.push(`casually remind ${ME.firstName} that Sunkul Pradeep's birthday is 27 July and ask if they've thought of a gift / the plan`);
-    }
-    return pool[Math.floor(Math.random() * pool.length)];
-}
-
-/* ============ typing + delivery ============ */
-function setTyping(c, on, member) {
-    c.typing = on; c.typingMember = on ? (member || null) : null;
-    if (state.active === c.id) { setHeaderStatus(c); const t = $('#typingMsg'); if (on && !t) { messagesEl.insertAdjacentHTML('beforeend', typingHTML(c)); scrollBottom(true); } if (!on && t) t.remove(); }
-    renderChatList();
-}
-async function deliverOne(c, member, hint, opts = {}) {
-    if (!ME) return;
-    setTyping(c, true, member);
-    const userText = opts.init ? '' : (hint || lastUserText(c) || '');
-    const hist = historyText(c);
-    let raw;
-    try { 
-        const prompt = opts.init 
-            ? buildInitPrompt(member, c) 
-            : buildPromptFromJSON(PERSONAS[member], c.isGroup ? 'group' : 'dm', c.name, hist, userText, opts.short, opts.replyToMsg);
-        raw = await askLLM(prompt); 
-    } catch (e) { raw = personaFallback(member); }
-    const p = PERSONAS[member];
-    let parts = p.structured ? [cleanLines(raw, member).join('\n')] : cleanLines(raw, member);
-    if (opts.init || opts.short) parts = parts.slice(0, 1).map(s => s.length > (opts.init ? 150 : 70) ? s.slice(0, opts.init ? 150 : 70) + '…' : s);
-    if (!parts.length || !parts[0]) parts = [personaFallback(member)];
-    for (let i = 0; i < parts.length; i++) {
-        if (i > 0) { setTyping(c, true, member); await wait(420 + Math.random() * 700); }
-        setTyping(c, false); markMyRead(c);
-        pushMessage(c, { id: uid(), from: 'them', text: parts[i], t: new Date(), member: c.isGroup ? member : undefined });
-        await wait(200);
-    }
-}
-
-function buildInitPrompt(member, c) {
-    const scen = pickScenario(member);
-    return buildPromptFromJSON(PERSONAS[member], c.isGroup ? 'group' : 'dm', c.name, '', '', false, null) + 
-           `\n\nYou are STARTING a brand-new message out of the blue — ${ME.firstName} did NOT just text you. Reach out to ${ME.firstName} warmly and casually, inspired by this scenario (use your own words & invented details, don't copy it): "${scen}". Send exactly ONE short message. Mention ${ME.firstName} by name naturally. Be a real friend/teammate — empathetic, human, a little playful.`;
-}
-
-function aiReply(c, hint, replyToMsg) {
-    clearTimeout(c._tt);
-    c._tt = setTimeout(async () => {
-        if (!ME) return;
-        if (c.isGroup) {
-            const txt = hint || lastUserText(c);
-            const mention = firstMention(txt);
-            let member, tagged = false;
-            if (mention) { member = mention; tagged = true; } else member = pickGroupResponder(txt);
-            await deliverOne(c, member, hint, { short: false, replyToMsg });
-            if (!tagged && !replyToMsg && Math.random() < 0.3) {
-                let m2 = pickGroupResponder(''); if (m2 === member) m2 = pickGroupResponder('');
-                if (m2 !== member) { await wait(700 + Math.random() * 600); await deliverOne(c, m2, null, { short: true }); }
-            }
-        } else { await deliverOne(c, c.name, hint, { short: false, replyToMsg }); }
-        if (state.active === c.id) setHeaderStatus(c);
-        renderChatList(); updateMsgCount();
-    }, 650 + Math.random() * 900);
-}
-
-/* ============ autonomous pings (~45s) ============ */
-let autoTimer = null, onlineTimer = null, firstPingTimer = null;
-const lastPing = {};
-function recentThem(c) { const l = lastMsg(c); return l && l.from === 'them' && (Date.now() - l.t < 100000); }
-function autoTick() {
-    if (!ME || document.visibilityState === 'hidden') return;
-    const dms = CONTACTS.filter(c => !c.isGroup);
-    const useGroup = Math.random() < 0.28;
-    let c, member;
-    if (useGroup) {
-        c = CONTACTS.find(x => x.isGroup); if (!c || c.typing) return;
-        const free = c.members.filter(n => c.typingMember !== n); if (!free.length) return;
-        member = free[Math.floor(Math.random() * free.length)];
-    } else {
-        const cand = dms.filter(x => !x.typing && (Date.now() - (lastPing[x.id] || 0) > 110000) && !recentThem(x));
-        if (!cand.length) return;
-        c = cand[Math.floor(Math.random() * cand.length)]; member = c.name;
-    }
-    lastPing[c.id] = Date.now();
-    deliverOne(c, member, null, { init: true });
-}
-function scheduleAuto() { autoTimer = setTimeout(() => { autoTick(); scheduleAuto(); }, 45000 + Math.floor(Math.random() * 14000) - 7000); }
-function startTimers() {
-    stopTimers();
-    onlineTimer = setInterval(flipOnline, 14000);
-    firstPingTimer = setTimeout(() => { autoTick(); scheduleAuto(); }, 6000 + Math.floor(Math.random() * 4000));
-}
-function stopTimers() { clearTimeout(autoTimer); clearTimeout(firstPingTimer); clearInterval(onlineTimer); autoTimer = onlineTimer = firstPingTimer = null; }
-function flipOnline() { const s = CONTACTS.filter(c => !c.isGroup); if (!s.length) return; const c = s[Math.floor(Math.random() * s.length)]; c.online = !c.online; if (!c.online) c.lastSeen = new Date(); if (state.active === c.id) setHeaderStatus(c); renderChatList(); }
-
-/* ============ rendering ============ */
-const lastMsg = c => c.messages[c.messages.length - 1];
-const mediaLabel = t => t === 'image' ? '📷 Photo' : t === 'voice' ? '🎤 Voice message' : '';
-function ticksHTML(m) { const read = m.status === 'read', dbl = m.status !== 'sent'; return `<span class="ticks ${read ? 'read' : ''}"><svg viewBox="0 0 19 12" width="16" height="11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 6.8 4.8 10 10.5 2.5"/>${dbl ? '<path d="M7.3 9.4l.9.9 7.3-7.5"/>' : ''}</svg></span>`; }
-function itemHTML(c, i) {
-    const last = lastMsg(c), unread = c.unread > 0; let preview;
-    if (c.typing) preview = `<span class="typing-txt">${c.isGroup ? (c.typingMember || 'Someone') + ' is typing…' : 'typing…'}</span>`;
-    else if (last.from === 'me') preview = `${ticksHTML(last)}<span>You: ${esc(last.type ? mediaLabel(last.type) : last.text)}</span>`;
-    else preview = `<span>${c.isGroup && last.member ? esc(last.member) + ': ' : ''}${esc(last.type ? mediaLabel(last.type) : last.text)}</span>`;
-    return `<div class="chat-item ${state.active === c.id ? 'active' : ''}" data-id="${c.id}" style="animation-delay:${i * 22}ms">
-    <img class="avatar" src="${chatAvatar(c)}" alt="">
-    <div class="ci-body">
-      <div class="ci-top"><span class="ci-name">${esc(c.name)}</span><span class="ci-time ${unread ? 'unread' : ''}">${listTime(last.t)}</span></div>
-      <div class="ci-bottom"><span class="ci-preview">${preview}</span>
-        <span class="ci-meta">${c.pinned ? '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--txt-2)"><path d="M16 9V4h1a1 1 0 0 0 0-2H7a1 1 0 0 0 0 2h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>' : ''}${unread ? `<span class="badge">${c.unread}</span>` : ''}</span>
-      </div>
-    </div></div>`;
-}
-function updateNavBadge() { const n = CONTACTS.reduce((a, c) => a + (c.unread || 0), 0); const b = $('#navChatsBadge'); if (b) { b.textContent = n; b.style.display = n > 0 ? 'flex' : 'none'; } }
-function updateTabCounts() { const u = CONTACTS.filter(c => c.unread > 0).length, f = CONTACTS.filter(c => c.fav).length; const ue = $('#tabUnreadCount'); if (ue) ue.textContent = u > 0 ? (' ' + u) : ''; const fe = $('#tabFavCount'); if (fe) fe.textContent = f > 0 ? (' ' + f) : ''; }
-function renderChatList() {
-    const q = state.q.toLowerCase();
-    let list = CONTACTS.filter(c => state.tab === 'unread' ? c.unread > 0 : state.tab === 'favs' ? c.fav : true);
-    if (q) list = list.filter(c => c.name.toLowerCase().includes(q) || (lastMsg(c).text || '').toLowerCase().includes(q));
-    list.sort((a, b) => ((b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)) || (lastMsg(b).t - lastMsg(a).t));
-    chatListEl.innerHTML = list.length ? list.map(itemHTML).join('') : '<div class="list-empty">No chats found</div>';
-    updateNavBadge(); updateTabCounts();
-}
-function lastSeenStr(c) { const d = c.lastSeen || new Date(); return (sameDay(d, new Date()) ? 'today at ' : 'yesterday at ') + fmtTime(d); }
-function setHeaderStatus(c) {
-    if (c.typing) { cvStatus.textContent = c.isGroup ? `${c.typingMember || 'Someone'} is typing…` : 'typing…'; cvStatus.className = 'typing'; }
-    else if (c.isGroup) { cvStatus.textContent = [...c.members, 'You'].join(', '); cvStatus.className = ''; }
-    else if (c.online) { cvStatus.textContent = 'online'; cvStatus.className = ''; }
-    else { cvStatus.textContent = 'last seen ' + lastSeenStr(c); cvStatus.className = ''; }
-}
-function renderHeader(c) { cvAvatar.src = chatAvatar(c); cvName.textContent = c.name; setHeaderStatus(c); updateMsgCount(); }
-function updateMsgCount() { const c = activeChat(); msgCount.textContent = c ? c.messages.length + ' msgs' : ''; }
-function quoteHTML(m, c) { if (!m.replyTo) return ''; const r = c.messages.find(x => x.id === m.replyTo); if (!r) return ''; const who = r.from === 'me' ? 'You' : (r.member || c.name); const col = r.from === 'me' ? 'var(--accent)' : memberColor(r.member || c.name); return `<div class="quote" style="border-left-color:${col}"><span class="q-name" style="color:${col}">${esc(who)}</span><span class="q-text">${esc((r.text || mediaLabel(r.type)).slice(0, 90))}</span></div>`; }
-function voiceHTML(m) { return `<div class="voice"><button class="vplay" data-id="${m.id}"><svg class="pl" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="pa" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button><div class="wave"><div class="wprog"></div><div class="bars">${m.wave.map(h => `<i style="height:${h}px"></i>`).join('')}</div></div><span class="vdur">${fmtDur(m.dur)}</span></div>`; }
-function bubbleHTML(m, c, first) {
-    const mine = m.from === 'me'; let body;
-    if (m.type === 'image') body = `<div class="imgph"><span>📷</span></div>`;
-    else if (m.type === 'voice') body = voiceHTML(m);
-    else body = `<span class="txt">${esc(m.text).replace(/\n/g, '<br>')}</span>`;
-    const mname = (!mine && c.isGroup && m.member) ? `<span class="mname" style="color:${memberColor(m.member)}">${esc(m.member)}</span>` : '';
-    return `<div class="msg ${mine ? 'out' : 'in'} ${first ? 'first' : ''} ${m.type ? 'media' : ''} ${m.react ? 'has-react' : ''}" data-id="${m.id}">
-    <div class="bubble">${mname}${quoteHTML(m, c)}${body}
-      <span class="meta">${m.star ? '<span class="star">⭐</span>' : ''}${fmtTime(m.t)}${mine ? ticksHTML(m) : ''}</span>
-      ${m.react ? `<span class="react">${m.react}</span>` : ''}
-    </div></div>`;
-}
-function typingHTML(c) { const mem = (c.isGroup && c.typingMember) ? `<span class="mname" style="color:${memberColor(c.typingMember)}">${esc(c.typingMember)}</span>` : ''; return `<div class="msg in first" id="typingMsg"><div class="bubble">${mem}<span class="tdots"><i></i><i></i><i></i></span></div></div>`; }
-function isFirst(c, m, prev, newDay) { return newDay || !prev || prev.from !== m.from || (c.isGroup && prev.member !== m.member) || (m.t - prev.t) > 300000; }
-function renderMessages(c) {
-    let html = `<div class="chip enc">🔒 End-to-end encrypted · you're role‑playing as <b>${esc(ME.name)}</b> · replies generated live by RAGina AI${KNOWLEDGE.ready ? ' · from your team knowledge 🧠' : ''}.</div>`;
-    let prev = null;
-    for (const m of c.messages) { const newDay = !prev || !sameDay(prev.t, m.t); if (newDay) html += `<div class="chip date">${dayLabel(m.t)}</div>`; html += bubbleHTML(m, c, isFirst(c, m, prev, newDay)); prev = m; }
-    if (c.typing) html += typingHTML(c);
-    messagesEl.innerHTML = html; updateMsgCount();
-}
-function appendMessage(c, m) {
-    const arr = c.messages, prev = arr[arr.length - 2]; const t = $('#typingMsg'); if (t) t.remove();
-    const newDay = !prev || !sameDay(prev.t, m.t);
-    if (newDay) messagesEl.insertAdjacentHTML('beforeend', `<div class="chip date">${dayLabel(m.t)}</div>`);
-    messagesEl.insertAdjacentHTML('beforeend', bubbleHTML(m, c, isFirst(c, m, prev, newDay)));
-    updateMsgCount();
-}
-function scrollBottom(s) { messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: s ? 'smooth' : 'auto' }); }
-
-/* ============ smart reply chips ============ */
-function lastIncomingFrom(c) { for (let i = c.messages.length - 1; i >= 0; i--) if (c.messages[i].from !== 'me') return c.isGroup ? (c.messages[i].member || c.name) : c.name; return null; }
-function refreshChips() {
-    if (!ME || !state.active || chatView.style.display === 'none' || composer.classList.contains('recording')) { smartChips.innerHTML = ''; return; }
-    const c = activeChat(); if (!c) { smartChips.innerHTML = ''; return; }
-    const h = new Date().getHours(), b = timeBucket(h);
-    const timePool = {
-        'morning': ["☀️ morning! still sleepy tbh", "coffee first, then chaos ☕", "standup in 5, u ready?"],
-        'lunch_time': ["🍽️ lunch? i'm starving", "canteen or order in?", "brb grabbing food"],
-        'afternoon': ["post-lunch slump is real 😴", "need another coffee ngl", "this bug is killing me"],
-        'evening': [" wrapping up soon", "tired yaar, long day", "evening walk?"],
-        'night': ["still up? 🦉", "late night coding hits different", "sleep soon promise 😴"],
-        'late_night': ["can't sleep either? 😅", "one more commit then bed", "you up?? 🦉"],
-    }[b] || [];
-    const evergreen = ["what's up?", "need a quick help 🙏", "free for a 2-min call?", "you okay?", "lol tell me everything", "brb 5"];
-    const shuf = a => a.slice().sort(() => Math.random() - .5);
-    const arr = [];
-    const from = lastIncomingFrom(c);
-    const bi = bdayInfo();
-    let ctx = null;
-    if (ME.name === 'Sai Surya' && bi.active && from) ctx = (from === 'Sunkul Pradeep') ? '🎂 Happy birthday Sunkul!! 🎉' : '💡 btw Sunkul\'s bday is 27th, don\'t forget';
-    if (ctx) arr.push({ t: ctx, ctx: true });
-    const t1 = shuf(timePool)[0], e1 = shuf(evergreen)[0];
-    if (t1) arr.push({ t: t1 }); if (e1) arr.push({ t: e1 });
-    if (!ctx && timePool[1]) arr.push({ t: shuf(timePool)[1] });
-    smartChips.innerHTML = arr.slice(0, 3).map(x => `<button class="chip-pill${x.ctx ? ' ctx' : ''}" data-text="${esc(x.t)}">${esc(x.t)}</button>`).join('');
-}
-smartChips.addEventListener('click', e => { const p = e.target.closest('.chip-pill'); if (!p) return; doSend(p.dataset.text); });
-
-/* ============ open / close / send ============ */
-function openChat(id) {
-    if (!id) return; const c = byId(id); if (!c) { toastText('⚠️ Chat not found.'); return; }
-    state.active = id; c.unread = 0;
-    document.body.classList.add('chat-open');
-    emptyState.style.display = 'none'; chatView.style.display = 'flex';
-    renderHeader(c); renderMessages(c); renderChatList(); scrollBottom(false);
-    input.placeholder = `Message as ${ME.firstName} (@ to mention)`;
-    input.disabled = false; input.focus(); updateMsgCount(); refreshChips();
-}
-function closeChat() { document.body.classList.remove('chat-open'); state.active = null; smartChips.innerHTML = ''; }
-
-function upgrade(m, status) { m.status = status; const el = messagesEl.querySelector(`.msg[data-id="${m.id}"] .ticks`); if (el) el.outerHTML = ticksHTML(m); scheduleSave(); }
-function markMyRead(c) { let ch = false; c.messages.forEach(m => { if (m.from === 'me' && m.status !== 'read') { m.status = 'read'; ch = true; } }); if (ch && state.active === c.id) c.messages.forEach(m => { if (m.from !== 'me') return; const el = messagesEl.querySelector(`.msg[data-id="${m.id}"] .ticks`); if (el) el.outerHTML = ticksHTML(m); }); if (ch) scheduleSave(); }
-function pushMessage(c, m) {
-    c.messages.push(m);
-    if (state.active === c.id) { appendMessage(c, m); scrollBottom(true); } else { c.unread++; toast(c, m); playPop(); }
-    renderChatList(); updateMsgCount(); scheduleSave(); refreshChips();
-}
-function deliverMine(c, m) { setTimeout(() => upgrade(m, 'delivered'), 450 + Math.random() * 600); }
-
-function doSend(text) {
-    text = (text || '').trim(); if (!text) return; const c = activeChat(); if (!c) return;
-    let replyToMsg = null; if (state.replyTo) replyToMsg = c.messages.find(m => m.id === state.replyTo);
-    const m = { id: uid(), from: 'me', text, t: new Date(), status: 'sent', replyTo: state.replyTo || undefined };
-    clearReply(); pushMessage(c, m); deliverMine(c, m); aiReply(c, text, replyToMsg);
-    input.value = ''; input.style.height = 'auto'; updateComposer(); input.disabled = false; input.focus();
-}
-function sendMessage() { doSend(input.value); }
-function sendMedia(type) {
-    const c = activeChat(); if (!c) return;
-    const m = { id: uid(), from: 'me', text: '', type, t: new Date(), status: 'sent' };
-    if (type === 'voice') { m.dur = Math.max(1, Math.round((Date.now() - rec.t0) / 1000)); m.wave = Array.from({ length: 26 }, () => 5 + Math.floor(Math.random() * 16)); }
-    pushMessage(c, m); deliverMine(c, m); aiReply(c, `[${ME.firstName} just sent a ${mediaLabel(type)} — react to it naturally and briefly]`);
-}
-
-function updateComposer() { composer.classList.toggle('has-text', input.value.trim().length > 0); }
-input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 120) + 'px'; updateComposer(); });
-input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
-$('#sendBtn').addEventListener('click', sendMessage);
-
-const EMOJIS = ['😀', '😂', '🤣', '😊', '😍', '😘', '😎', '🤩', '🥳', '😅', '😉', '🙃', '😇', '🤔', '🤨', '😴', '🥺', '', '😤', '', '🥶', '', '🤗', '🤫', '', '😬', '🤤', '😷', '🤠', '🥸', '😈', '👻', '', '👽', '🤖', '', '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '', '💔', '❣️', '💕', '', '💯', '🔥', '✨', '🎉', '🎊', '', '👎', '👏', '🙌', '', '🤝', '', '✌️', '🤞', '', ''];
-$('#emojiGrid').innerHTML = EMOJIS.map(e => `<button type="button">${e}</button>`).join('');
-$('#emojiGrid').addEventListener('click', e => { if (e.target.tagName !== 'BUTTON') return; input.value += e.target.textContent; input.focus(); updateComposer(); });
-$('#emojiBtn').addEventListener('click', e => { e.stopPropagation(); emojiTray.classList.toggle('open'); });
-
-const rec = { on: false, t0: 0, iv: null };
-$('#micBtn').addEventListener('click', () => { rec.on = true; rec.t0 = Date.now(); composer.classList.add('recording'); $('#recTime').textContent = '0:00'; rec.iv = setInterval(() => { $('#recTime').textContent = fmtDur(Math.floor((Date.now() - rec.t0) / 1000)); }, 250); refreshChips(); });
-function stopRecording(send) { if (!rec.on) return; clearInterval(rec.iv); rec.on = false; composer.classList.remove('recording'); if (send && Date.now() - rec.t0 > 500) sendMedia('voice'); refreshChips(); }
-$('#recTrash').addEventListener('click', () => stopRecording(false));
-$('#recSend').addEventListener('click', () => stopRecording(true));
-
-let playing = { id: null, iv: null };
-function stopVoice() { if (playing.iv) clearInterval(playing.iv); if (playing.id) { const b = messagesEl.querySelector(`.msg[data-id="${playing.id}"] .vplay`); const p = messagesEl.querySelector(`.msg[data-id="${playing.id}"] .wprog`); if (b) b.classList.remove('playing'); if (p) p.style.width = '0%'; } playing = { id: null, iv: null }; }
-function toggleVoice(id) { const c = activeChat(); if (!c) return; const m = c.messages.find(x => x.id === id); if (!m) return; if (playing.id === id) { stopVoice(); return; } stopVoice(); playing.id = id; const b = messagesEl.querySelector(`.msg[data-id="${id}"] .vplay`); const p = messagesEl.querySelector(`.msg[data-id="${id}"] .wprog`); b.classList.add('playing'); let v = 0; const step = 100 / (m.dur * 20); playing.iv = setInterval(() => { v += step; if (v >= 100) { p.style.width = '100%'; setTimeout(stopVoice, 200); return; } p.style.width = v + '%'; }, 50); }
-
-function findMsg(id) { const c = activeChat(); return c && c.messages.find(m => m.id === id); }
-function rerenderKeepScroll() { const c = activeChat(); if (!c) return; const st = messagesEl.scrollTop; renderMessages(c); messagesEl.scrollTop = st; updateMsgCount(); }
-
-messagesEl.addEventListener('contextmenu', e => { const b = e.target.closest('.bubble'); if (!b) return; e.preventDefault(); state.ctxId = b.parentElement.dataset.id; const m = findMsg(state.ctxId); ctxMenu.querySelector('[data-act="star"]').textContent = m && m.star ? 'Unstar' : 'Star'; ctxMenu.style.left = Math.min(e.clientX, innerWidth - 200) + 'px'; ctxMenu.style.top = Math.min(e.clientY, innerHeight - 190) + 'px'; ctxMenu.classList.add('open'); });
-messagesEl.addEventListener('dblclick', e => { const b = e.target.closest('.bubble'); if (!b) return; const m = findMsg(b.parentElement.dataset.id); if (!m) return; m.react = m.react ? null : '❤️'; rerenderKeepScroll(); scheduleSave(); });
-messagesEl.addEventListener('click', e => { const vp = e.target.closest('.vplay'); if (vp) toggleVoice(vp.dataset.id); });
-
-ctxMenu.addEventListener('click', e => {
-    const btn = e.target.closest('button'); if (!btn) return;
-    const m = findMsg(state.ctxId); ctxMenu.classList.remove('open'); if (!m) return; const c = activeChat();
-    switch (btn.dataset.act) {
-        case 'reply': {
-            state.replyTo = m.id; const col = m.from === 'me' ? 'var(--accent)' : memberColor(m.member || c.name);
-            $('#rbName').textContent = m.from === 'me' ? 'You' : (m.member || c.name); $('#rbName').style.color = col;
-            document.querySelector('.rb-txt').style.borderLeftColor = col; $('#rbSnippet').textContent = m.text || mediaLabel(m.type);
-            replyBar.classList.remove('hidden'); input.focus(); refreshChips(); break;
-        }
-        case 'react': m.react = m.react ? null : '❤️'; rerenderKeepScroll(); break;
-        case 'star': m.star = !m.star; rerenderKeepScroll(); break;
-        case 'delete': c.messages = c.messages.filter(x => x.id !== m.id); rerenderKeepScroll(); renderChatList(); updateMsgCount(); break;
-    }
-    scheduleSave();
-});
-function clearReply() { state.replyTo = null; replyBar.classList.add('hidden'); refreshChips(); }
-$('#rbClose').addEventListener('click', clearReply);
-
-$('#newChatBtn').addEventListener('click', () => { $('#ncList').innerHTML = CONTACTS.map(c => `<div class="nc-row" data-id="${c.id}" style="display:flex;align-items:center;gap:14px;padding:11px 15px;cursor:pointer"><img class="avatar" src="${chatAvatar(c)}" alt=""><div><div style="font-size:16px">${esc(c.name)}</div><div style="font-size:13.5px;color:var(--txt-2)">${esc(c.about)}</div></div></div>`).join(''); $('#newChatPanel').classList.remove('hidden'); });
-$('#ncBack').addEventListener('click', () => $('#newChatPanel').classList.add('hidden'));
-$('#ncList').addEventListener('click', e => { const r = e.target.closest('.nc-row'); if (!r) return; $('#newChatPanel').classList.add('hidden'); openChat(r.dataset.id); });
-
-$// ====== MENU TOGGLE ======
-$('#menuBtn').addEventListener('click', e => {
-  e.stopPropagation();
-  menuDrop.classList.toggle('open');
-});
-
-// ====== MENU ACTIONS ======
-menuDrop.addEventListener('click', e => {
-  menuDrop.classList.remove('open');
-  const a = e.target.dataset.act;
-  
-  if (a === 'ai') {
-    // ✅ Opens the AI modal (instead of just a toast)
-    //$('#aiModal').classList.add('open');
-    $('.fab-ai').classList.add('open');
-  }
-  else if (a === 'knowledge') {
-    const u = prompt('Paste a team knowledge URL to crawl (wiki / Confluence / docs / any public page):', KNOWLEDGE_URL || '');
-    if (u && u.trim()) loadKnowledge(u.trim());
-  }
-  else if (a === 'export') {
-    exportChat();
-  }
-  else if (a === 'home') { // ✅ NEW: Back to Home
-    window.location.href = 'personaManager.html';
-  }
-  else if (a === 'clear') {
-    const c = activeChat();
-    if (!c) return;
-    if (confirm(`Clear all messages in "${c.name}"? This cannot be undone.`)) {
-      c.messages = [];
-      if (state.active === c.id) {
-        renderMessages(c);
-        updateMsgCount();
-      }
-      renderChatList();
-      scheduleSave();
-      toastText('🗑️ Chat cleared.');
-    }
-  }
-  else if (a === 'standup') {
-    openChat('mammoth');
-    setTimeout(() => {
-      const c = byId('mammoth');
-      pushMessage(c, {
-        id: uid(),
-        from: 'me',
-        text: `Morning team 🦣☀️ quick standup — blockers and status please! — ${ME.firstName}`,
-        t: new Date(),
-        status: 'read'
-      });
-      aiReply(c, 'Morning team 🦣☀️ quick standup — blockers and status please!');
-    }, 400);
-  }
-  else if (a === 'profile') {
-    fillProfile();
-    $('#profileModal').classList.add('open');
-  }
-  else if (a === 'switch') {
-    openPicker();
-  }
-});
-
-// ====== AI MODAL CONTROLS ======
-function closeAiModal() {
-  $('#aiModal').classList.remove('open');
-}
-
-// Close AI modal when clicking outside
-$('#aiModal').addEventListener('click', function(e) {
-  if (e.target === this) closeAiModal();
-});
-$('#profileClose').addEventListener('click', () => $('#profileModal').classList.remove('open'));
-$('#profileModal').addEventListener('click', e => { if (e.target === e.currentTarget) $('#profileModal').classList.remove('open'); });
-$('#pmSwitch').addEventListener('click', () => { $('#profileModal').classList.remove('open'); openPicker(); });
-
-$('#backBtn').addEventListener('click', closeChat);
-$('#closeChatBtn').addEventListener('click', closeChat);
-$$('[data-demo]').forEach(b => b.addEventListener('click', () => toastText(b.dataset.demo)));
-
-$('#tabs').addEventListener('click', e => { const t = e.target.closest('.tab'); if (!t) return; $$('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active'); state.tab = t.dataset.tab; renderChatList(); });
-$('#searchInput').addEventListener('input', e => { state.q = e.target.value; renderChatList(); });
-chatListEl.addEventListener('click', e => { const item = e.target.closest('.chat-item'); if (!item) return; openChat(item.dataset.id); });
-$('#bottomNav').addEventListener('click', e => { const it = e.target.closest('.nav-item'); if (!it) return; if (it.dataset.nav === 'chats' && state.active) closeChat(); });
-
-messagesEl.addEventListener('scroll', () => { const dist = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight; scrollFab.classList.toggle('show', dist > 420); });
-scrollFab.addEventListener('click', () => scrollBottom(true));
-
-document.addEventListener('click', e => { if (!e.target.closest('#emojiTray') && !e.target.closest('#emojiBtn')) emojiTray.classList.remove('open'); if (!e.target.closest('#menuDrop') && !e.target.closest('#menuBtn')) menuDrop.classList.remove('open'); if (!e.target.closest('.ctx')) ctxMenu.classList.remove('open'); });
-document.addEventListener('keydown', e => { if (e.key !== 'Escape') return; emojiTray.classList.remove('open'); menuDrop.classList.remove('open'); ctxMenu.classList.remove('open'); $('#newChatPanel').classList.add('hidden'); $('#profileModal').classList.remove('open'); });
-
-function toast(c, m) { const el = document.createElement('div'); el.className = 'toast'; el.innerHTML = `<img src="${chatAvatar(c)}" alt=""><div><b>${esc(c.isGroup && m.member ? c.name + ' · ' + m.member : c.name)}</b><span>${esc(m.text || mediaLabel(m.type))}</span></div>`; el.addEventListener('click', () => { openChat(c.id); el.remove(); }); toastsEl.appendChild(el); setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 4200); }
-function toastText(t) { const el = document.createElement('div'); el.className = 'toast'; el.innerHTML = `<div style="padding:0 6px"><span style="max-width:none;color:var(--txt)">${esc(t)}</span></div>`; el.addEventListener('click', () => el.remove()); toastsEl.appendChild(el); setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 3600); }
-
-let AC;
-function playPop() { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(880, AC.currentTime); o.frequency.exponentialRampToValueAtTime(1320, AC.currentTime + 0.08); g.gain.setValueAtTime(0.0001, AC.currentTime); g.gain.exponentialRampToValueAtTime(0.1, AC.currentTime + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + 0.22); o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime + 0.28); } catch (e) {} }
-        /* ============ persistence (per identity) ============ */
-        const storeKey = () => `mammoth_v3::${ME.name}`;
-        let saveTimer = null;
-        function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveChats, 250); }
-        function saveChats() { if (!ME) return; try { localStorage.setItem(storeKey(), JSON.stringify(CONTACTS.map(c => ({ id: c.id, unread: c.unread, messages: c.messages.map(({ id, from, text, t, status, member, type, dur, wave, react, star, replyTo }) => ({ id, from, text, t, status, member, type, dur, wave, react, star, replyTo })) })))); } catch (e) {} }
-        function loadHistoryFor() { try { const raw = localStorage.getItem(storeKey()); if (!raw) return false; let any = false; for (const s of JSON.parse(raw)) { const c = byId(s.id); if (!c) continue; c.unread = s.unread || 0; if (Array.isArray(s.messages) && s.messages.length) { c.messages = s.messages.map(m => ({ ...m, t: new Date(m.t) })); any = true; } } return any; } catch (e) { return false; } }
-        setInterval(() => saveChats(), 5000);
-        window.addEventListener('beforeunload', saveChats);
-        window.addEventListener('pagehide', saveChats);
-        document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveChats(); });
-
-        function exportChat() {
-            const c = activeChat(); if (!c) { toastText('⚠️ Open a chat first, then export.'); return; }
-            const lines = [`WhatsApp chat export — ${c.name} (you were ${ME.name})`, `Exported ${new Date().toLocaleString()}`, ''];
-            for (const m of c.messages) { const who = m.from === 'me' ? `${ME.name} (You)` : (c.isGroup ? (m.member || c.name) : c.name); lines.push(`[${m.t.toLocaleString()}] ${who}: ${(m.type ? mediaLabel(m.type) : (m.text || '')).replace(/\n/g, '\n        ')}`); }
-            try { const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = (c.name.replace(/[^\w\-]+/g, '_') || 'chat') + '.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500); toastText('📥 Chat exported as .txt'); } catch (e) { toastText('⚠️ Export failed on this browser.'); }
-        }
-
-        /* ============ PERSISTENCE ============ */
-        async function loadPersonas() {
-            const stored = localStorage.getItem('personasoi_data');
-            if (stored) {
-                try {
-                    const parsed = JSON.parse(stored);
-                    if (Array.isArray(parsed) && parsed.length) {
-                        console.log('✅ Loaded personas from localStorage');
-                        return parsed;
-                    }
-                } catch (e) {}
-            }
+    function knowledgeContext(t) { const h = retrieve(t, 3); if (!h.length) return ''; return `\n\nTeam knowledge (use ONLY if relevant; weave in naturally; stay in character; never mention "documents"/"sources"):\n` + h.map((x, i) => `[${i + 1}] ${x.text}`).join('\n'); }
+    async function askLLM(prompt, tries = 3) {
+        for (let i = 0; i < tries; i++) {
             try {
-                const resp = await fetch('persona.json');
-                if (!resp.ok) throw new Error('Network error');
-                const data = await resp.json();
-                let list = Array.isArray(data) ? data : (data.personas || []);
-                if (list.length) {
-                    console.log('✅ Loaded personas from persona.json');
-                    return list;
+                const res = await fetch(ASK_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ prompt }) });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const d = await res.json(); if (d.error) throw new Error(d.error);
+                const t = (d.text || '').trim(); if (t) return t; throw new Error('empty');
+            } catch (e) { if (i === tries - 1) throw e; await wait(800 * (i + 1)); }
+        }
+    }
+    const PFALL = {};
+    function initPFall() {
+        Object.keys(PERSONAS).forEach(k => {
+            PFALL[k] = ['got it 👍', 'hmm let me check 👀', 'noted ✅'];
+        });
+    }
+    function personaFallback(m) { const a = PFALL[m] || ["got it 👍", "hmm let me check 👀", "noted ✅"]; return a[Math.floor(Math.random() * a.length)]; }
+
+    /* ============ DOM helpers ============ */
+    const $ = s => document.querySelector(s);
+    const $$ = s => [...document.querySelectorAll(s)];
+    const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    const fmtTime = d => d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const fmtDur = s => Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+    const sameDay = (a, b) => a.toDateString() === b.toDateString();
+    function dayLabel(d) { const t = new Date(); t.setHours(0, 0, 0, 0); const x = new Date(d); x.setHours(0, 0, 0, 0); const diff = Math.round((t - x) / 86400000); if (diff === 0) return 'Today'; if (diff === 1) return 'Yesterday'; if (diff < 7) return d.toLocaleDateString([], { weekday: 'long' }); return d.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' }); }
+    function listTime(d) { const t = new Date(); if (sameDay(d, t)) return fmtTime(d); const y = new Date(t); y.setDate(y.getDate() - 1); if (sameDay(d, y)) return 'Yesterday'; return d.toLocaleDateString([], { day: '2-digit', month: '2-digit', year: 'numeric' }); }
+
+    const AV = ['#e17076', '#7bc862', '#65aadd', '#a695e7', '#ee7aae', '#6ec9cb', '#faa774', '#00a884'];
+    const MV = ['#c23b46', '#177a44', '#2574a8', '#6a45b8', '#b23d80', '#0d7d80', '#b3572a', '#007a5e'];
+    const hash = s => [...String(s)].reduce((a, c) => a + c.charCodeAt(0), 0);
+    const colorFor = n => AV[hash(n) % AV.length];
+    const memberColor = n => MV[hash(n) % MV.length];
+    function avatarFor(name) { const c = colorFor(name); const ini = name.replace(/[^\w ]/g, '').trim().split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase() || 'MM'; return 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='${c}'/><text x='48' y='61' font-family='Arial' font-size='38' font-weight='600' fill='rgba(255,255,255,.92)' text-anchor='middle'>${ini}</text></svg>`); }
+    function groupAvatar() { return 'data:image/svg+xml;utf8,' + encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96'><rect width='96' height='96' fill='#cfd8db'/><text x='48' y='66' font-size='48' text-anchor='middle'>🦣</text></svg>`); }
+    function chatAvatar(c) { return c.isGroup ? groupAvatar() : avatarFor(c.name); }
+
+    const state = { active: null, tab: 'all', q: '', replyTo: null, ctxId: null };
+    const byId = id => CONTACTS.find(c => c.id === id);
+    const activeChat = () => byId(state.active);
+    const AI = () => Object.keys(PERSONAS).filter(n => !ME || n !== ME.name);
+    const chatListEl = $('#chatList'), messagesEl = $('#messages'), input = $('#msgInput'), composer = $('#composer');
+    const emptyState = $('#emptyState'), chatView = $('#chatView'), cvName = $('#cvName'), cvStatus = $('#cvStatus');
+    const cvAvatar = $('#cvAvatar'), replyBar = $('#replyBar'), ctxMenu = $('#ctxMenu'), emojiTray = $('#emojiTray');
+    const menuDrop = $('#menuDrop'), toastsEl = $('#toasts'), scrollFab = $('#scrollDown'), msgCount = $('#msgCount');
+    const smartChips = $('#smartChips');
+
+    /* ============ TASK INBOX ============ */
+    let taskCompletion = {};
+
+    function loadTasks() {
+        const taskList = document.getElementById('taskList');
+        if (!taskList) return;
+        taskList.innerHTML = '<div class="task-empty">Loading tasks…</div>';
+
+        fetch('task.json')
+            .then(res => {
+                if (!res.ok) throw new Error('Network error');
+                return res.json();
+            })
+            .then(data => {
+                if (!data.tasks || !Array.isArray(data.tasks)) {
+                    throw new Error('Invalid task format');
                 }
-            } catch (e) { console.warn('Failed to fetch persona.json:', e); }
-            console.log('Using default hardcoded team');
-            return getDefaultTeam();
+                const saved = localStorage.getItem('taskCompletion');
+                if (saved) {
+                    try { taskCompletion = JSON.parse(saved); } catch(e) {}
+                }
+
+                const nameLower = ME ? ME.name.toLowerCase() : '';
+                const userTasks = data.tasks.filter(task => {
+                    if (!task.assigned_to) return false;
+                    return task.assigned_to.toLowerCase().startsWith(nameLower);
+                });
+
+                if (userTasks.length === 0) {
+                    taskList.innerHTML = `<div class="task-empty">🎉 No tasks assigned to you right now. Enjoy!</div>`;
+                    return;
+                }
+
+                renderTasks(userTasks);
+            })
+            .catch(err => {
+                console.warn('Task load error (optional):', err);
+                taskList.innerHTML = `<div class="task-empty">📭 No tasks available right now.</div>`;
+            });
+    }
+
+    function renderTasks(tasks) {
+        const taskList = document.getElementById('taskList');
+        if (!taskList) return;
+
+        const sorted = tasks.sort((a, b) => {
+            const statusOrder = { 'pending': 0, 'in_progress': 1, 'scheduled': 2, 'completed': 3 };
+            const aStatus = taskCompletion[a.id] ? 'completed' : a.status;
+            const bStatus = taskCompletion[b.id] ? 'completed' : b.status;
+            return (statusOrder[aStatus] || 9) - (statusOrder[bStatus] || 9);
+        });
+
+        taskList.innerHTML = sorted.map(task => {
+            const isCompleted = taskCompletion[task.id] || false;
+            const priorityClass = task.priority ? `priority-${task.priority}` : '';
+            const deadline = task.deadline ? new Date(task.deadline).toLocaleDateString() : 'No deadline';
+            const statusText = isCompleted ? '✅ Completed' : (task.status || 'Pending');
+
+            return `
+                <div class="task-item ${isCompleted ? 'completed' : ''}" data-task-id="${task.id}">
+                    <div class="task-header">
+                        <input type="checkbox" ${isCompleted ? 'checked' : ''} onchange="toggleTask('${task.id}')" />
+                        <div style="flex:1;min-width:0;">
+                            <div class="task-title">${esc(task.title)}</div>
+                            <div class="task-desc">${esc(task.description || '')}</div>
+                            <div class="task-meta">
+                                <span class="${priorityClass}">🔴 ${task.priority || 'normal'}</span>
+                                <span>📅 ${deadline}</span>
+                                <span>📂 ${task.category || 'uncategorized'}</span>
+                                <span>📌 ${statusText}</span>
+                            </div>
+                            ${task.tags && task.tags.length ? `
+                                <div class="task-tags">
+                                    ${task.tags.map(tag => `<span class="task-tag">#${esc(tag)}</span>`).join('')}
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+        window._currentTasks = tasks;
+    }
+
+    function toggleTask(taskId) {
+        taskCompletion[taskId] = !taskCompletion[taskId];
+        localStorage.setItem('taskCompletion', JSON.stringify(taskCompletion));
+        if (window._currentTasks) {
+            renderTasks(window._currentTasks);
+        } else {
+            loadTasks();
+        }
+        // Play a subtle sound
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(660, ctx.currentTime);
+            osc.frequency.setValueAtTime(880, ctx.currentTime + 0.05);
+            gain.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            osc.connect(gain).connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.15);
+        } catch(e) {}
+    }
+
+    function openTaskInbox() {
+        loadTasks();
+        document.getElementById('aiModal').classList.add('open');
+    }
+
+    function closeAiModal() {
+        document.getElementById('aiModal').classList.remove('open');
+    }
+
+    /* ============ persona prompt builder using JSON ============ */
+    function buildPromptFromJSON(persona, mode, otherName, history, userMsg, short, replyToMsg) {
+        const tpl = persona.system_prompt_template;
+        const tc = timeCtx();
+        const tb = timeBucket(new Date().getHours());
+        const hints = persona.time_contexts[tb] || [];
+        const activityHint = hints.length ? hints[Math.floor(Math.random() * hints.length)] : 'working';
+        const birthday = bdayLine(persona.name);
+        
+        let quoteCtx = '';
+        if (replyToMsg) {
+            const who = replyToMsg.from === 'me' ? ME.name : (replyToMsg.member || otherName);
+            quoteCtx = `\nYou are replying to this specific message from ${who}: "${replyToMsg.text || mediaLabel(replyToMsg.type)}"\nMake your reply a direct, relevant response to that exact message.`;
         }
 
-        function getDefaultTeam() {
-            return [
-                { name: 'Sanchita', flag: '🧑‍💼', role: 'BA', vibe: 'Process‑oriented, detail‑focused', meme_vocabulary: ['process', 'acceptance', 'criteria'], quirks: ['Loves checklists', 'Always on time'] },
-                { name: 'Raissa', flag: '👩‍💼', role: 'PO', vibe: 'Strategic, domain‑expert', meme_vocabulary: ['eligibility', 'adjudication'], quirks: ['Thinks in business rules', 'Explains patiently'] },
-                { name: 'Satya', flag: '👨‍💻', role: 'Developer', vibe: 'Energetic, quick to help', meme_vocabulary: ['coffee', '🔥'], quirks: ['Always suggests solutions', 'Loves coding'] },
-                { name: 'Nidhi', flag: '👩‍💻', role: 'Senior Dev', vibe: 'Supportive, process‑wise', meme_vocabulary: ['deployment', 'prod'], quirks: ['Mentors juniors', 'Cautious with permissions'] },
-                { name: 'Rambabu', flag: '🧑‍🔧', role: 'QA Lead', vibe: 'Analytical, detail‑oriented', meme_vocabulary: ['performance', 'TPS', 'SLA'], quirks: ['Loves metrics', 'Writes detailed reports'] },
-                { name: 'Sivaram', flag: '👨‍💻', role: 'Developer', vibe: 'Calm, methodical', meme_vocabulary: ['regression', 'suite'], quirks: ['Quiet but thorough', 'Tests everything'] },
-                { name: 'Yamini', flag: '👩‍💻', role: 'Developer', vibe: 'Reserved, direct', meme_vocabulary: ['java', 'service'], quirks: ['Terse but effective', 'Fixes things quickly'] },
-                { name: 'Sunkul Pradeep', flag: '🧑‍🚀', role: 'Data Engineer', vibe: 'Cheerful, tech‑savvy', meme_vocabulary: ['databricks', 'pipeline', '💯'], quirks: ['Always hungry', 'Loves biryani'] },
-                { name: 'Shivani Kumar', flag: '👩‍🎓', role: 'Intern', vibe: 'Eager, learning', meme_vocabulary: ['CI/CD', 'build', '🎉'], quirks: ['Asks lots of questions', 'Celebrates small wins'] },
-                { name: 'Laik', flag: '👨‍🦱', role: 'Developer', vibe: 'Chill, friendly', meme_vocabulary: ['yar', 'bhai', 'chill', '🤙'], quirks: ['Uses Hinglish', 'Loves chai'] },
-                { name: 'Sai Surya', flag: '🦣', role: 'Scrum Master', vibe: 'Facilitator, motivator', meme_vocabulary: ['standup', 'blocker', 'retro'], quirks: ['Always asks "what’s blocking you?"', 'Keeps the team happy'] }
-            ];
-        }
+        let prompt = tpl
+            .replace(/{{NAME}}/g, persona.name)
+            .replace(/{{FLAG}}/g, persona.flag)
+            .replace(/{{ROLE}}/g, persona.role)
+            .replace(/{{OTHER_NAME}}/g, otherName)
+            .replace(/{{OTHER_FLAG}}/g, ME.flag)
+            .replace(/{{OTHER_ROLE}}/g, ME.role)
+            .replace(/{{VIBE}}/g, persona.vibe)
+            .replace(/{{MEME_VOCABULARY}}/g, persona.meme_vocabulary.join(', '))
+            .replace(/{{OFFTOPIC_TOPICS}}/g, persona.offtopic_topics.join(', '))
+            .replace(/{{LIFE_HACKS}}/g, persona.life_hacks.join(', '))
+            .replace(/{{TIME}}/g, tc)
+            .replace(/{{ACTIVITY_HINT}}/g, activityHint)
+            .replace(/{{BIRTHDAY}}/g, birthday)
+            .replace(/{{TAGGED}}/g, persona.name)
+            .replace(/{{HISTORY}}/g, history)
+            .replace(/{{USER_MSG}}/g, userMsg)
+            .replace(/{{QUOTE_CONTEXT}}/g, quoteCtx);
 
-        function buildPersonas(list) {
-            PERSONAS = {};
-            list.forEach(p => {
-                p.flag = p.flag || '👤';
-                p.role = p.role || 'Unspecified';
-                p.vibe = p.vibe || 'Friendly';
-                p.meme_vocabulary = p.meme_vocabulary || [];
-                p.quirks = p.quirks || [];
-                p.offtopic_topics = p.offtopic_topics || ['work', 'life', 'food'];
-                p.life_hacks = p.life_hacks || [];
-                p.structured = p.structured !== undefined ? p.structured : true;
-                p.system_prompt_template = p.system_prompt_template || `
+        if (short) prompt += '\nKeep this reply VERY short (a single short line) — you are just chiming into the group conversation.';
+        return prompt;
+    }
+
+    function historyText(c) {
+        return c.messages.slice(-14).map(m => {
+            if (m.from === 'me') return `${ME.name} (you): ${m.text || mediaLabel(m.type)}`;
+            const who = c.isGroup ? (m.member || c.name) : c.name;
+            return `${who}: ${m.text || mediaLabel(m.type)}`;
+        }).join('\n');
+    }
+    function lastUserText(c) { for (let i = c.messages.length - 1; i >= 0; i--) if (c.messages[i].from === 'me') return c.messages[i].text || mediaLabel(c.messages[i].type); return ''; }
+
+    function cleanLines(raw, member) {
+        const names = Object.keys(PERSONAS).map(n => n.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+        const re = new RegExp(`^(?:${names})\\s*:\\s*`, 'i');
+        return raw.split(/\n+/).map(s => s.trim()).map(s => s.replace(/^["'`]+|["'`]+$/g, '')).map(s => s.replace(re, '')).map(s => s.trim()).filter(Boolean).slice(0, PERSONAS[member].structured ? 10 : 4);
+    }
+
+    /* ============ who replies ============ */
+    function firstMention(text) {
+        if (!ME || !text) return null;
+        const re = /@([A-Za-z][A-Za-z ]*?)(?=[\s.,!?:;@]|$)/g; let m;
+        while ((m = re.exec(text)) !== null) {
+            const q = m[1].trim().toLowerCase(); if (!q) continue;
+            const found = Object.keys(PERSONAS).find(n => n !== ME.name && (n.toLowerCase() === q || n.toLowerCase().startsWith(q)));
+            if (found) return found;
+        }
+        return null;
+    }
+    function pickGroupResponder(text) {
+        const t = (text || '').toLowerCase();
+        const ai = AI();
+        const safe = n => n === ME.name ? ai[Math.floor(Math.random() * ai.length)] : n;
+        if (/status|test|performance|load|defect|bug|tps|sla|lag|jmeter/.test(t)) return safe('Rambabu');
+        if (/story|stories|requirement|acceptance|backlog|refin|process|jira|sign[- ]?off|criteria/.test(t)) return safe('Sanchita');
+        if (/why|explain|domain|insurance|pharmacy|healthcare|eligib|claim|adjudic|rule/.test(t)) return safe('Raissa');
+        if (/databricks|data\b|pipeline|spark|notebook|etl/.test(t)) return safe('Sunkul Pradeep');
+        if (/intern|ci\/cd|ci-cd|learn|mentor/.test(t)) return safe('Shivani Kumar');
+        if (/access|approv|senior|platform|prod\b|deploy|whom|who to/.test(t)) return safe('Nidhi');
+        if (/yar|yaar|bhai|chill|acha|relax/.test(t)) return safe('Laik');
+        if (/regress|qa\b|suite|test case/.test(t)) return safe(Math.random() < .5 ? 'Sivaram' : 'Rambabu');
+        if (/help|stuck|ui\b|kafka|config|code|api|pick|lunch|canteen|coffee|home|lift|tired|bored/.test(t)) return safe(Math.random() < .5 ? 'Satya' : (Math.random() < .5 ? 'Laik' : 'Sai Surya'));
+        const pool = ['Sanchita', 'Raissa', 'Satya', 'Nidhi', 'Rambabu', 'Sivaram', 'Sunkul Pradeep', 'Shivani Kumar', 'Laik', 'Sai Surya', 'Satya', 'Laik', 'Sanchita'].filter(n => n !== ME.name);
+        return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    /* ============ scenarios for autonomous pings ============ */
+    function pickScenario(member) {
+        const h = new Date().getHours(), b = timeBucket(h);
+        const evergreen = [
+            `ask ${ME.firstName} what they're up to right now and if they're free`,
+            `ask if ${ME.firstName} is in the canteen / wants to grab coffee or lunch together`,
+            `ask ${ME.firstName} for a small favor or quick help with something at work`,
+            `ask if ${ME.firstName} can give you a lift / drop you home today`,
+            `share a tiny personal update (what you ate, a funny thing, your mood) and ask how ${ME.firstName} is`,
+            `ping about a small work thing (a build, a config, a story) but keep it casual and friendly`,
+            `send a random warm 'hey, you alive?' type check-in to ${ME.firstName}`,
+            `mention the weather / weekend plans / a show you're watching and ask ${ME.firstName}`,
+        ];
+        const timeScen = {
+            'morning': [`complain playfully about being sleepy and ask if ${ME.firstName} had coffee`, `mention standup is soon and ask if ${ME.firstName} is ready`],
+            'lunch_time': [`ask ${ME.firstName} what they're eating / if they want to go to the canteen together`, `say you're starving and ask ${ME.firstName} to order in with you`],
+            'afternoon': [`say the post-lunch slump is hitting and ask how ${ME.firstName} is holding up`, `ask ${ME.firstName} if they want a coffee break`],
+            'evening': [`say you're wrapping up and ask ${ME.firstName} about their evening / a lift home`, `ask ${ME.firstName} if they're tired too after a long day`],
+            'night': [`ask ${ME.firstName} why they're still up and joke about late-night coding`, `wish ${ME.firstName} good night / tell them to sleep`],
+            'late_night': [`ask ${ME.firstName} if they're also up late and commiserate`, `send a sleepy random thought to ${ME.firstName}`],
+        };
+        const pool = evergreen.concat(timeScen[b] || []);
+        const bi = bdayInfo();
+        if (bi.active) {
+            if (member === 'Sunkul Pradeep') pool.push(`playfully hint your birthday (27 July) is ${bi.diff === 0 ? 'today' : 'coming up'} and joke about cake/treats with ${ME.firstName}`);
+            else if (member !== 'Sai Surya') pool.push(`casually remind ${ME.firstName} that Sunkul Pradeep's birthday is 27 July and ask if they've thought of a gift / the plan`);
+        }
+        return pool[Math.floor(Math.random() * pool.length)];
+    }
+
+    /* ============ typing + delivery ============ */
+    function setTyping(c, on, member) {
+        c.typing = on; c.typingMember = on ? (member || null) : null;
+        if (state.active === c.id) { setHeaderStatus(c); const t = $('#typingMsg'); if (on && !t) { messagesEl.insertAdjacentHTML('beforeend', typingHTML(c)); scrollBottom(true); } if (!on && t) t.remove(); }
+        renderChatList();
+    }
+    async function deliverOne(c, member, hint, opts = {}) {
+        if (!ME) return;
+        setTyping(c, true, member);
+        const userText = opts.init ? '' : (hint || lastUserText(c) || '');
+        const hist = historyText(c);
+        let raw;
+        try { 
+            const prompt = opts.init 
+                ? buildInitPrompt(member, c) 
+                : buildPromptFromJSON(PERSONAS[member], c.isGroup ? 'group' : 'dm', c.name, hist, userText, opts.short, opts.replyToMsg);
+            raw = await askLLM(prompt); 
+        } catch (e) { raw = personaFallback(member); }
+        const p = PERSONAS[member];
+        let parts = p.structured ? [cleanLines(raw, member).join('\n')] : cleanLines(raw, member);
+        if (opts.init || opts.short) parts = parts.slice(0, 1).map(s => s.length > (opts.init ? 150 : 70) ? s.slice(0, opts.init ? 150 : 70) + '…' : s);
+        if (!parts.length || !parts[0]) parts = [personaFallback(member)];
+        for (let i = 0; i < parts.length; i++) {
+            if (i > 0) { setTyping(c, true, member); await wait(420 + Math.random() * 700); }
+            setTyping(c, false); markMyRead(c);
+            pushMessage(c, { id: uid(), from: 'them', text: parts[i], t: new Date(), member: c.isGroup ? member : undefined });
+            await wait(200);
+        }
+    }
+
+    function buildInitPrompt(member, c) {
+        const scen = pickScenario(member);
+        return buildPromptFromJSON(PERSONAS[member], c.isGroup ? 'group' : 'dm', c.name, '', '', false, null) + 
+               `\n\nYou are STARTING a brand-new message out of the blue — ${ME.firstName} did NOT just text you. Reach out to ${ME.firstName} warmly and casually, inspired by this scenario (use your own words & invented details, don't copy it): "${scen}". Send exactly ONE short message. Mention ${ME.firstName} by name naturally. Be a real friend/teammate — empathetic, human, a little playful.`;
+    }
+
+    function aiReply(c, hint, replyToMsg) {
+        clearTimeout(c._tt);
+        c._tt = setTimeout(async () => {
+            if (!ME) return;
+            if (c.isGroup) {
+                const txt = hint || lastUserText(c);
+                const mention = firstMention(txt);
+                let member, tagged = false;
+                if (mention) { member = mention; tagged = true; } else member = pickGroupResponder(txt);
+                await deliverOne(c, member, hint, { short: false, replyToMsg });
+                if (!tagged && !replyToMsg && Math.random() < 0.3) {
+                    let m2 = pickGroupResponder(''); if (m2 === member) m2 = pickGroupResponder('');
+                    if (m2 !== member) { await wait(700 + Math.random() * 600); await deliverOne(c, m2, null, { short: true }); }
+                }
+            } else { await deliverOne(c, c.name, hint, { short: false, replyToMsg }); }
+            if (state.active === c.id) setHeaderStatus(c);
+            renderChatList(); updateMsgCount();
+        }, 650 + Math.random() * 900);
+    }
+
+    /* ============ autonomous pings (~45s) ============ */
+    let autoTimer = null, onlineTimer = null, firstPingTimer = null;
+    const lastPing = {};
+    function recentThem(c) { const l = lastMsg(c); return l && l.from === 'them' && (Date.now() - l.t < 100000); }
+    function autoTick() {
+        if (!ME || document.visibilityState === 'hidden') return;
+        const dms = CONTACTS.filter(c => !c.isGroup);
+        const useGroup = Math.random() < 0.28;
+        let c, member;
+        if (useGroup) {
+            c = CONTACTS.find(x => x.isGroup); if (!c || c.typing) return;
+            const free = c.members.filter(n => c.typingMember !== n); if (!free.length) return;
+            member = free[Math.floor(Math.random() * free.length)];
+        } else {
+            const cand = dms.filter(x => !x.typing && (Date.now() - (lastPing[x.id] || 0) > 110000) && !recentThem(x));
+            if (!cand.length) return;
+            c = cand[Math.floor(Math.random() * cand.length)]; member = c.name;
+        }
+        lastPing[c.id] = Date.now();
+        deliverOne(c, member, null, { init: true });
+    }
+    function scheduleAuto() { autoTimer = setTimeout(() => { autoTick(); scheduleAuto(); }, 45000 + Math.floor(Math.random() * 14000) - 7000); }
+    function startTimers() {
+        stopTimers();
+        onlineTimer = setInterval(flipOnline, 14000);
+        firstPingTimer = setTimeout(() => { autoTick(); scheduleAuto(); }, 6000 + Math.floor(Math.random() * 4000));
+    }
+    function stopTimers() { clearTimeout(autoTimer); clearTimeout(firstPingTimer); clearInterval(onlineTimer); autoTimer = onlineTimer = firstPingTimer = null; }
+    function flipOnline() { const s = CONTACTS.filter(c => !c.isGroup); if (!s.length) return; const c = s[Math.floor(Math.random() * s.length)]; c.online = !c.online; if (!c.online) c.lastSeen = new Date(); if (state.active === c.id) setHeaderStatus(c); renderChatList(); }
+
+    /* ============ rendering ============ */
+    const lastMsg = c => c.messages[c.messages.length - 1];
+    const mediaLabel = t => t === 'image' ? '📷 Photo' : t === 'voice' ? '🎤 Voice message' : '';
+    function ticksHTML(m) { const read = m.status === 'read', dbl = m.status !== 'sent'; return `<span class="ticks ${read ? 'read' : ''}"><svg viewBox="0 0 19 12" width="16" height="11" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1.5 6.8 4.8 10 10.5 2.5"/>${dbl ? '<path d="M7.3 9.4l.9.9 7.3-7.5"/>' : ''}</svg></span>`; }
+    function itemHTML(c, i) {
+        const last = lastMsg(c), unread = c.unread > 0; let preview;
+        if (c.typing) preview = `<span class="typing-txt">${c.isGroup ? (c.typingMember || 'Someone') + ' is typing…' : 'typing…'}</span>`;
+        else if (last.from === 'me') preview = `${ticksHTML(last)}<span>You: ${esc(last.type ? mediaLabel(last.type) : last.text)}</span>`;
+        else preview = `<span>${c.isGroup && last.member ? esc(last.member) + ': ' : ''}${esc(last.type ? mediaLabel(last.type) : last.text)}</span>`;
+        return `<div class="chat-item ${state.active === c.id ? 'active' : ''}" data-id="${c.id}" style="animation-delay:${i * 22}ms">
+        <img class="avatar" src="${chatAvatar(c)}" alt="">
+        <div class="ci-body">
+          <div class="ci-top"><span class="ci-name">${esc(c.name)}</span><span class="ci-time ${unread ? 'unread' : ''}">${listTime(last.t)}</span></div>
+          <div class="ci-bottom"><span class="ci-preview">${preview}</span>
+            <span class="ci-meta">${c.pinned ? '<svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:var(--txt-2)"><path d="M16 9V4h1a1 1 0 0 0 0-2H7a1 1 0 0 0 0 2h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z"/></svg>' : ''}${unread ? `<span class="badge">${c.unread}</span>` : ''}</span>
+          </div>
+        </div></div>`;
+    }
+    function updateNavBadge() { const n = CONTACTS.reduce((a, c) => a + (c.unread || 0), 0); const b = $('#navChatsBadge'); if (b) { b.textContent = n; b.style.display = n > 0 ? 'flex' : 'none'; } }
+    function updateTabCounts() { const u = CONTACTS.filter(c => c.unread > 0).length, f = CONTACTS.filter(c => c.fav).length; const ue = $('#tabUnreadCount'); if (ue) ue.textContent = u > 0 ? (' ' + u) : ''; const fe = $('#tabFavCount'); if (fe) fe.textContent = f > 0 ? (' ' + f) : ''; }
+    function renderChatList() {
+        const q = state.q.toLowerCase();
+        let list = CONTACTS.filter(c => state.tab === 'unread' ? c.unread > 0 : state.tab === 'favs' ? c.fav : true);
+        if (q) list = list.filter(c => c.name.toLowerCase().includes(q) || (lastMsg(c).text || '').toLowerCase().includes(q));
+        list.sort((a, b) => ((b.pinned ? 1 : 0) - (a.pinned ? 1 : 0)) || (lastMsg(b).t - lastMsg(a).t));
+        chatListEl.innerHTML = list.length ? list.map(itemHTML).join('') : '<div class="list-empty">No chats found</div>';
+        updateNavBadge(); updateTabCounts();
+    }
+    function lastSeenStr(c) { const d = c.lastSeen || new Date(); return (sameDay(d, new Date()) ? 'today at ' : 'yesterday at ') + fmtTime(d); }
+    function setHeaderStatus(c) {
+        if (c.typing) { cvStatus.textContent = c.isGroup ? `${c.typingMember || 'Someone'} is typing…` : 'typing…'; cvStatus.className = 'typing'; }
+        else if (c.isGroup) { cvStatus.textContent = [...c.members, 'You'].join(', '); cvStatus.className = ''; }
+        else if (c.online) { cvStatus.textContent = 'online'; cvStatus.className = ''; }
+        else { cvStatus.textContent = 'last seen ' + lastSeenStr(c); cvStatus.className = ''; }
+    }
+    function renderHeader(c) { cvAvatar.src = chatAvatar(c); cvName.textContent = c.name; setHeaderStatus(c); updateMsgCount(); }
+    function updateMsgCount() { const c = activeChat(); msgCount.textContent = c ? c.messages.length + ' msgs' : ''; }
+    function quoteHTML(m, c) { if (!m.replyTo) return ''; const r = c.messages.find(x => x.id === m.replyTo); if (!r) return ''; const who = r.from === 'me' ? 'You' : (r.member || c.name); const col = r.from === 'me' ? 'var(--accent)' : memberColor(r.member || c.name); return `<div class="quote" style="border-left-color:${col}"><span class="q-name" style="color:${col}">${esc(who)}</span><span class="q-text">${esc((r.text || mediaLabel(r.type)).slice(0, 90))}</span></div>`; }
+    function voiceHTML(m) { return `<div class="voice"><button class="vplay" data-id="${m.id}"><svg class="pl" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg><svg class="pa" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg></button><div class="wave"><div class="wprog"></div><div class="bars">${m.wave.map(h => `<i style="height:${h}px"></i>`).join('')}</div></div><span class="vdur">${fmtDur(m.dur)}</span></div>`; }
+    function bubbleHTML(m, c, first) {
+        const mine = m.from === 'me'; let body;
+        if (m.type === 'image') body = `<div class="imgph"><span>📷</span></div>`;
+        else if (m.type === 'voice') body = voiceHTML(m);
+        else body = `<span class="txt">${esc(m.text).replace(/\n/g, '<br>')}</span>`;
+        const mname = (!mine && c.isGroup && m.member) ? `<span class="mname" style="color:${memberColor(m.member)}">${esc(m.member)}</span>` : '';
+        return `<div class="msg ${mine ? 'out' : 'in'} ${first ? 'first' : ''} ${m.type ? 'media' : ''} ${m.react ? 'has-react' : ''}" data-id="${m.id}">
+        <div class="bubble">${mname}${quoteHTML(m, c)}${body}
+          <span class="meta">${m.star ? '<span class="star">⭐</span>' : ''}${fmtTime(m.t)}${mine ? ticksHTML(m) : ''}</span>
+          ${m.react ? `<span class="react">${m.react}</span>` : ''}
+        </div></div>`;
+    }
+    function typingHTML(c) { const mem = (c.isGroup && c.typingMember) ? `<span class="mname" style="color:${memberColor(c.typingMember)}">${esc(c.typingMember)}</span>` : ''; return `<div class="msg in first" id="typingMsg"><div class="bubble">${mem}<span class="tdots"><i></i><i></i><i></i></span></div></div>`; }
+    function isFirst(c, m, prev, newDay) { return newDay || !prev || prev.from !== m.from || (c.isGroup && prev.member !== m.member) || (m.t - prev.t) > 300000; }
+    function renderMessages(c) {
+        let html = `<div class="chip enc">🔒 End-to-end encrypted · you're role‑playing as <b>${esc(ME.name)}</b> · replies generated live by RAGina AI${KNOWLEDGE.ready ? ' · from your team knowledge 🧠' : ''}.</div>`;
+        let prev = null;
+        for (const m of c.messages) { const newDay = !prev || !sameDay(prev.t, m.t); if (newDay) html += `<div class="chip date">${dayLabel(m.t)}</div>`; html += bubbleHTML(m, c, isFirst(c, m, prev, newDay)); prev = m; }
+        if (c.typing) html += typingHTML(c);
+        messagesEl.innerHTML = html; updateMsgCount();
+    }
+    function appendMessage(c, m) {
+        const arr = c.messages, prev = arr[arr.length - 2]; const t = $('#typingMsg'); if (t) t.remove();
+        const newDay = !prev || !sameDay(prev.t, m.t);
+        if (newDay) messagesEl.insertAdjacentHTML('beforeend', `<div class="chip date">${dayLabel(m.t)}</div>`);
+        messagesEl.insertAdjacentHTML('beforeend', bubbleHTML(m, c, isFirst(c, m, prev, newDay)));
+        updateMsgCount();
+    }
+    function scrollBottom(s) { messagesEl.scrollTo({ top: messagesEl.scrollHeight, behavior: s ? 'smooth' : 'auto' }); }
+
+    /* ============ smart reply chips ============ */
+    function lastIncomingFrom(c) { for (let i = c.messages.length - 1; i >= 0; i--) if (c.messages[i].from !== 'me') return c.isGroup ? (c.messages[i].member || c.name) : c.name; return null; }
+    function refreshChips() {
+        if (!ME || !state.active || chatView.style.display === 'none' || composer.classList.contains('recording')) { smartChips.innerHTML = ''; return; }
+        const c = activeChat(); if (!c) { smartChips.innerHTML = ''; return; }
+        const h = new Date().getHours(), b = timeBucket(h);
+        const timePool = {
+            'morning': ["☀️ morning! still sleepy tbh", "coffee first, then chaos ☕", "standup in 5, u ready?"],
+            'lunch_time': ["🍽️ lunch? i'm starving", "canteen or order in?", "brb grabbing food"],
+            'afternoon': ["post-lunch slump is real 😴", "need another coffee ngl", "this bug is killing me"],
+            'evening': [" wrapping up soon", "tired yaar, long day", "evening walk?"],
+            'night': ["still up? 🦉", "late night coding hits different", "sleep soon promise 😴"],
+            'late_night': ["can't sleep either? 😅", "one more commit then bed", "you up?? 🦉"],
+        }[b] || [];
+        const evergreen = ["what's up?", "need a quick help 🙏", "free for a 2-min call?", "you okay?", "lol tell me everything", "brb 5"];
+        const shuf = a => a.slice().sort(() => Math.random() - .5);
+        const arr = [];
+        const from = lastIncomingFrom(c);
+        const bi = bdayInfo();
+        let ctx = null;
+        if (ME.name === 'Sai Surya' && bi.active && from) ctx = (from === 'Sunkul Pradeep') ? '🎂 Happy birthday Sunkul!! 🎉' : '💡 btw Sunkul\'s bday is 27th, don\'t forget';
+        if (ctx) arr.push({ t: ctx, ctx: true });
+        const t1 = shuf(timePool)[0], e1 = shuf(evergreen)[0];
+        if (t1) arr.push({ t: t1 }); if (e1) arr.push({ t: e1 });
+        if (!ctx && timePool[1]) arr.push({ t: shuf(timePool)[1] });
+        smartChips.innerHTML = arr.slice(0, 3).map(x => `<button class="chip-pill${x.ctx ? ' ctx' : ''}" data-text="${esc(x.t)}">${esc(x.t)}</button>`).join('');
+    }
+    smartChips.addEventListener('click', e => { const p = e.target.closest('.chip-pill'); if (!p) return; doSend(p.dataset.text); });
+
+    /* ============ open / close / send ============ */
+    function openChat(id) {
+        if (!id) return; const c = byId(id); if (!c) { toastText('⚠️ Chat not found.'); return; }
+        state.active = id; c.unread = 0;
+        document.body.classList.add('chat-open');
+        emptyState.style.display = 'none'; chatView.style.display = 'flex';
+        renderHeader(c); renderMessages(c); renderChatList(); scrollBottom(false);
+        input.placeholder = `Message as ${ME.firstName} (@ to mention)`;
+        input.disabled = false; input.focus(); updateMsgCount(); refreshChips();
+    }
+    function closeChat() { document.body.classList.remove('chat-open'); state.active = null; smartChips.innerHTML = ''; }
+
+    function upgrade(m, status) { m.status = status; const el = messagesEl.querySelector(`.msg[data-id="${m.id}"] .ticks`); if (el) el.outerHTML = ticksHTML(m); scheduleSave(); }
+    function markMyRead(c) { let ch = false; c.messages.forEach(m => { if (m.from === 'me' && m.status !== 'read') { m.status = 'read'; ch = true; } }); if (ch && state.active === c.id) c.messages.forEach(m => { if (m.from !== 'me') return; const el = messagesEl.querySelector(`.msg[data-id="${m.id}"] .ticks`); if (el) el.outerHTML = ticksHTML(m); }); if (ch) scheduleSave(); }
+    function pushMessage(c, m) {
+        c.messages.push(m);
+        if (state.active === c.id) { appendMessage(c, m); scrollBottom(true); } else { c.unread++; toast(c, m); playPop(); }
+        renderChatList(); updateMsgCount(); scheduleSave(); refreshChips();
+    }
+    function deliverMine(c, m) { setTimeout(() => upgrade(m, 'delivered'), 450 + Math.random() * 600); }
+
+    function doSend(text) {
+        text = (text || '').trim(); if (!text) return; const c = activeChat(); if (!c) return;
+        let replyToMsg = null; if (state.replyTo) replyToMsg = c.messages.find(m => m.id === state.replyTo);
+        const m = { id: uid(), from: 'me', text, t: new Date(), status: 'sent', replyTo: state.replyTo || undefined };
+        clearReply(); pushMessage(c, m); deliverMine(c, m); aiReply(c, text, replyToMsg);
+        input.value = ''; input.style.height = 'auto'; updateComposer(); input.disabled = false; input.focus();
+    }
+    function sendMessage() { doSend(input.value); }
+    function sendMedia(type) {
+        const c = activeChat(); if (!c) return;
+        const m = { id: uid(), from: 'me', text: '', type, t: new Date(), status: 'sent' };
+        if (type === 'voice') { m.dur = Math.max(1, Math.round((Date.now() - rec.t0) / 1000)); m.wave = Array.from({ length: 26 }, () => 5 + Math.floor(Math.random() * 16)); }
+        pushMessage(c, m); deliverMine(c, m); aiReply(c, `[${ME.firstName} just sent a ${mediaLabel(type)} — react to it naturally and briefly]`);
+    }
+
+    function updateComposer() { composer.classList.toggle('has-text', input.value.trim().length > 0); }
+    input.addEventListener('input', () => { input.style.height = 'auto'; input.style.height = Math.min(input.scrollHeight, 120) + 'px'; updateComposer(); });
+    input.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
+    $('#sendBtn').addEventListener('click', sendMessage);
+
+    const EMOJIS = ['😀', '😂', '🤣', '😊', '😍', '😘', '😎', '🤩', '🥳', '😅', '😉', '🙃', '😇', '🤔', '🤨', '😴', '🥺', '', '😤', '', '🥶', '', '🤗', '🤫', '', '😬', '🤤', '😷', '🤠', '🥸', '😈', '👻', '', '👽', '🤖', '', '❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '', '💔', '❣️', '💕', '', '💯', '🔥', '✨', '🎉', '🎊', '', '👎', '👏', '🙌', '', '🤝', '', '✌️', '🤞', '', ''];
+    $('#emojiGrid').innerHTML = EMOJIS.map(e => `<button type="button">${e}</button>`).join('');
+    $('#emojiGrid').addEventListener('click', e => { if (e.target.tagName !== 'BUTTON') return; input.value += e.target.textContent; input.focus(); updateComposer(); });
+    $('#emojiBtn').addEventListener('click', e => { e.stopPropagation(); emojiTray.classList.toggle('open'); });
+
+    const rec = { on: false, t0: 0, iv: null };
+    $('#micBtn').addEventListener('click', () => { rec.on = true; rec.t0 = Date.now(); composer.classList.add('recording'); $('#recTime').textContent = '0:00'; rec.iv = setInterval(() => { $('#recTime').textContent = fmtDur(Math.floor((Date.now() - rec.t0) / 1000)); }, 250); refreshChips(); });
+    function stopRecording(send) { if (!rec.on) return; clearInterval(rec.iv); rec.on = false; composer.classList.remove('recording'); if (send && Date.now() - rec.t0 > 500) sendMedia('voice'); refreshChips(); }
+    $('#recTrash').addEventListener('click', () => stopRecording(false));
+    $('#recSend').addEventListener('click', () => stopRecording(true));
+
+    let playing = { id: null, iv: null };
+    function stopVoice() { if (playing.iv) clearInterval(playing.iv); if (playing.id) { const b = messagesEl.querySelector(`.msg[data-id="${playing.id}"] .vplay`); const p = messagesEl.querySelector(`.msg[data-id="${playing.id}"] .wprog`); if (b) b.classList.remove('playing'); if (p) p.style.width = '0%'; } playing = { id: null, iv: null }; }
+    function toggleVoice(id) { const c = activeChat(); if (!c) return; const m = c.messages.find(x => x.id === id); if (!m) return; if (playing.id === id) { stopVoice(); return; } stopVoice(); playing.id = id; const b = messagesEl.querySelector(`.msg[data-id="${id}"] .vplay`); const p = messagesEl.querySelector(`.msg[data-id="${id}"] .wprog`); b.classList.add('playing'); let v = 0; const step = 100 / (m.dur * 20); playing.iv = setInterval(() => { v += step; if (v >= 100) { p.style.width = '100%'; setTimeout(stopVoice, 200); return; } p.style.width = v + '%'; }, 50); }
+
+    function findMsg(id) { const c = activeChat(); return c && c.messages.find(m => m.id === id); }
+    function rerenderKeepScroll() { const c = activeChat(); if (!c) return; const st = messagesEl.scrollTop; renderMessages(c); messagesEl.scrollTop = st; updateMsgCount(); }
+
+    messagesEl.addEventListener('contextmenu', e => { const b = e.target.closest('.bubble'); if (!b) return; e.preventDefault(); state.ctxId = b.parentElement.dataset.id; const m = findMsg(state.ctxId); ctxMenu.querySelector('[data-act="star"]').textContent = m && m.star ? 'Unstar' : 'Star'; ctxMenu.style.left = Math.min(e.clientX, innerWidth - 200) + 'px'; ctxMenu.style.top = Math.min(e.clientY, innerHeight - 190) + 'px'; ctxMenu.classList.add('open'); });
+    messagesEl.addEventListener('dblclick', e => { const b = e.target.closest('.bubble'); if (!b) return; const m = findMsg(b.parentElement.dataset.id); if (!m) return; m.react = m.react ? null : '❤️'; rerenderKeepScroll(); scheduleSave(); });
+    messagesEl.addEventListener('click', e => { const vp = e.target.closest('.vplay'); if (vp) toggleVoice(vp.dataset.id); });
+
+    ctxMenu.addEventListener('click', e => {
+        const btn = e.target.closest('button'); if (!btn) return;
+        const m = findMsg(state.ctxId); ctxMenu.classList.remove('open'); if (!m) return; const c = activeChat();
+        switch (btn.dataset.act) {
+            case 'reply': {
+                state.replyTo = m.id; const col = m.from === 'me' ? 'var(--accent)' : memberColor(m.member || c.name);
+                $('#rbName').textContent = m.from === 'me' ? 'You' : (m.member || c.name); $('#rbName').style.color = col;
+                document.querySelector('.rb-txt').style.borderLeftColor = col; $('#rbSnippet').textContent = m.text || mediaLabel(m.type);
+                replyBar.classList.remove('hidden'); input.focus(); refreshChips(); break;
+            }
+            case 'react': m.react = m.react ? null : '❤️'; rerenderKeepScroll(); break;
+            case 'star': m.star = !m.star; rerenderKeepScroll(); break;
+            case 'delete': c.messages = c.messages.filter(x => x.id !== m.id); rerenderKeepScroll(); renderChatList(); updateMsgCount(); break;
+        }
+        scheduleSave();
+    });
+    function clearReply() { state.replyTo = null; replyBar.classList.add('hidden'); refreshChips(); }
+    $('#rbClose').addEventListener('click', clearReply);
+
+    $('#newChatBtn').addEventListener('click', () => { $('#ncList').innerHTML = CONTACTS.map(c => `<div class="nc-row" data-id="${c.id}" style="display:flex;align-items:center;gap:14px;padding:11px 15px;cursor:pointer"><img class="avatar" src="${chatAvatar(c)}" alt=""><div><div style="font-size:16px">${esc(c.name)}</div><div style="font-size:13.5px;color:var(--txt-2)">${esc(c.about)}</div></div></div>`).join(''); $('#newChatPanel').classList.remove('hidden'); });
+    $('#ncBack').addEventListener('click', () => $('#newChatPanel').classList.add('hidden'));
+    $('#ncList').addEventListener('click', e => { const r = e.target.closest('.nc-row'); if (!r) return; $('#newChatPanel').classList.add('hidden'); openChat(r.dataset.id); });
+
+    // ====== MENU TOGGLE ======
+    $('#menuBtn').addEventListener('click', e => {
+        e.stopPropagation();
+        menuDrop.classList.toggle('open');
+    });
+
+    // ====== MENU ACTIONS ======
+    menuDrop.addEventListener('click', e => {
+        menuDrop.classList.remove('open');
+        const a = e.target.dataset.act;
+
+        if (a === 'ai') {
+            openTaskInbox();
+        }
+        else if (a === 'knowledge') {
+            const u = prompt('Paste a team knowledge URL to crawl (wiki / Confluence / docs / any public page):', KNOWLEDGE_URL || '');
+            if (u && u.trim()) loadKnowledge(u.trim());
+        }
+        else if (a === 'export') {
+            exportChat();
+        }
+        else if (a === 'home') {
+            window.location.href = 'personaManager.html';
+        }
+        else if (a === 'clear') {
+            const c = activeChat();
+            if (!c) return;
+            if (confirm(`Clear all messages in "${c.name}"? This cannot be undone.`)) {
+                c.messages = [];
+                if (state.active === c.id) {
+                    renderMessages(c);
+                    updateMsgCount();
+                }
+                renderChatList();
+                scheduleSave();
+                toastText('🗑️ Chat cleared.');
+            }
+        }
+        else if (a === 'standup') {
+            openChat('mammoth');
+            setTimeout(() => {
+                const c = byId('mammoth');
+                pushMessage(c, {
+                    id: uid(),
+                    from: 'me',
+                    text: `Morning team 🦣☀️ quick standup — blockers and status please! — ${ME.firstName}`,
+                    t: new Date(),
+                    status: 'read'
+                });
+                aiReply(c, 'Morning team 🦣☀️ quick standup — blockers and status please!');
+            }, 400);
+        }
+        else if (a === 'profile') {
+            fillProfile();
+            $('#profileModal').classList.add('open');
+        }
+        else if (a === 'switch') {
+            openPicker();
+        }
+    });
+
+    // ====== FAB AI BUTTON ======
+    const fabBtn = document.getElementById('fabAiBtn');
+    if (fabBtn) {
+        fabBtn.addEventListener('click', function() {
+            openTaskInbox();
+        });
+    }
+
+    // ====== AI MODAL CONTROLS ======
+    function closeAiModal() {
+        const modal = document.getElementById('aiModal');
+        if (modal) modal.classList.remove('open');
+    }
+    const aiModalEl = document.getElementById('aiModal');
+    if (aiModalEl) {
+        aiModalEl.addEventListener('click', function(e) {
+            if (e.target === this) closeAiModal();
+        });
+    }
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeAiModal();
+    });
+
+    // ====== PROFILE MODAL ======
+    const profileClose = document.getElementById('profileClose');
+    if (profileClose) profileClose.addEventListener('click', () => document.getElementById('profileModal').classList.remove('open'));
+    const profileModal = document.getElementById('profileModal');
+    if (profileModal) {
+        profileModal.addEventListener('click', e => { if (e.target === e.currentTarget) document.getElementById('profileModal').classList.remove('open'); });
+    }
+    const pmSwitch = document.getElementById('pmSwitch');
+    if (pmSwitch) {
+        pmSwitch.addEventListener('click', () => {
+            document.getElementById('profileModal').classList.remove('open');
+            openPicker();
+        });
+    }
+
+    // ====== CHAT CONTROLS ======
+    const backBtn = document.getElementById('backBtn');
+    if (backBtn) backBtn.addEventListener('click', closeChat);
+    const closeChatBtn = document.getElementById('closeChatBtn');
+    if (closeChatBtn) closeChatBtn.addEventListener('click', closeChat);
+    document.querySelectorAll('[data-demo]').forEach(b => b.addEventListener('click', () => toastText(b.dataset.demo)));
+
+    const tabs = document.getElementById('tabs');
+    if (tabs) {
+        tabs.addEventListener('click', e => {
+            const t = e.target.closest('.tab');
+            if (!t) return;
+            document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+            t.classList.add('active');
+            state.tab = t.dataset.tab;
+            renderChatList();
+        });
+    }
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.addEventListener('input', e => { state.q = e.target.value; renderChatList(); });
+    }
+    if (chatListEl) {
+        chatListEl.addEventListener('click', e => {
+            const item = e.target.closest('.chat-item');
+            if (!item) return;
+            openChat(item.dataset.id);
+        });
+    }
+    const bottomNav = document.getElementById('bottomNav');
+    if (bottomNav) {
+        bottomNav.addEventListener('click', e => {
+            const it = e.target.closest('.nav-item');
+            if (!it) return;
+            if (it.dataset.nav === 'chats' && state.active) closeChat();
+        });
+    }
+
+    if (messagesEl) {
+        messagesEl.addEventListener('scroll', () => {
+            const dist = messagesEl.scrollHeight - messagesEl.scrollTop - messagesEl.clientHeight;
+            if (scrollFab) scrollFab.classList.toggle('show', dist > 420);
+        });
+    }
+    if (scrollFab) scrollFab.addEventListener('click', () => scrollBottom(true));
+
+    document.addEventListener('click', e => {
+        if (!e.target.closest('#emojiTray') && !e.target.closest('#emojiBtn')) {
+            if (emojiTray) emojiTray.classList.remove('open');
+        }
+        if (!e.target.closest('#menuDrop') && !e.target.closest('#menuBtn')) {
+            if (menuDrop) menuDrop.classList.remove('open');
+        }
+        if (!e.target.closest('.ctx')) {
+            if (ctxMenu) ctxMenu.classList.remove('open');
+        }
+    });
+    document.addEventListener('keydown', e => {
+        if (e.key !== 'Escape') return;
+        if (emojiTray) emojiTray.classList.remove('open');
+        if (menuDrop) menuDrop.classList.remove('open');
+        if (ctxMenu) ctxMenu.classList.remove('open');
+        const newChatPanel = document.getElementById('newChatPanel');
+        if (newChatPanel) newChatPanel.classList.add('hidden');
+        const profileModalEl = document.getElementById('profileModal');
+        if (profileModalEl) profileModalEl.classList.remove('open');
+    });
+
+    function toast(c, m) {
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.innerHTML = `<img src="${chatAvatar(c)}" alt=""><div><b>${esc(c.isGroup && m.member ? c.name + ' · ' + m.member : c.name)}</b><span>${esc(m.text || mediaLabel(m.type))}</span></div>`;
+        el.addEventListener('click', () => { openChat(c.id); el.remove(); });
+        toastsEl.appendChild(el);
+        setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 4200);
+    }
+    function toastText(t) {
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.innerHTML = `<div style="padding:0 6px"><span style="max-width:none;color:var(--txt)">${esc(t)}</span></div>`;
+        el.addEventListener('click', () => el.remove());
+        toastsEl.appendChild(el);
+        setTimeout(() => { el.classList.add('out'); setTimeout(() => el.remove(), 320); }, 3600);
+    }
+
+    let AC;
+    function playPop() { try { AC = AC || new (window.AudioContext || window.webkitAudioContext)(); const o = AC.createOscillator(), g = AC.createGain(); o.type = 'sine'; o.frequency.setValueAtTime(880, AC.currentTime); o.frequency.exponentialRampToValueAtTime(1320, AC.currentTime + 0.08); g.gain.setValueAtTime(0.0001, AC.currentTime); g.gain.exponentialRampToValueAtTime(0.1, AC.currentTime + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, AC.currentTime + 0.22); o.connect(g).connect(AC.destination); o.start(); o.stop(AC.currentTime + 0.28); } catch (e) {} }
+
+    /* ============ persistence (per identity) ============ */
+    const storeKey = () => `mammoth_v3::${ME.name}`;
+    let saveTimer = null;
+    function scheduleSave() { clearTimeout(saveTimer); saveTimer = setTimeout(saveChats, 250); }
+    function saveChats() { if (!ME) return; try { localStorage.setItem(storeKey(), JSON.stringify(CONTACTS.map(c => ({ id: c.id, unread: c.unread, messages: c.messages.map(({ id, from, text, t, status, member, type, dur, wave, react, star, replyTo }) => ({ id, from, text, t, status, member, type, dur, wave, react, star, replyTo })) })))); } catch (e) {} }
+    function loadHistoryFor() { try { const raw = localStorage.getItem(storeKey()); if (!raw) return false; let any = false; for (const s of JSON.parse(raw)) { const c = byId(s.id); if (!c) continue; c.unread = s.unread || 0; if (Array.isArray(s.messages) && s.messages.length) { c.messages = s.messages.map(m => ({ ...m, t: new Date(m.t) })); any = true; } } return any; } catch (e) { return false; } }
+    setInterval(() => saveChats(), 5000);
+    window.addEventListener('beforeunload', saveChats);
+    window.addEventListener('pagehide', saveChats);
+    document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') saveChats(); });
+
+    function exportChat() {
+        const c = activeChat(); if (!c) { toastText('⚠️ Open a chat first, then export.'); return; }
+        const lines = [`WhatsApp chat export — ${c.name} (you were ${ME.name})`, `Exported ${new Date().toLocaleString()}`, ''];
+        for (const m of c.messages) { const who = m.from === 'me' ? `${ME.name} (You)` : (c.isGroup ? (m.member || c.name) : c.name); lines.push(`[${m.t.toLocaleString()}] ${who}: ${(m.type ? mediaLabel(m.type) : (m.text || '')).replace(/\n/g, '\n        ')}`); }
+        try { const blob = new Blob([lines.join('\n')], { type: 'text/plain;charset=utf-8' }); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = (c.name.replace(/[^\w\-]+/g, '_') || 'chat') + '.txt'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 1500); toastText('📥 Chat exported as .txt'); } catch (e) { toastText('⚠️ Export failed on this browser.'); }
+    }
+
+    /* ============ PERSISTENCE ============ */
+    async function loadPersonas() {
+        const stored = localStorage.getItem('personasoi_data');
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                if (Array.isArray(parsed) && parsed.length) {
+                    console.log('✅ Loaded personas from localStorage');
+                    return parsed;
+                }
+            } catch (e) {}
+        }
+        try {
+            const resp = await fetch('persona.json');
+            if (!resp.ok) throw new Error('Network error');
+            const data = await resp.json();
+            let list = Array.isArray(data) ? data : (data.personas || []);
+            if (list.length) {
+                console.log('✅ Loaded personas from persona.json');
+                return list;
+            }
+        } catch (e) { console.warn('Failed to fetch persona.json:', e); }
+        console.log('Using default hardcoded team');
+        return getDefaultTeam();
+    }
+
+    function getDefaultTeam() {
+        return [
+            { name: 'Sanchita', flag: '🧑‍💼', role: 'BA', vibe: 'Process‑oriented, detail‑focused', meme_vocabulary: ['process', 'acceptance', 'criteria'], quirks: ['Loves checklists', 'Always on time'] },
+            { name: 'Raissa', flag: '👩‍💼', role: 'PO', vibe: 'Strategic, domain‑expert', meme_vocabulary: ['eligibility', 'adjudication'], quirks: ['Thinks in business rules', 'Explains patiently'] },
+            { name: 'Satya', flag: '👨‍💻', role: 'Developer', vibe: 'Energetic, quick to help', meme_vocabulary: ['coffee', '🔥'], quirks: ['Always suggests solutions', 'Loves coding'] },
+            { name: 'Nidhi', flag: '👩‍💻', role: 'Senior Dev', vibe: 'Supportive, process‑wise', meme_vocabulary: ['deployment', 'prod'], quirks: ['Mentors juniors', 'Cautious with permissions'] },
+            { name: 'Rambabu', flag: '🧑‍🔧', role: 'QA Lead', vibe: 'Analytical, detail‑oriented', meme_vocabulary: ['performance', 'TPS', 'SLA'], quirks: ['Loves metrics', 'Writes detailed reports'] },
+            { name: 'Sivaram', flag: '👨‍💻', role: 'Developer', vibe: 'Calm, methodical', meme_vocabulary: ['regression', 'suite'], quirks: ['Quiet but thorough', 'Tests everything'] },
+            { name: 'Yamini', flag: '👩‍💻', role: 'Developer', vibe: 'Reserved, direct', meme_vocabulary: ['java', 'service'], quirks: ['Terse but effective', 'Fixes things quickly'] },
+            { name: 'Sunkul Pradeep', flag: '🧑‍🚀', role: 'Data Engineer', vibe: 'Cheerful, tech‑savvy', meme_vocabulary: ['databricks', 'pipeline', '💯'], quirks: ['Always hungry', 'Loves biryani'] },
+            { name: 'Shivani Kumar', flag: '👩‍🎓', role: 'Intern', vibe: 'Eager, learning', meme_vocabulary: ['CI/CD', 'build', '🎉'], quirks: ['Asks lots of questions', 'Celebrates small wins'] },
+            { name: 'Laik', flag: '👨‍🦱', role: 'Developer', vibe: 'Chill, friendly', meme_vocabulary: ['yar', 'bhai', 'chill', '🤙'], quirks: ['Uses Hinglish', 'Loves chai'] },
+            { name: 'Sai Surya', flag: '🦣', role: 'Scrum Master', vibe: 'Facilitator, motivator', meme_vocabulary: ['standup', 'blocker', 'retro'], quirks: ['Always asks "what’s blocking you?"', 'Keeps the team happy'] }
+        ];
+    }
+
+    function buildPersonas(list) {
+        PERSONAS = {};
+        list.forEach(p => {
+            p.flag = p.flag || '👤';
+            p.role = p.role || 'Unspecified';
+            p.vibe = p.vibe || 'Friendly';
+            p.meme_vocabulary = p.meme_vocabulary || [];
+            p.quirks = p.quirks || [];
+            p.offtopic_topics = p.offtopic_topics || ['work', 'life', 'food'];
+            p.life_hacks = p.life_hacks || [];
+            p.structured = p.structured !== undefined ? p.structured : true;
+            p.system_prompt_template = p.system_prompt_template || `
 You are {{NAME}}, {{FLAG}} {{ROLE}} at Team Mammoth. 
 Your vibe: {{VIBE}}. 
 Meme vocabulary: {{MEME_VOCABULARY}}.
@@ -1348,91 +1599,96 @@ The person you're talking to is {{OTHER_NAME}}, {{OTHER_FLAG}} {{OTHER_ROLE}}.
 User just said: {{USER_MSG}}
 
 Reply naturally, in your character. Keep it brief and human – no emojis unless you really want to. Respond directly to the user's last message. Use your meme vocabulary occasionally.
-                `;
-                p.time_contexts = p.time_contexts || {
-                    'morning': ['just woke up, getting coffee', 'feeling fresh and ready'],
-                    'lunch_time': ['thinking about food', 'hungry and distracted'],
-                    'afternoon': ['post‑lunch slump', 'focused but tired'],
-                    'evening': ['wrapping up', 'thinking about going home'],
-                    'night': ['tired but still working', 'late‑night productivity'],
-                    'late_night': ['should be sleeping', 'caffeine fueled']
-                };
-                PERSONAS[p.name] = p;
-            });
-            window._teamMeta = null;
-        }
-
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'personasoi_data') {
-                console.log('🔄 Persona data changed in localStorage – reloading...');
-                reloadApp();
-            }
+            `;
+            p.time_contexts = p.time_contexts || {
+                'morning': ['just woke up, getting coffee', 'feeling fresh and ready'],
+                'lunch_time': ['thinking about food', 'hungry and distracted'],
+                'afternoon': ['post‑lunch slump', 'focused but tired'],
+                'evening': ['wrapping up', 'thinking about going home'],
+                'night': ['tired but still working', 'late‑night productivity'],
+                'late_night': ['should be sleeping', 'caffeine fueled']
+            };
+            PERSONAS[p.name] = p;
         });
+        window._teamMeta = null;
+    }
 
-        async function reloadApp() {
-            saveChats();
-            const list = await loadPersonas();
-            buildPersonas(list);
-            if (ME) {
-                if (!PERSONAS[ME.name]) {
-                    const names = Object.keys(PERSONAS);
-                    if (names.length) choose(names[0]); else openPicker();
-                } else {
-                    buildContacts();
-                    const activeId = state.active;
-                    if (activeId && byId(activeId)) openChat(activeId);
-                    else { closeChat(); fillEmpty(); renderChatList(); }
-                    fillProfile();
-                    renderChatList();
-                }
-            } else {
-                openPicker();
-            }
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'personasoi_data') {
+            console.log('🔄 Persona data changed in localStorage – reloading...');
+            reloadApp();
         }
+    });
 
-        function buildContacts() {
-            CONTACTS = [];
-            const aiNames = Object.keys(PERSONAS).filter(n => n !== ME.name);
+    async function reloadApp() {
+        saveChats();
+        const list = await loadPersonas();
+        buildPersonas(list);
+        if (ME) {
+            if (!PERSONAS[ME.name]) {
+                const names = Object.keys(PERSONAS);
+                if (names.length) choose(names[0]); else openPicker();
+            } else {
+                buildContacts();
+                const activeId = state.active;
+                if (activeId && byId(activeId)) openChat(activeId);
+                else { closeChat(); fillEmpty(); renderChatList(); }
+                fillProfile();
+                renderChatList();
+            }
+        } else {
+            openPicker();
+        }
+    }
+
+    function buildContacts() {
+        CONTACTS = [];
+        const aiNames = Object.keys(PERSONAS).filter(n => n !== ME.name);
+        CONTACTS.push({
+            id: 'mammoth',
+            name: 'Team Mammoth 🦣',
+            isGroup: true,
+            about: [...aiNames, 'You'].join(', '),
+            members: aiNames,
+            online: true,
+            pinned: true,
+            fav: true,
+            unread: 1,
+            messages: makeGroupSeed(),
+            typing: false,
+            typingMember: null,
+            _tt: null
+        });
+        aiNames.forEach((name, idx) => {
+            const p = PERSONAS[name];
+            const msgs = makeDmSeed(name);
             CONTACTS.push({
-                id: 'mammoth',
-                name: 'Team Mammoth 🦣',
-                isGroup: true,
-                about: [...aiNames, 'You'].join(', '),
-                members: aiNames,
-                online: true,
-                pinned: true,
-                fav: true,
-                unread: 1,
-                messages: makeGroupSeed(),
+                id: 'c' + idx,
+                name,
+                isGroup: false,
+                about: `${p.flag} ${p.role}`,
+                online: idx % 2 === 0,
+                lastSeen: ago(5 + idx * 9),
+                pinned: false,
+                fav: idx < 4,
+                unread: Math.min(msgs.length, [2, 1, 0][idx % 3]),
+                messages: msgs,
                 typing: false,
                 typingMember: null,
                 _tt: null
             });
-            aiNames.forEach((name, idx) => {
-                const p = PERSONAS[name];
-                const msgs = makeDmSeed(name);
-                CONTACTS.push({
-                    id: 'c' + idx,
-                    name,
-                    isGroup: false,
-                    about: `${p.flag} ${p.role}`,
-                    online: idx % 2 === 0,
-                    lastSeen: ago(5 + idx * 9),
-                    pinned: false,
-                    fav: idx < 4,
-                    unread: Math.min(msgs.length, [2, 1, 0][idx % 3]),
-                    messages: msgs,
-                    typing: false,
-                    typingMember: null,
-                    _tt: null
-                });
-            });
-        }
+        });
+    }
 
-        function openPicker() {
-            saveChats(); stopTimers();
+    function openPicker() {
+        saveChats(); stopTimers();
+        const picker = document.getElementById('picker');
+        const pickerList = document.getElementById('pickerList');
+        
+        // Show the regular persona picker
+        if (pickerList) {
             const last = localStorage.getItem('mammoth_last_me');
-            $('#pickerList').innerHTML = Object.keys(PERSONAS).map(name => {
+            pickerList.innerHTML = Object.keys(PERSONAS).map(name => {
                 const p = PERSONAS[name];
                 return `<div class="pk-row${name === last ? ' sel' : ''}" data-name="${esc(name)}">
                   <img class="avatar" src="${avatarFor(name)}" alt="">
@@ -1442,104 +1698,264 @@ Reply naturally, in your character. Keep it brief and human – no emojis unless
                     <div class="pk-tag">${esc(p.tagline || p.vibe.substring(0, 60))}</div>
                   </div><span class="go">›</span></div>`;
             }).join('');
-            $('#picker').classList.remove('hidden');
+            picker.classList.remove('hidden');
         }
-        $('#pickerList').addEventListener('click', e => { const r = e.target.closest('.pk-row'); if (!r) return; choose(r.dataset.name); });
-
-        function choose(name) {
-            const p = PERSONAS[name];
-            if (!p) { openPicker(); return; }
-            ME = { name, flag: p.flag, role: p.role, tagline: p.tagline || p.vibe, vibe: p.vibe, firstName: name.split(' ')[0] };
-            localStorage.setItem('mammoth_last_me', name);
-            buildContacts();
-            const had = loadHistoryFor();
-            $('#picker').classList.add('hidden');
-            closeChat();
-            fillProfile(); fillEmpty(); renderChatList();
+    }
+    
+    function showWelcomeScreen(userId) {
+        const p = PERSONAS[userId];
+        if (!p) return openPicker();
+        
+        const picker = document.getElementById('picker');
+        const pickerList = document.getElementById('pickerList');
+        if (pickerList) pickerList.innerHTML = ''; // hide the list
+        
+        // Update the picker head
+        const mascot = document.getElementById('pickerMascot');
+        if (mascot) mascot.src = 'personasoi.png'; // use logo
+        document.getElementById('pickerTitle').innerHTML = `Welcome, <span id="pickerUserName">${esc(userId)}</span>!`;
+        document.getElementById('pickerUserName').textContent = userId;
+        document.getElementById('pickerSub').textContent = 'It might take some time to blend in, but believe me, you\'ll have great fun while you work with us.';
+        
+        // Build the welcome note
+        const welcomeNote = document.getElementById('welcomeNote');
+        if (welcomeNote) {
+            welcomeNote.innerHTML = `
+                <p><strong>Hey ${esc(userId)},</strong></p>
+                <p>Welcome to Team Mammoth! You've been part of this team for a while, so you already know the vibes. 🦣</p>
+                <p>Remember: all tasks will be in your inbox. Ensure you regularly check inbox and complete assigned tickets.</p>
+                <div class="admin-sig">
+                    <strong>Best regards,</strong><br>
+                    Sai Varakala ☀️<br>
+                    <span style="font-size:0.8rem;">From Admin @suryasticsai</span>
+                </div>
+            `;
+        }
+        
+        // Show the picker with the welcome screen
+        if (picker) picker.classList.remove('hidden');
+        
+        // Set up slide to confirm
+        setupSlideToConfirm(userId);
+    }
+    
+    // ====== SLIDE TO CONFIRM ======
+    function setupSlideToConfirm(userId) {
+    const slideContainer = document.getElementById('slideContainer');
+    const slideThumb = document.getElementById('slideThumb');
+    const slideLabel = document.getElementById('slideLabel');
+    const agreeCheck = document.getElementById('agreeCheck');
+    
+    if (!slideContainer || !slideThumb || !slideLabel) return;
+    
+    let isDragging = false;
+    let startX = 0;
+    let thumbLeft = 4;
+    
+    function resetSlider() {
+        thumbLeft = 4;
+        slideThumb.style.left = '4px';
+        slideLabel.textContent = 'Slide to enter the team →';
+        slideLabel.classList.remove('completed');
+        // Also make slider visually disabled if unchecked
+        if (!agreeCheck.checked) {
+            slideContainer.style.opacity = '0.5';
+            slideContainer.style.cursor = 'not-allowed';
+            slideThumb.style.background = 'var(--txt-2)';
+        } else {
+            slideContainer.style.opacity = '1';
+            slideContainer.style.cursor = 'pointer';
+            slideThumb.style.background = 'var(--accent)';
+        }
+    }
+    
+    function onStart(e) {
+        // ✅ Only allow dragging if agreed
+        if (!agreeCheck.checked) {
+            toastText('⚠️ Please agree to the terms first.');
+            return;
+        }
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const rect = slideContainer.getBoundingClientRect();
+        startX = clientX - rect.left - 22;
+        isDragging = true;
+        slideThumb.classList.add('dragging');
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onEnd);
+        document.addEventListener('touchmove', onMove, { passive: true });
+        document.addEventListener('touchend', onEnd);
+    }
+    
+    function onMove(e) {
+        if (!isDragging) return;
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const rect = slideContainer.getBoundingClientRect();
+        let newLeft = clientX - rect.left - 22;
+        const maxLeft = rect.width - 48;
+        newLeft = Math.max(4, Math.min(newLeft, maxLeft));
+        thumbLeft = newLeft;
+        slideThumb.style.left = newLeft + 'px';
+        
+        const progress = (newLeft - 4) / (maxLeft - 4);
+        if (progress > 0.5) {
+            slideLabel.textContent = 'Release to enter!';
+            slideLabel.classList.add('completed');
+        } else {
+            slideLabel.textContent = 'Slide to enter the team →';
+            slideLabel.classList.remove('completed');
+        }
+    }
+    
+    function onEnd() {
+        if (!isDragging) return;
+        isDragging = false;
+        slideThumb.classList.remove('dragging');
+        document.removeEventListener('mousemove', onMove);
+        document.removeEventListener('mouseup', onEnd);
+        document.removeEventListener('touchmove', onMove);
+        document.removeEventListener('touchend', onEnd);
+        
+        const rect = slideContainer.getBoundingClientRect();
+        const maxLeft = rect.width - 48;
+        
+        if (thumbLeft >= maxLeft - 4) {
+            proceedToGame(userId);
+            return;
+        } else {
+            resetSlider();
+        }
+    }
+    
+    // Attach events
+    slideContainer.addEventListener('mousedown', onStart);
+    slideContainer.addEventListener('touchstart', onStart, { passive: true });
+    
+    // Update slider when checkbox changes
+    agreeCheck.addEventListener('change', function() {
+        resetSlider();
+    });
+    
+    // Initial state
+    resetSlider();
+}
+    
+    function proceedToGame(userId) {
+        const agreeCheck = document.getElementById('agreeCheck');
+        if (!agreeCheck || !agreeCheck.checked) {
+            toastText('⚠️ Please agree to the terms first.');
+            if (window._resetSlider) window._resetSlider();
+            return;
+        }
+        
+        // Play a success sound
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(523, ctx.currentTime);
+            osc.frequency.setValueAtTime(659, ctx.currentTime + 0.08);
+            osc.frequency.setValueAtTime(784, ctx.currentTime + 0.16);
+            gain.gain.setValueAtTime(0.12, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+            osc.connect(gain).connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.25);
+        } catch(e) {}
+        
+        // Close picker and start the chat
+        document.getElementById('picker').classList.add('hidden');
+        if (ME && ME.name !== userId) {
+            choose(userId, true);
+        } else {
+            fillEmpty();
+            renderChatList();
             startTimers();
-            setTimeout(() => toastText(` You're ${ME.firstName} now — Team Mammoth is online. Unlimited chat, no dead ends.`), 500);
-            setTimeout(() => toastText(had ? `💾 Loaded your saved chats as ${ME.firstName} — every message (yours & the team's) is kept per identity.` : `💾 Auto‑save ON as ${ME.firstName} — your history & the team's memory persist on this device.`), 1500);
+            toastText(`🎮 Welcome ${userId}! You're now part of Team Mammoth.`);
         }
-
-        function fillProfile() {
-            $('#pmAvatar').src = avatarFor(ME.name);
-            $('#pmName').textContent = ME.name;
-            $('#pmSub').textContent = `${ME.flag} ${ME.role} · Team Mammoth 🦣`;
-            $('#pmBio').innerHTML = `You're role‑playing as <b>${esc(ME.name)}</b> — ${esc(ME.vibe)}.<br><br>${esc(ME.catchphrase)}<div style="margin-top:8px"><span class="tag">${esc(ME.role)}</span><span class="tag">Team Mammoth 🦣</span><span class="tag">RAGina AI</span></div>`;
-            $('#pmLinks').style.display = ME.name === 'Sai Surya' ? 'flex' : 'none';
-            $('#menuProfileBtn').textContent = `👤 ${ME.name} · Profile`;
-        }
-        function fillEmpty() {
-            $('#esTitle').textContent = `Hey ${ME.firstName} 👋`;
-            const team = Object.keys(PERSONAS).filter(n => n !== ME.name).join(', ');
-            $('#esBody').innerHTML = `You're in the driver's seat as <b>${esc(ME.name)}</b> (${esc(ME.role)}).<br>Open any chat — your AI teammates <i>${esc(team)}</i> will talk <b>with you</b>, remember everything, and ping you out of the blue. Use <b>@name</b> to get a specific person to answer, and watch the quick‑reply chips above the keyboard.`;
-        }
-
-        /* ============ WELCOME MODAL LOGIC ============ */
-        function showWelcome(name) {
-            const msg = getWelcomeMessage(name);
-            welcomeName.textContent = name;
-            welcomeName2.textContent = name;
-            welcomeMessage.innerHTML = msg.message.replace(/\n/g, '<br>');
-            welcomeModal.classList.add('open');
-        }
-        function hideWelcome() { welcomeModal.classList.remove('open'); }
-
-        acceptBtn.addEventListener('click', function() {
-            if (prefs && prefs.soundsEnabled) {
-                try {
-                    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-                    const osc = ctx.createOscillator();
-                    const gain = ctx.createGain();
-                    osc.type = 'square';
-                    osc.frequency.setValueAtTime(880, ctx.currentTime);
-                    osc.frequency.exponentialRampToValueAtTime(1320, ctx.currentTime + 0.15);
-                    gain.gain.setValueAtTime(0.15, ctx.currentTime);
-                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
-                    osc.connect(gain).connect(ctx.destination);
-                    osc.start();
-                    osc.stop(ctx.currentTime + 0.2);
-                } catch (e) {}
-            }
-            hideWelcome();
-            toastText(`🎮 Mission accepted, ${ME.firstName}! You're now in the team.`);
+    }
+    
+    const pickerList = document.getElementById('pickerList');
+    if (pickerList) {
+        pickerList.addEventListener('click', e => { 
+            const r = e.target.closest('.pk-row'); 
+            if (!r) return; 
+            choose(r.dataset.name, false); 
         });
+    }
 
-        /* ============ MODIFIED CHOOSE ============ */
-        const originalChoose = choose;
-        choose = function(name, showWelcomeModal = false) {
-            originalChoose(name);
-            if (showWelcomeModal) {
-                setTimeout(() => { showWelcome(name); }, 300);
-            }
-        };
+    function choose(name, showWelcomeModal = false) {
+        const p = PERSONAS[name];
+        if (!p) { openPicker(); return; }
+        ME = { name, flag: p.flag, role: p.role, tagline: p.tagline || p.vibe, vibe: p.vibe, firstName: name.split(' ')[0] };
+        localStorage.setItem('mammoth_last_me', name);
+        buildContacts();
+        const had = loadHistoryFor();
+        document.getElementById('picker').classList.add('hidden');
+        closeChat();
+        fillProfile(); fillEmpty(); renderChatList();
+        startTimers();
+        setTimeout(() => toastText(` You're ${ME.firstName} now — Team Mammoth is online. Unlimited chat, no dead ends.`), 500);
+        setTimeout(() => toastText(had ? `💾 Loaded your saved chats as ${ME.firstName} — every message (yours & the team's) is kept per identity.` : `💾 Auto‑save ON as ${ME.firstName} — your history & the team's memory persist on this device.`), 1500);
+    }
 
-        /* ============ INIT ============ */
-        async function initApp() {
-            console.log('🚀 Initializing chat...');
-            const list = await loadPersonas();
-            buildPersonas(list);
-            initPFall();
+    function fillProfile() {
+        const pmAvatar = document.getElementById('pmAvatar');
+        if (pmAvatar) pmAvatar.src = avatarFor(ME.name);
+        const pmName = document.getElementById('pmName');
+        if (pmName) pmName.textContent = ME.name;
+        const pmSub = document.getElementById('pmSub');
+        if (pmSub) pmSub.textContent = `${ME.flag} ${ME.role} · Team Mammoth 🦣`;
+        const pmBio = document.getElementById('pmBio');
+        if (pmBio) {
+            pmBio.innerHTML = `You're role‑playing as <b>${esc(ME.name)}</b> — ${esc(ME.vibe)}.<br><br>${esc(ME.catchphrase)}<div style="margin-top:8px"><span class="tag">${esc(ME.role)}</span><span class="tag">Team Mammoth 🦣</span><span class="tag">RAGina AI</span></div>`;
+        }
+        const pmLinks = document.getElementById('pmLinks');
+        if (pmLinks) pmLinks.style.display = ME.name === 'Sai Surya' ? 'flex' : 'none';
+        const menuProfileBtn = document.getElementById('menuProfileBtn');
+        if (menuProfileBtn) menuProfileBtn.textContent = `👤 ${ME.name} · Profile`;
+    }
+    
+    function fillEmpty() {
+        const esTitle = document.getElementById('esTitle');
+        if (esTitle) esTitle.textContent = `Hey ${ME.firstName} 👋`;
+        const esBody = document.getElementById('esBody');
+        if (esBody) {
+            const team = Object.keys(PERSONAS).filter(n => n !== ME.name).join(', ');
+            esBody.innerHTML = `You're in the driver's seat as <b>${esc(ME.name)}</b> (${esc(ME.role)}).<br>Open any chat — your AI teammates <i>${esc(team)}</i> will talk <b>with you</b>, remember everything, and ping you out of the blue. Use <b>@name</b> to get a specific person to answer, and watch the quick‑reply chips above the keyboard.`;
+        }
+    }
 
-            const urlParams = new URLSearchParams(window.location.search);
-            const userId = urlParams.get('user');
+    /* ============ INIT ============ */
+    async function initApp() {
+        console.log('🚀 Initializing chat...');
+        const list = await loadPersonas();
+        buildPersonas(list);
+        initPFall();
 
-            if (userId && PERSONAS[userId]) {
-                choose(userId, true);
-                localStorage.setItem('mammoth_last_me', userId);
-            } else {
-                const lastMe = localStorage.getItem('mammoth_last_me');
-                if (lastMe && PERSONAS[lastMe]) {
-                    choose(lastMe, false);
-                } else {
-                    openPicker();
-                }
-            }
+        const urlParams = new URLSearchParams(window.location.search);
+        let userId = urlParams.get('user_id') || urlParams.get('user');
 
-            if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
+        // If no user specified or user not found, default to 'Sai Surya' or first persona
+        if (!userId || !PERSONAS[userId]) {
+            const firstKey = Object.keys(PERSONAS)[0];
+            userId = firstKey || 'Sai Surya';
+            if (!PERSONAS[userId] && firstKey) userId = firstKey;
         }
 
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+        if (PERSONAS[userId]) {
+            choose(userId, false);
+            showWelcomeScreen(userId);
+            localStorage.setItem('mammoth_last_me', userId);
+        } else {
+            // Fallback: open picker
+            openPicker();
+        }
+
+        if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
+    }
+
+    document.addEventListener('DOMContentLoaded', initApp);
+</script>
 </body>
 </html>
