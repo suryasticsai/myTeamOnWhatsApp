@@ -2018,6 +2018,7 @@ async function initApp() {
 
     localStorage.setItem('mammoth_last_me', userId);
     if (KNOWLEDGE_URL) setTimeout(() => loadKnowledge(KNOWLEDGE_URL), 1500);
+    loadTasks();  
 }
 
 document.addEventListener('DOMContentLoaded', initApp);
