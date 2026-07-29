@@ -767,15 +767,34 @@ function loadTasks() {
                 try { taskCompletion = JSON.parse(saved); } catch(e) {}
             }
 
-            // ===== NEW: Pass ALL tasks to the Updates section =====
-            if (window.Updates && typeof window.Updates.setTasks === 'function') {
-                window.Updates.setTasks(data.tasks);
-                console.log('[loadTasks] All tasks passed to Updates.');
-            } else {
-                console.warn('[loadTasks] Updates module not available yet.');
+            // ==========================================================
+            // 1. Pass ALL tasks to the Updates section (with retry)
+            // ==========================================================
+            function injectTasksToUpdates(retries = 3) {
+                if (window.Updates && typeof window.Updates.setTasks === 'function') {
+                    window.Updates.setTasks(data.tasks);
+                    console.log('[loadTasks] ✅ All tasks passed to Updates.');
+                    // Force a refresh in case the panel is already open
+                    if (typeof window.Updates.refresh === 'function') {
+                        window.Updates.refresh();
+                    }
+                    return true;
+                } else if (retries > 0) {
+                    console.warn(`[loadTasks] Updates module not ready, retrying... (${retries} left)`);
+                    setTimeout(() => injectTasksToUpdates(retries - 1), 200);
+                    return false;
+                } else {
+                    console.error('[loadTasks] ❌ Updates module never became available.');
+                    // Fallback: store tasks in a global variable in case it loads later
+                    window._pendingUpdatesTasks = data.tasks;
+                    return false;
+                }
             }
+            injectTasksToUpdates();
 
-            // --- Existing user‑specific filtering and rendering ---
+            // ==========================================================
+            // 2. Existing user‑specific filtering and rendering
+            // ==========================================================
             const nameLower = ME ? ME.name.toLowerCase() : '';
             const userTasks = data.tasks.filter(task => {
                 if (!task.assigned_to) return false;
