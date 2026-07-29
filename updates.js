@@ -1,9 +1,5 @@
-/**
- * updates.js – WhatsApp-style Status Cards
- * Integrates with myTeamOnWhatsApp's existing Updates nav button.
- * Expects tasks to be injected via Updates.setTasks(tasks).
- */
-
+<!-- Place this anywhere after your main app markup, but before your main script -->
+<script>
 (function() {
     'use strict';
 
@@ -49,7 +45,7 @@
     }
 
     // =============================================
-    // STYLES (injected)
+    // STYLES (injected once)
     // =============================================
     function injectStyles() {
         if (document.getElementById('updates-styles')) return;
@@ -733,7 +729,7 @@
         let container = document.getElementById('updates-container');
         if (!container) {
             container = createUpdatesUI();
-            // Insert into app – find main chat container and hide it
+            // Find the main chat container and hide it
             const chatContainer = document.querySelector('.chat-container') ||
                                   document.querySelector('#chat') ||
                                   document.querySelector('.main-content');
@@ -756,10 +752,6 @@
         // Start auto-refresh
         if (refreshTimer) clearInterval(refreshTimer);
         refreshTimer = setInterval(refreshUpdates, CONFIG.REFRESH_INTERVAL);
-
-        // Highlight the nav button (optional)
-        const navBtn = document.querySelector('[data-nav="updates"]');
-        if (navBtn) navBtn.classList.add('active');
     }
 
     function hideUpdates() {
@@ -778,33 +770,30 @@
             refreshTimer = null;
         }
         closeStatusViewer();
-
-        const navBtn = document.querySelector('[data-nav="updates"]');
-        if (navBtn) navBtn.classList.remove('active');
     }
 
     // =============================================
-    // INIT
+    // INIT – hook the button with id="updates-nav-btn"
     // =============================================
     function initUpdates() {
         injectStyles();
 
-        // Try to load cached tasks if no external setTasks was called yet
+        // Try to load cached tasks (so you see something before setTasks is called)
         try {
             const cached = localStorage.getItem('updates_tasks');
             if (cached) {
                 const parsed = JSON.parse(cached);
-                if (parsed.length > 0) {
+                if (parsed.length) {
                     tasks = parsed;
                     processStatuses();
                 }
             }
         } catch (_) {}
 
-        // Hook into the existing Updates nav button
-        const navBtn = document.querySelector('[data-nav="updates"]');
+        // Hook the Updates button
+        const navBtn = document.getElementById('updates-nav-btn');
         if (navBtn) {
-            navBtn.addEventListener('click', (e) => {
+            navBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 if (isUpdatesVisible) {
                     hideUpdates();
@@ -812,8 +801,9 @@
                     showUpdates();
                 }
             });
+            console.log('[Updates] Button #updates-nav-btn hooked.');
         } else {
-            console.warn('[Updates] No button with data-nav="updates" found.');
+            console.warn('[Updates] No element with id="updates-nav-btn" found.');
         }
 
         console.log('[Updates] Initialized. Use Updates.setTasks(tasks) to inject tasks.');
@@ -827,7 +817,7 @@
         show: showUpdates,
         hide: hideUpdates,
         refresh: refreshUpdates,
-        setTasks: setTasks,          // <--- main method
+        setTasks: setTasks,
         getStatuses: () => statuses,
     };
 
@@ -839,3 +829,4 @@
     }
 
 })();
+</script>
