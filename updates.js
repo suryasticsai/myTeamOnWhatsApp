@@ -9,14 +9,14 @@
     // CONFIG
     // =============================================
     const CONFIG = {
-        TASKS_URL: 'task.json',
-        REFRESH_INTERVAL: 30000,
-        MAX_STATUSES_PER_USER: 5,
-        STATUS_DURATION: 86400000,
-        VIEWER_DURATION: 5000,
-        WALLPAPER_LIGHT: 'wallpaper/wallpaper-light.png',
-        WALLPAPER_DARK: 'wallpaper/wallpaper-dark.png',
-    };
+    TASKS_URL: 'https://raw.githubusercontent.com/suryasticsai/myTeamOnWhatsApp/refs/heads/main/task.json',
+    REFRESH_INTERVAL: 30000,
+    MAX_STATUSES_PER_USER: 5,
+    STATUS_DURATION: 86400000,
+    VIEWER_DURATION: 5000,
+    WALLPAPER_LIGHT: 'wallpaper/wallpaper-light.png',
+    WALLPAPER_DARK: 'wallpaper/wallpaper-dark.png',
+};
 
     // =============================================
     // STATE
