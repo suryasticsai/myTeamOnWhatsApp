@@ -1,16 +1,17 @@
-<!-- Place this anywhere after your main app markup, but before your main script -->
-<script>
+/**
+ * updates.js – WhatsApp-style Status Cards (fixed for your HTML)
+ */
 (function() {
     'use strict';
 
     // =============================================
-    // CONFIGURATION
+    // CONFIG
     // =============================================
     const CONFIG = {
-        REFRESH_INTERVAL: 30000,          // auto-refresh every 30s
+        REFRESH_INTERVAL: 30000,
         MAX_STATUSES_PER_USER: 5,
-        STATUS_DURATION: 86400000,         // 24h
-        VIEWER_DURATION: 5000,             // 5s per status
+        STATUS_DURATION: 86400000,
+        VIEWER_DURATION: 5000,
     };
 
     // =============================================
@@ -35,14 +36,8 @@
         if (innerHTML) el.innerHTML = innerHTML;
         return el;
     }
-
-    function $(selector, context = document) {
-        return context.querySelector(selector);
-    }
-
-    function $$(selector, context = document) {
-        return [...context.querySelectorAll(selector)];
-    }
+    function $(sel, ctx = document) { return ctx.querySelector(sel); }
+    function $$(sel, ctx = document) { return [...ctx.querySelectorAll(sel)]; }
 
     // =============================================
     // STYLES (injected once)
@@ -57,10 +52,11 @@
                 display: none;
                 flex-direction: column;
                 height: 100%;
+                width: 100%;
                 background: var(--chat-bg, #efeae2);
                 overflow: hidden;
                 position: relative;
-                z-index: 100;
+                z-index: 10;
             }
             .updates-container.active {
                 display: flex;
@@ -147,13 +143,7 @@
                 box-shadow: 0 2px 8px rgba(0,0,0,0.12);
             }
             .status-card .avatar-wrapper.has-status {
-                background: conic-gradient(
-                    from 0deg,
-                    #25d366 0%,
-                    #128c7e 40%,
-                    #25d366 70%,
-                    #128c7e 100%
-                );
+                background: conic-gradient(from 0deg, #25d366 0%, #128c7e 40%, #25d366 70%, #128c7e 100%);
             }
             .status-card .avatar-wrapper img {
                 width: 100%;
@@ -211,7 +201,6 @@
             .status-viewer.active {
                 display: flex;
             }
-
             .status-viewer .close-viewer {
                 position: absolute;
                 top: 16px;
@@ -228,7 +217,6 @@
             .status-viewer .close-viewer:hover {
                 opacity: 1;
             }
-
             .status-viewer .viewer-user {
                 position: absolute;
                 top: 16px;
@@ -254,7 +242,6 @@
                 font-size: 12px;
                 opacity: 0.6;
             }
-
             .status-viewer .status-content {
                 max-width: 480px;
                 width: 100%;
@@ -294,7 +281,6 @@
                 padding: 4px 12px;
                 border-radius: 12px;
             }
-
             .status-viewer .nav-arrow {
                 position: absolute;
                 top: 50%;
@@ -319,7 +305,6 @@
             .status-viewer .nav-arrow.next {
                 right: 12px;
             }
-
             .status-viewer .progress-bar {
                 position: absolute;
                 bottom: 30px;
@@ -339,7 +324,6 @@
                 transition: width 0.3s linear;
             }
 
-            /* ===== RESPONSIVE ===== */
             @media (max-width: 600px) {
                 .status-card { width: 60px; }
                 .status-card .avatar-wrapper { width: 52px; height: 52px; }
@@ -351,7 +335,6 @@
                 .status-viewer .progress-bar { left: 10%; right: 10%; }
             }
 
-            /* ===== EMPTY STATE ===== */
             .updates-empty {
                 display: flex;
                 flex-direction: column;
@@ -389,7 +372,6 @@
             return;
         }
         tasks = newTasks;
-        // Cache for offline
         try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
         processStatuses();
         renderIfVisible();
@@ -404,7 +386,6 @@
         const userMap = new Map();
 
         tasks.forEach(task => {
-            // Use created_at or updated_at; fallback to now
             let timestamp = now;
             if (task.created_at) {
                 const d = new Date(task.created_at);
@@ -415,12 +396,10 @@
             }
 
             const age = now - timestamp;
-            if (age > CONFIG.STATUS_DURATION) return; // expired
+            if (age > CONFIG.STATUS_DURATION) return;
 
             const user = task.assigned_to || 'Unknown';
-            if (!userMap.has(user)) {
-                userMap.set(user, []);
-            }
+            if (!userMap.has(user)) userMap.set(user, []);
             userMap.get(user).push({
                 ...task,
                 displayTitle: task.title || 'Task',
@@ -430,7 +409,6 @@
             });
         });
 
-        // Sort each user's tasks newest first, limit
         for (let [user, userTasks] of userMap) {
             userTasks.sort((a, b) => b.timestamp - a.timestamp);
             if (userTasks.length > CONFIG.MAX_STATUSES_PER_USER) {
@@ -471,7 +449,7 @@
 
         statuses.forEach(status => {
             const card = createElement('div', 'status-card');
-            const avatarUrl = getAvatarUrl(status.user);
+            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(status.user)}&background=25d366&color=fff&size=64&bold=true`;
 
             const wrapper = createElement('div', 'avatar-wrapper');
             wrapper.classList.add(status.hasStatus ? 'has-status' : 'no-status');
@@ -498,10 +476,6 @@
         });
     }
 
-    function getAvatarUrl(name) {
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}&background=25d366&color=fff&size=64&bold=true`;
-    }
-
     function formatTimeAgo(timestamp) {
         if (!timestamp) return 'just now';
         const diff = Date.now() - timestamp;
@@ -519,11 +493,9 @@
     function openStatusViewer(user) {
         const status = statuses.find(s => s.user === user);
         if (!status || !status.hasStatus) return;
-
         currentViewingUser = user;
         viewerTasks = status.tasks;
         viewerIndex = 0;
-
         showStatusViewer();
     }
 
@@ -533,7 +505,6 @@
             viewer = createViewerElement();
             document.body.appendChild(viewer);
         }
-
         viewer.classList.add('active');
         renderViewerContent(viewer);
         startViewerProgress(viewer);
@@ -542,7 +513,6 @@
     function createViewerElement() {
         const viewer = createElement('div', 'status-viewer');
         viewer.id = 'status-viewer';
-
         viewer.innerHTML = `
             <button class="close-viewer" id="viewer-close">✕</button>
             <div class="viewer-user" id="viewer-user">
@@ -559,22 +529,18 @@
                 <div class="progress-fill" id="viewer-progress"></div>
             </div>
         `;
-
         viewer.querySelector('#viewer-close').addEventListener('click', closeStatusViewer);
         viewer.querySelector('#viewer-prev').addEventListener('click', () => navigateViewer(-1));
         viewer.querySelector('#viewer-next').addEventListener('click', () => navigateViewer(1));
-
         document.addEventListener('keydown', (e) => {
             if (!viewer.classList.contains('active')) return;
             if (e.key === 'Escape') closeStatusViewer();
             if (e.key === 'ArrowLeft') navigateViewer(-1);
             if (e.key === 'ArrowRight') navigateViewer(1);
         });
-
         viewer.addEventListener('click', (e) => {
             if (e.target === viewer) closeStatusViewer();
         });
-
         let touchStartX = 0;
         viewer.addEventListener('touchstart', (e) => {
             touchStartX = e.changedTouches[0].screenX;
@@ -585,7 +551,6 @@
                 navigateViewer(diff > 0 ? 1 : -1);
             }
         });
-
         return viewer;
     }
 
@@ -594,10 +559,9 @@
             closeStatusViewer();
             return;
         }
-
         const task = viewerTasks[viewerIndex];
-
-        viewer.querySelector('#viewer-avatar').src = getAvatarUrl(currentViewingUser);
+        const avatar = `https://ui-avatars.com/api/?name=${encodeURIComponent(currentViewingUser)}&background=25d366&color=fff&size=64&bold=true`;
+        viewer.querySelector('#viewer-avatar').src = avatar;
         viewer.querySelector('#viewer-name').textContent = currentViewingUser;
         viewer.querySelector('#viewer-time').textContent = formatTimeAgo(task.timestamp);
 
@@ -618,7 +582,6 @@
 
         const progress = viewer.querySelector('#viewer-progress');
         progress.style.width = '0%';
-
         viewer.querySelector('#viewer-prev').style.display = viewerIndex > 0 ? 'block' : 'none';
         viewer.querySelector('#viewer-next').style.display = viewerIndex < viewerTasks.length - 1 ? 'block' : 'none';
     }
@@ -626,7 +589,6 @@
     function navigateViewer(delta) {
         const newIndex = viewerIndex + delta;
         if (newIndex < 0 || newIndex >= viewerTasks.length) return;
-
         viewerIndex = newIndex;
         const viewer = document.getElementById('status-viewer');
         if (viewer) {
@@ -638,14 +600,11 @@
     function startViewerProgress(viewer) {
         if (progressInterval) clearInterval(progressInterval);
         if (viewerTimeout) clearTimeout(viewerTimeout);
-
         const progress = viewer.querySelector('#viewer-progress');
         progress.style.width = '0%';
-
         const duration = CONFIG.VIEWER_DURATION;
         const steps = 50;
         let step = 0;
-
         progressInterval = setInterval(() => {
             step++;
             const pct = (step / steps) * 100;
@@ -712,9 +671,6 @@
         }
     }
 
-    // =============================================
-    // REFRESH
-    // =============================================
     async function refreshUpdates() {
         processStatuses();
         const container = document.getElementById('updates-container');
@@ -723,35 +679,38 @@
     }
 
     // =============================================
-    // SHOW / HIDE
+    // SHOW / HIDE – fixed to work with your layout
     // =============================================
     function showUpdates() {
         let container = document.getElementById('updates-container');
         if (!container) {
             container = createUpdatesUI();
-            // Find the main chat container and hide it
-            const chatContainer = document.querySelector('.chat-container') ||
-                                  document.querySelector('#chat') ||
-                                  document.querySelector('.main-content');
-            if (chatContainer) {
-                chatContainer.style.display = 'none';
-                chatContainer.parentNode.insertBefore(container, chatContainer);
+            // Insert the updates container inside #app, alongside #chatArea
+            const app = document.getElementById('app');
+            const chatArea = document.getElementById('chatArea');
+            if (app && chatArea) {
+                app.insertBefore(container, chatArea);
             } else {
-                // Fallback: append to body and hide other main content
+                // fallback
                 document.body.appendChild(container);
-                $$('.app, .main, .chat-view, .chat-container').forEach(el => {
-                    if (el.id !== 'updates-container') el.style.display = 'none';
-                });
             }
         }
 
+        // Hide the main chat area
+        const chatArea = document.getElementById('chatArea');
+        if (chatArea) chatArea.style.display = 'none';
+
+        // Show updates
         container.classList.add('active');
         isUpdatesVisible = true;
         refreshUpdates();
 
-        // Start auto-refresh
         if (refreshTimer) clearInterval(refreshTimer);
         refreshTimer = setInterval(refreshUpdates, CONFIG.REFRESH_INTERVAL);
+
+        // Highlight nav button
+        const navBtn = document.querySelector('[data-nav="updates"]');
+        if (navBtn) navBtn.classList.add('active');
     }
 
     function hideUpdates() {
@@ -759,26 +718,27 @@
         if (container) container.classList.remove('active');
         isUpdatesVisible = false;
 
-        // Restore chat
-        const chatContainer = document.querySelector('.chat-container') ||
-                              document.querySelector('#chat') ||
-                              document.querySelector('.main-content');
-        if (chatContainer) chatContainer.style.display = '';
+        // Restore chat area
+        const chatArea = document.getElementById('chatArea');
+        if (chatArea) chatArea.style.display = '';
 
         if (refreshTimer) {
             clearInterval(refreshTimer);
             refreshTimer = null;
         }
         closeStatusViewer();
+
+        const navBtn = document.querySelector('[data-nav="updates"]');
+        if (navBtn) navBtn.classList.remove('active');
     }
 
     // =============================================
-    // INIT – hook the button with id="updates-nav-btn"
+    // INIT
     // =============================================
     function initUpdates() {
         injectStyles();
 
-        // Try to load cached tasks (so you see something before setTasks is called)
+        // Load cached tasks
         try {
             const cached = localStorage.getItem('updates_tasks');
             if (cached) {
@@ -790,10 +750,10 @@
             }
         } catch (_) {}
 
-        // Hook the Updates button
-        const navBtn = document.getElementById('updates-nav-btn');
+        // Hook the Updates button (id="status-update" or data-nav="updates")
+        const navBtn = document.querySelector('[data-nav="updates"]') || document.getElementById('status-update');
         if (navBtn) {
-            navBtn.addEventListener('click', function(e) {
+            navBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (isUpdatesVisible) {
                     hideUpdates();
@@ -801,9 +761,8 @@
                     showUpdates();
                 }
             });
-            console.log('[Updates] Button #updates-nav-btn hooked.');
         } else {
-            console.warn('[Updates] No element with id="updates-nav-btn" found.');
+            console.warn('[Updates] No Updates button found.');
         }
 
         console.log('[Updates] Initialized. Use Updates.setTasks(tasks) to inject tasks.');
@@ -821,12 +780,10 @@
         getStatuses: () => statuses,
     };
 
-    // Auto-init when DOM is ready
+    // Auto-init
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initUpdates);
     } else {
         initUpdates();
     }
-
 })();
-</script>
