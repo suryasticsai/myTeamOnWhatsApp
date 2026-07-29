@@ -1,7 +1,6 @@
 /**
- * updates.js – WhatsApp-style Status Cards + Channels (full‑screen)
- * Now fetches task.json directly, like taskManager.js.
- * Wallpaper applied via JS.
+ * updates.js – WhatsApp-style Status Cards + Channels
+ * Fetches task.json exactly like taskManager.js.
  */
 (function() {
     'use strict';
@@ -10,7 +9,7 @@
     // CONFIG
     // =============================================
     const CONFIG = {
-        TASKS_URL: 'task.json',                // same as taskManager.js
+        TASKS_URL: 'task.json',
         REFRESH_INTERVAL: 30000,
         MAX_STATUSES_PER_USER: 5,
         STATUS_DURATION: 86400000,
@@ -32,13 +31,13 @@
     let viewerTimeout = null;
     let isUpdatesVisible = false;
     let wallpaperEnabled = true;
+    let taskLoading = false;      // prevent concurrent fetches
 
     // =============================================
-    // DUMMY CHANNELS DATA (static, for realism)
+    // DUMMY CHANNELS (static)
     // =============================================
     function getDummyChannels() {
         return [
-            { name: 'Sai Maharaj Sannidhi', icon: '🕉️', time: '10:37 AM', count: 41 },
             { name: 'Loot Deals Official', icon: '🛍️', time: '10:36 AM', count: 116 },
             { name: 'Programming & AI Resources', icon: '🤖', time: '10:34 AM', count: 34 },
             { name: 'TCS Community Updates', icon: '💼', time: '10:11 AM', count: 1 },
@@ -50,7 +49,7 @@
     }
 
     // =============================================
-    // WALLPAPER APPLIER (via JS)
+    // WALLPAPER
     // =============================================
     function applyWallpaper(theme) {
         const messages = document.querySelector('.messages');
@@ -88,7 +87,7 @@
     function $$(sel, ctx = document) { return [...ctx.querySelectorAll(sel)]; }
 
     // =============================================
-    // STYLES (injected once)
+    // STYLES (injected)
     // =============================================
     function injectStyles() {
         if (document.getElementById('updates-styles')) return;
@@ -155,7 +154,7 @@
                 to { transform: rotate(360deg); }
             }
 
-            /* ===== MAIN SCROLLABLE AREA (status + channels) ===== */
+            /* ===== MAIN SCROLLABLE AREA ===== */
             .updates-body {
                 flex: 1;
                 overflow-y: auto;
@@ -379,7 +378,7 @@
                 font-weight: 400;
             }
 
-            /* ===== STATUS VIEWER (full-screen) ===== */
+            /* ===== STATUS VIEWER ===== */
             .status-viewer {
                 display: none;
                 position: fixed;
@@ -522,47 +521,17 @@
             }
 
             @media (max-width: 600px) {
-                .status-card {
-                    flex: 0 0 120px;
-                    width: 120px;
-                    min-height: 140px;
-                    padding: 12px 6px;
-                }
-                .status-card .avatar-wrapper {
-                    flex: 0 0 50px;
-                    width: 50px;
-                    height: 50px;
-                }
-                .status-card .status-name {
-                    font-size: 13px;
-                }
-                .status-card .status-preview {
-                    font-size: 10px;
-                }
-                .channel-item {
-                    padding: 8px 10px;
-                }
-                .channel-item .channel-icon {
-                    font-size: 24px;
-                }
-                .status-viewer .status-content {
-                    font-size: 16px;
-                    padding: 18px;
-                }
-                .status-viewer .nav-arrow {
-                    font-size: 24px;
-                    padding: 8px 12px;
-                }
-                .status-viewer .nav-arrow.prev {
-                    left: 4px;
-                }
-                .status-viewer .nav-arrow.next {
-                    right: 4px;
-                }
-                .status-viewer .progress-bar {
-                    left: 10%;
-                    right: 10%;
-                }
+                .status-card { flex: 0 0 120px; width: 120px; min-height: 140px; padding: 12px 6px; }
+                .status-card .avatar-wrapper { flex: 0 0 50px; width: 50px; height: 50px; }
+                .status-card .status-name { font-size: 13px; }
+                .status-card .status-preview { font-size: 10px; }
+                .channel-item { padding: 8px 10px; }
+                .channel-item .channel-icon { font-size: 24px; }
+                .status-viewer .status-content { font-size: 16px; padding: 18px; }
+                .status-viewer .nav-arrow { font-size: 24px; padding: 8px 12px; }
+                .status-viewer .nav-arrow.prev { left: 4px; }
+                .status-viewer .nav-arrow.next { right: 4px; }
+                .status-viewer .progress-bar { left: 10%; right: 10%; }
             }
 
             .updates-empty {
@@ -575,89 +544,99 @@
                 padding: 40px;
                 text-align: center;
             }
-            .updates-empty .empty-icon {
-                font-size: 56px;
-                margin-bottom: 16px;
-                opacity: 0.4;
-            }
-            .updates-empty h3 {
-                margin: 0 0 8px 0;
-                font-weight: 500;
-                color: var(--txt, #111b21);
-            }
-            .updates-empty p {
-                margin: 0;
-                font-size: 14px;
-            }
+            .updates-empty .empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.4; }
+            .updates-empty h3 { margin: 0 0 8px 0; font-weight: 500; color: var(--txt, #111b21); }
+            .updates-empty p { margin: 0; font-size: 14px; }
         `;
         document.head.appendChild(style);
     }
 
     // =============================================
-    // DATA LOADER (copied from taskManager.js style)
+    // FETCH TASKS – exactly like taskManager.js
     // =============================================
-    async function loadTasksFromJSON() {
-        try {
-            const response = await fetch(CONFIG.TASKS_URL);
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const data = await response.json();
-            // Support both { tasks: [...] } and plain array
-            const taskArray = Array.isArray(data) ? data : (data.tasks || []);
-            if (!taskArray.length) {
-                console.warn('[Updates] No tasks found in', CONFIG.TASKS_URL);
-                return [];
-            }
-            return taskArray;
-        } catch (err) {
-            console.warn('[Updates] Could not load tasks:', err.message);
-            // Fallback to cached data
-            try {
-                const cached = localStorage.getItem('updates_tasks');
-                if (cached) {
-                    const parsed = JSON.parse(cached);
-                    if (Array.isArray(parsed) && parsed.length) {
-                        console.log('[Updates] Using cached tasks.');
-                        return parsed;
+    function loadTasksFromJSON() {
+        return new Promise((resolve) => {
+            if (taskLoading) {
+                // If already loading, wait a bit and return cached tasks
+                const check = setInterval(() => {
+                    if (!taskLoading) {
+                        clearInterval(check);
+                        resolve(tasks.length ? tasks : []);
                     }
-                }
-            } catch (_) {}
-            return [];
-        }
+                }, 100);
+                return;
+            }
+            taskLoading = true;
+
+            fetch(CONFIG.TASKS_URL)
+                .then(res => {
+                    if (!res.ok) {
+                        if (res.status === 404) {
+                            // File doesn't exist – treat as no tasks
+                            console.log('[Updates] task.json not found (404).');
+                            taskCache = [];
+                            tasks = [];
+                            taskLoading = false;
+                            resolve([]);
+                            return;
+                        }
+                        throw new Error('Network error');
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    // Exactly like taskManager.js: expect data.tasks
+                    if (!data || !data.tasks || !Array.isArray(data.tasks)) {
+                        console.warn('[Updates] Invalid task format – no tasks array.');
+                        tasks = [];
+                        taskLoading = false;
+                        resolve([]);
+                        return;
+                    }
+                    tasks = data.tasks;
+                    // Cache for later
+                    try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
+                    console.log(`[Updates] Loaded ${tasks.length} tasks from ${CONFIG.TASKS_URL}`);
+                    taskLoading = false;
+                    resolve(tasks);
+                })
+                .catch(err => {
+                    console.warn('[Updates] Fetch error:', err.message);
+                    // Fallback to cache
+                    try {
+                        const cached = localStorage.getItem('updates_tasks');
+                        if (cached) {
+                            const parsed = JSON.parse(cached);
+                            if (Array.isArray(parsed) && parsed.length) {
+                                tasks = parsed;
+                                console.log(`[Updates] Using cached tasks (${tasks.length})`);
+                                taskLoading = false;
+                                resolve(tasks);
+                                return;
+                            }
+                        }
+                    } catch (_) {}
+                    tasks = [];
+                    taskLoading = false;
+                    resolve([]);
+                });
+        });
     }
 
     // =============================================
-    // PUBLIC: Set tasks from external source
-    // =============================================
-    function setTasks(newTasks) {
-        if (!Array.isArray(newTasks)) {
-            console.warn('[Updates] setTasks expects an array');
-            return;
-        }
-        tasks = newTasks;
-        // Cache to localStorage
-        try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
-        processStatuses();
-        renderIfVisible();
-        console.log(`[Updates] Tasks updated externally: ${tasks.length} tasks`);
-    }
-
-    // =============================================
-    // PROCESSING (groups by assigned_to)
+    // PROCESSING
     // =============================================
     function processStatuses() {
         const now = Date.now();
         const userMap = new Map();
 
-        // If no tasks, statuses empty
         if (!tasks || tasks.length === 0) {
             statuses = [];
             return statuses;
         }
 
         tasks.forEach(task => {
-            // --- Flexible field names ---
             const assignee = task.assigned_to || task.assignee || task.assignedTo || 'Unknown';
-            // timestamp: try created_at, updated_at, created, updated, timestamp, date
             let timestamp = now;
             const timeFields = ['created_at', 'updated_at', 'created', 'updated', 'timestamp', 'date'];
             for (const f of timeFields) {
@@ -700,8 +679,19 @@
         return statuses;
     }
 
+    function formatTimeAgo(timestamp) {
+        if (!timestamp) return 'just now';
+        const diff = Date.now() - timestamp;
+        const mins = Math.floor(diff / 60000);
+        if (mins < 1) return 'just now';
+        if (mins < 60) return `${mins}m ago`;
+        const hrs = Math.floor(mins / 60);
+        if (hrs < 24) return `${hrs}h ago`;
+        return `${Math.floor(hrs / 24)}d ago`;
+    }
+
     // =============================================
-    // RENDER: Status Cards + Channels
+    // RENDER
     // =============================================
     function renderUpdatesBody(container) {
         container.innerHTML = '';
@@ -781,17 +771,6 @@
             channelsSection.appendChild(item);
         });
         container.appendChild(channelsSection);
-    }
-
-    function formatTimeAgo(timestamp) {
-        if (!timestamp) return 'just now';
-        const diff = Date.now() - timestamp;
-        const mins = Math.floor(diff / 60000);
-        if (mins < 1) return 'just now';
-        if (mins < 60) return `${mins}m ago`;
-        const hrs = Math.floor(mins / 60);
-        if (hrs < 24) return `${hrs}h ago`;
-        return `${Math.floor(hrs / 24)}d ago`;
     }
 
     // =============================================
@@ -943,7 +922,7 @@
     }
 
     // =============================================
-    // TOAST HELPER (for channel clicks)
+    // TOAST HELPER
     // =============================================
     function toastText(msg) {
         const el = document.createElement('div');
@@ -1002,13 +981,11 @@
         }
     }
 
+    // =============================================
+    // REFRESH – re‑fetch from task.json
+    // =============================================
     async function refreshUpdates() {
-        // Re-fetch from JSON (like taskManager.js)
-        const fresh = await loadTasksFromJSON();
-        if (fresh && fresh.length) {
-            tasks = fresh;
-            try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
-        }
+        await loadTasksFromJSON();
         processStatuses();
         const body = document.getElementById('updates-body');
         if (body) renderUpdatesBody(body);
@@ -1058,6 +1035,21 @@
     }
 
     // =============================================
+    // PUBLIC SETTER (for external updates)
+    // =============================================
+    function setTasks(newTasks) {
+        if (!Array.isArray(newTasks)) {
+            console.warn('[Updates] setTasks expects an array');
+            return;
+        }
+        tasks = newTasks;
+        try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
+        processStatuses();
+        renderIfVisible();
+        console.log(`[Updates] Tasks updated externally: ${tasks.length} tasks`);
+    }
+
+    // =============================================
     // INIT
     // =============================================
     async function initUpdates() {
@@ -1069,25 +1061,9 @@
         applyWallpaper();
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyWallpaper);
 
-        // ---- Load tasks exactly like taskManager.js ----
-        const loaded = await loadTasksFromJSON();
-        if (loaded && loaded.length) {
-            tasks = loaded;
-            try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
-            processStatuses();
-        } else {
-            // If no tasks, try cache (though loadTasksFromJSON already tries)
-            try {
-                const cached = localStorage.getItem('updates_tasks');
-                if (cached) {
-                    const parsed = JSON.parse(cached);
-                    if (Array.isArray(parsed) && parsed.length) {
-                        tasks = parsed;
-                        processStatuses();
-                    }
-                }
-            } catch (_) {}
-        }
+        // Load tasks from task.json (exactly like taskManager.js)
+        await loadTasksFromJSON();
+        processStatuses();
 
         // Hook the Updates button
         const navBtn = document.querySelector('[data-nav="updates"]') || document.getElementById('status-update');
@@ -1104,8 +1080,7 @@
             console.warn('[Updates] No Updates button found.');
         }
 
-        console.log('[Updates] Initialized with internal fetch from', CONFIG.TASKS_URL);
-        console.log('[Updates] Channels are static dummy for realism.');
+        console.log(`[Updates] Initialized with ${tasks.length} tasks.`);
     }
 
     // =============================================
