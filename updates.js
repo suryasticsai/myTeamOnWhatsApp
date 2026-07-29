@@ -1,6 +1,6 @@
 /**
  * updates.js – WhatsApp-style Status Cards + Channels (full‑screen)
- * No dummy tasks – relies entirely on setTasks() or localStorage cache.
+ * Now fetches task.json directly, like taskManager.js.
  * Wallpaper applied via JS.
  */
 (function() {
@@ -10,6 +10,7 @@
     // CONFIG
     // =============================================
     const CONFIG = {
+        TASKS_URL: 'task.json',                // same as taskManager.js
         REFRESH_INTERVAL: 30000,
         MAX_STATUSES_PER_USER: 5,
         STATUS_DURATION: 86400000,
@@ -593,6 +594,38 @@
     }
 
     // =============================================
+    // DATA LOADER (copied from taskManager.js style)
+    // =============================================
+    async function loadTasksFromJSON() {
+        try {
+            const response = await fetch(CONFIG.TASKS_URL);
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const data = await response.json();
+            // Support both { tasks: [...] } and plain array
+            const taskArray = Array.isArray(data) ? data : (data.tasks || []);
+            if (!taskArray.length) {
+                console.warn('[Updates] No tasks found in', CONFIG.TASKS_URL);
+                return [];
+            }
+            return taskArray;
+        } catch (err) {
+            console.warn('[Updates] Could not load tasks:', err.message);
+            // Fallback to cached data
+            try {
+                const cached = localStorage.getItem('updates_tasks');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length) {
+                        console.log('[Updates] Using cached tasks.');
+                        return parsed;
+                    }
+                }
+            } catch (_) {}
+            return [];
+        }
+    }
+
+    // =============================================
     // PUBLIC: Set tasks from external source
     // =============================================
     function setTasks(newTasks) {
@@ -605,7 +638,7 @@
         try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
         processStatuses();
         renderIfVisible();
-        console.log(`[Updates] Tasks updated: ${tasks.length} tasks`);
+        console.log(`[Updates] Tasks updated externally: ${tasks.length} tasks`);
     }
 
     // =============================================
@@ -615,28 +648,30 @@
         const now = Date.now();
         const userMap = new Map();
 
-        // If no tasks, statuses become empty
+        // If no tasks, statuses empty
         if (!tasks || tasks.length === 0) {
             statuses = [];
             return statuses;
         }
 
         tasks.forEach(task => {
+            // --- Flexible field names ---
+            const assignee = task.assigned_to || task.assignee || task.assignedTo || 'Unknown';
+            // timestamp: try created_at, updated_at, created, updated, timestamp, date
             let timestamp = now;
-            if (task.created_at) {
-                const d = new Date(task.created_at);
-                if (!isNaN(d)) timestamp = d.getTime();
-            } else if (task.updated_at) {
-                const d = new Date(task.updated_at);
-                if (!isNaN(d)) timestamp = d.getTime();
+            const timeFields = ['created_at', 'updated_at', 'created', 'updated', 'timestamp', 'date'];
+            for (const f of timeFields) {
+                if (task[f]) {
+                    const d = new Date(task[f]);
+                    if (!isNaN(d)) { timestamp = d.getTime(); break; }
+                }
             }
 
             const age = now - timestamp;
             if (age > CONFIG.STATUS_DURATION) return;
 
-            const user = task.assigned_to || 'Unknown';
-            if (!userMap.has(user)) userMap.set(user, []);
-            userMap.get(user).push({
+            if (!userMap.has(assignee)) userMap.set(assignee, []);
+            userMap.get(assignee).push({
                 ...task,
                 displayTitle: task.title || 'Task',
                 displayDesc: task.description || 'No description',
@@ -968,6 +1003,12 @@
     }
 
     async function refreshUpdates() {
+        // Re-fetch from JSON (like taskManager.js)
+        const fresh = await loadTasksFromJSON();
+        if (fresh && fresh.length) {
+            tasks = fresh;
+            try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
+        }
         processStatuses();
         const body = document.getElementById('updates-body');
         if (body) renderUpdatesBody(body);
@@ -1019,20 +1060,34 @@
     // =============================================
     // INIT
     // =============================================
-    function initUpdates() {
+    async function initUpdates() {
         injectStyles();
 
-        // Load cached tasks if any (from previous setTasks call)
-        try {
-            const cached = localStorage.getItem('updates_tasks');
-            if (cached) {
-                const parsed = JSON.parse(cached);
-                if (Array.isArray(parsed) && parsed.length) {
-                    tasks = parsed;
-                    processStatuses();
+        // Load wallpaper preference
+        const saved = localStorage.getItem('wallpaperEnabled');
+        if (saved !== null) wallpaperEnabled = saved !== 'false';
+        applyWallpaper();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyWallpaper);
+
+        // ---- Load tasks exactly like taskManager.js ----
+        const loaded = await loadTasksFromJSON();
+        if (loaded && loaded.length) {
+            tasks = loaded;
+            try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
+            processStatuses();
+        } else {
+            // If no tasks, try cache (though loadTasksFromJSON already tries)
+            try {
+                const cached = localStorage.getItem('updates_tasks');
+                if (cached) {
+                    const parsed = JSON.parse(cached);
+                    if (Array.isArray(parsed) && parsed.length) {
+                        tasks = parsed;
+                        processStatuses();
+                    }
                 }
-            }
-        } catch (_) {}
+            } catch (_) {}
+        }
 
         // Hook the Updates button
         const navBtn = document.querySelector('[data-nav="updates"]') || document.getElementById('status-update');
@@ -1049,13 +1104,7 @@
             console.warn('[Updates] No Updates button found.');
         }
 
-        // ---- Apply wallpaper via JS ----
-        const saved = localStorage.getItem('wallpaperEnabled');
-        if (saved !== null) wallpaperEnabled = saved !== 'false';
-        applyWallpaper();
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyWallpaper);
-
-        console.log('[Updates] Initialized (no dummy tasks). Use Updates.setTasks(realTasks) to populate.');
+        console.log('[Updates] Initialized with internal fetch from', CONFIG.TASKS_URL);
         console.log('[Updates] Channels are static dummy for realism.');
     }
 
