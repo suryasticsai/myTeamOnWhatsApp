@@ -1,5 +1,7 @@
 /**
- * updates.js – WhatsApp-style Status Cards (fixed for your HTML)
+ * updates.js – WhatsApp-style Status Cards + Channels (full‑screen)
+ * No dummy tasks – relies entirely on setTasks() or localStorage cache.
+ * Wallpaper applied via JS.
  */
 (function() {
     'use strict';
@@ -12,6 +14,8 @@
         MAX_STATUSES_PER_USER: 5,
         STATUS_DURATION: 86400000,
         VIEWER_DURATION: 5000,
+        WALLPAPER_LIGHT: 'wallpaper/wallpaper-light.png',
+        WALLPAPER_DARK: 'wallpaper/wallpaper-dark.png',
     };
 
     // =============================================
@@ -26,6 +30,49 @@
     let progressInterval = null;
     let viewerTimeout = null;
     let isUpdatesVisible = false;
+    let wallpaperEnabled = true;
+
+    // =============================================
+    // DUMMY CHANNELS DATA (static, for realism)
+    // =============================================
+    function getDummyChannels() {
+        return [
+            { name: 'Sai Maharaj Sannidhi', icon: '🕉️', time: '10:37 AM', count: 41 },
+            { name: 'Loot Deals Official', icon: '🛍️', time: '10:36 AM', count: 116 },
+            { name: 'Programming & AI Resources', icon: '🤖', time: '10:34 AM', count: 34 },
+            { name: 'TCS Community Updates', icon: '💼', time: '10:11 AM', count: 1 },
+            { name: 'Hindustan Times', icon: '📰', time: '9:58 AM', count: 0 },
+            { name: 'BBC News', icon: '🌍', time: '9:30 AM', count: 43 },
+            { name: 'TechCrunch', icon: '💻', time: '8:45 AM', count: 12 },
+            { name: 'The Verge', icon: '📱', time: '8:10 AM', count: 8 },
+        ];
+    }
+
+    // =============================================
+    // WALLPAPER APPLIER (via JS)
+    // =============================================
+    function applyWallpaper(theme) {
+        const messages = document.querySelector('.messages');
+        if (!messages) return;
+        if (!wallpaperEnabled) {
+            messages.style.backgroundImage = 'none';
+            messages.style.backgroundColor = 'var(--chat-bg, #efeae2)';
+            return;
+        }
+        const isDark = theme === 'dark' || (theme === undefined && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        const url = isDark ? CONFIG.WALLPAPER_DARK : CONFIG.WALLPAPER_LIGHT;
+        messages.style.backgroundImage = `url('${url}')`;
+        messages.style.backgroundSize = 'cover';
+        messages.style.backgroundPosition = 'center';
+        messages.style.backgroundRepeat = 'no-repeat';
+        messages.style.backgroundAttachment = 'fixed';
+    }
+
+    function toggleWallpaper() {
+        wallpaperEnabled = !wallpaperEnabled;
+        localStorage.setItem('wallpaperEnabled', wallpaperEnabled);
+        applyWallpaper();
+    }
 
     // =============================================
     // DOM HELPERS
@@ -47,16 +94,15 @@
         const style = document.createElement('style');
         style.id = 'updates-styles';
         style.textContent = `
-            /* ===== UPDATES CONTAINER ===== */
+            /* ===== UPDATES CONTAINER (full screen overlay) ===== */
             .updates-container {
                 display: none;
-                flex-direction: column;
-                height: 100%;
-                width: 100%;
+                position: fixed;
+                inset: 0;
+                z-index: 1000;
                 background: var(--chat-bg, #efeae2);
+                flex-direction: column;
                 overflow: hidden;
-                position: relative;
-                z-index: 10;
             }
             .updates-container.active {
                 display: flex;
@@ -71,6 +117,7 @@
                 align-items: center;
                 gap: 12px;
                 flex-shrink: 0;
+                min-height: 60px;
             }
             .updates-header h2 {
                 font-size: 18px;
@@ -107,40 +154,96 @@
                 to { transform: rotate(360deg); }
             }
 
-            /* Status grid */
-            .status-grid {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 16px;
-                padding: 16px;
-                overflow-y: auto;
+            /* ===== MAIN SCROLLABLE AREA (status + channels) ===== */
+            .updates-body {
                 flex: 1;
-                align-content: flex-start;
-                justify-content: flex-start;
+                overflow-y: auto;
+                padding: 8px 12px 20px;
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .updates-body::-webkit-scrollbar {
+                width: 4px;
+            }
+            .updates-body::-webkit-scrollbar-thumb {
+                background: rgba(0,0,0,0.2);
+                border-radius: 4px;
+            }
+            .updates-body::-webkit-scrollbar-track {
+                background: transparent;
             }
 
-            /* Individual status card */
+            /* ===== STATUS SECTION ===== */
+            .status-section {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .status-section .section-label {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--txt-2, #667781);
+                padding: 4px 0;
+            }
+
+            .status-scroll {
+                display: flex;
+                gap: 14px;
+                overflow-x: auto;
+                overflow-y: hidden;
+                padding: 4px 0 12px 0;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+            .status-scroll::-webkit-scrollbar {
+                height: 4px;
+            }
+            .status-scroll::-webkit-scrollbar-thumb {
+                background: rgba(0,0,0,0.2);
+                border-radius: 4px;
+            }
+            .status-scroll::-webkit-scrollbar-track {
+                background: transparent;
+            }
+
+            /* Tall vertical card */
             .status-card {
+                flex: 0 0 140px;
+                width: 140px;
+                min-height: 160px;
+                background: var(--panel, #ffffff);
+                border-radius: 16px;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.08);
                 display: flex;
                 flex-direction: column;
                 align-items: center;
-                gap: 4px;
+                justify-content: center;
+                gap: 8px;
+                padding: 14px 8px;
                 cursor: pointer;
-                width: 72px;
-                transition: transform 0.15s;
+                transition: transform 0.15s, box-shadow 0.2s;
+                scroll-snap-align: start;
+                border: 1px solid var(--border, #e9edef);
                 text-align: center;
             }
             .status-card:hover {
-                transform: scale(1.05);
+                transform: scale(1.03);
+                box-shadow: 0 4px 16px rgba(0,0,0,0.15);
             }
+            .status-card:active {
+                transform: scale(0.95);
+            }
+
             .status-card .avatar-wrapper {
-                position: relative;
-                width: 64px;
-                height: 64px;
+                flex: 0 0 60px;
+                width: 60px;
+                height: 60px;
                 border-radius: 50%;
                 padding: 3px;
                 background: #d1d7db;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+                position: relative;
             }
             .status-card .avatar-wrapper.has-status {
                 background: conic-gradient(from 0deg, #25d366 0%, #128c7e 40%, #25d366 70%, #128c7e 100%);
@@ -156,8 +259,8 @@
             }
             .status-card .avatar-wrapper .status-dot {
                 position: absolute;
-                bottom: 2px;
-                right: 2px;
+                bottom: 3px;
+                right: 3px;
                 width: 14px;
                 height: 14px;
                 background: #25d366;
@@ -168,18 +271,111 @@
             .status-card .avatar-wrapper.has-status .status-dot {
                 display: block;
             }
+
+            .status-card .card-info {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 4px;
+                width: 100%;
+                min-width: 0;
+            }
             .status-card .status-name {
-                font-size: 12px;
+                font-size: 14px;
+                font-weight: 600;
                 color: var(--txt, #111b21);
-                max-width: 72px;
+                white-space: nowrap;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                max-width: 100%;
+            }
+            .status-card .status-preview {
+                font-size: 11px;
+                color: var(--txt-2, #667781);
                 white-space: nowrap;
-                font-weight: 500;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                max-width: 100%;
+                opacity: 0.8;
+                line-height: 1.3;
             }
             .status-card .status-time {
                 font-size: 10px;
                 color: var(--txt-2, #667781);
+                opacity: 0.6;
+                margin-top: 2px;
+            }
+
+            /* ===== CHANNELS SECTION ===== */
+            .channels-section {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 4px;
+            }
+            .channels-section .section-label {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--txt-2, #667781);
+                padding: 4px 0;
+            }
+
+            .channel-item {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                padding: 10px 12px;
+                background: var(--panel, #ffffff);
+                border-radius: 12px;
+                border: 1px solid var(--border, #e9edef);
+                transition: background 0.15s;
+                cursor: default;
+            }
+            .channel-item:hover {
+                background: var(--hover, #f5f6f6);
+            }
+            .channel-item .channel-icon {
+                font-size: 28px;
+                flex: 0 0 40px;
+                text-align: center;
+            }
+            .channel-item .channel-info {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                min-width: 0;
+            }
+            .channel-item .channel-name {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--txt, #111b21);
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .channel-item .channel-meta {
+                font-size: 12px;
+                color: var(--txt-2, #667781);
+                display: flex;
+                gap: 12px;
+                align-items: center;
+            }
+            .channel-item .channel-count {
+                background: var(--badge, #25d366);
+                color: #fff;
+                border-radius: 10px;
+                padding: 0 8px;
+                font-size: 11px;
+                font-weight: 600;
+                min-width: 18px;
+                text-align: center;
+                line-height: 18px;
+            }
+            .channel-item .channel-count.zero {
+                background: transparent;
+                color: var(--txt-2);
+                font-weight: 400;
             }
 
             /* ===== STATUS VIEWER (full-screen) ===== */
@@ -325,14 +521,47 @@
             }
 
             @media (max-width: 600px) {
-                .status-card { width: 60px; }
-                .status-card .avatar-wrapper { width: 52px; height: 52px; }
-                .status-card .status-name { font-size: 10px; }
-                .status-viewer .status-content { font-size: 16px; padding: 18px; }
-                .status-viewer .nav-arrow { font-size: 24px; padding: 8px 12px; }
-                .status-viewer .nav-arrow.prev { left: 4px; }
-                .status-viewer .nav-arrow.next { right: 4px; }
-                .status-viewer .progress-bar { left: 10%; right: 10%; }
+                .status-card {
+                    flex: 0 0 120px;
+                    width: 120px;
+                    min-height: 140px;
+                    padding: 12px 6px;
+                }
+                .status-card .avatar-wrapper {
+                    flex: 0 0 50px;
+                    width: 50px;
+                    height: 50px;
+                }
+                .status-card .status-name {
+                    font-size: 13px;
+                }
+                .status-card .status-preview {
+                    font-size: 10px;
+                }
+                .channel-item {
+                    padding: 8px 10px;
+                }
+                .channel-item .channel-icon {
+                    font-size: 24px;
+                }
+                .status-viewer .status-content {
+                    font-size: 16px;
+                    padding: 18px;
+                }
+                .status-viewer .nav-arrow {
+                    font-size: 24px;
+                    padding: 8px 12px;
+                }
+                .status-viewer .nav-arrow.prev {
+                    left: 4px;
+                }
+                .status-viewer .nav-arrow.next {
+                    right: 4px;
+                }
+                .status-viewer .progress-bar {
+                    left: 10%;
+                    right: 10%;
+                }
             }
 
             .updates-empty {
@@ -372,6 +601,7 @@
             return;
         }
         tasks = newTasks;
+        // Cache to localStorage
         try { localStorage.setItem('updates_tasks', JSON.stringify(tasks)); } catch (_) {}
         processStatuses();
         renderIfVisible();
@@ -384,6 +614,12 @@
     function processStatuses() {
         const now = Date.now();
         const userMap = new Map();
+
+        // If no tasks, statuses become empty
+        if (!tasks || tasks.length === 0) {
+            statuses = [];
+            return statuses;
+        }
 
         tasks.forEach(task => {
             let timestamp = now;
@@ -422,6 +658,7 @@
                 tasks: userTasks,
                 latestTimestamp: userTasks[0]?.timestamp || 0,
                 hasStatus: userTasks.length > 0,
+                preview: userTasks[0]?.displayTitle || 'No updates',
             }))
             .sort((a, b) => b.latestTimestamp - a.latestTimestamp);
 
@@ -429,51 +666,86 @@
     }
 
     // =============================================
-    // RENDER: Status Grid
+    // RENDER: Status Cards + Channels
     // =============================================
-    function renderStatusGrid(container) {
-        const grid = container.querySelector('.status-grid') || createElement('div', 'status-grid');
+    function renderUpdatesBody(container) {
         container.innerHTML = '';
-        container.appendChild(grid);
+
+        // ---- Status section ----
+        const statusSection = createElement('div', 'status-section');
+        const statusLabel = createElement('div', 'section-label', '📸 Status');
+        statusSection.appendChild(statusLabel);
 
         if (statuses.length === 0) {
-            grid.innerHTML = `
-                <div class="updates-empty">
-                    <div class="empty-icon">📭</div>
-                    <h3>No status updates</h3>
-                    <p>Check back later for updates from your team.</p>
+            const empty = createElement('div', 'updates-empty');
+            empty.innerHTML = `
+                <div class="empty-icon">📭</div>
+                <h3>No status updates</h3>
+                <p>Check back later for updates from your team.</p>
+            `;
+            statusSection.appendChild(empty);
+        } else {
+            const scrollWrapper = createElement('div', 'status-scroll');
+            statuses.forEach(status => {
+                const card = createElement('div', 'status-card');
+                const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(status.user)}&background=25d366&color=fff&size=64&bold=true`;
+
+                const avatarWrapper = createElement('div', 'avatar-wrapper');
+                avatarWrapper.classList.add(status.hasStatus ? 'has-status' : 'no-status');
+
+                const img = createElement('img');
+                img.src = avatarUrl;
+                img.alt = status.user;
+                img.loading = 'lazy';
+                avatarWrapper.appendChild(img);
+
+                const dot = createElement('div', 'status-dot');
+                avatarWrapper.appendChild(dot);
+
+                const info = createElement('div', 'card-info');
+                const name = createElement('div', 'status-name', status.user);
+                const preview = createElement('div', 'status-preview', status.preview);
+                const time = createElement('div', 'status-time', formatTimeAgo(status.latestTimestamp));
+
+                info.appendChild(name);
+                info.appendChild(preview);
+                info.appendChild(time);
+
+                card.appendChild(avatarWrapper);
+                card.appendChild(info);
+
+                card.addEventListener('click', () => openStatusViewer(status.user));
+
+                scrollWrapper.appendChild(card);
+            });
+            statusSection.appendChild(scrollWrapper);
+        }
+        container.appendChild(statusSection);
+
+        // ---- Channels section ----
+        const channelsSection = createElement('div', 'channels-section');
+        const channelsLabel = createElement('div', 'section-label', '📢 Channels');
+        channelsSection.appendChild(channelsLabel);
+
+        const channels = getDummyChannels();
+        channels.forEach(ch => {
+            const item = createElement('div', 'channel-item');
+            item.innerHTML = `
+                <div class="channel-icon">${ch.icon}</div>
+                <div class="channel-info">
+                    <div class="channel-name">${ch.name}</div>
+                    <div class="channel-meta">
+                        <span>${ch.time}</span>
+                        <span class="channel-count ${ch.count === 0 ? 'zero' : ''}">${ch.count > 0 ? ch.count : ''}</span>
+                    </div>
                 </div>
             `;
-            return;
-        }
-
-        statuses.forEach(status => {
-            const card = createElement('div', 'status-card');
-            const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(status.user)}&background=25d366&color=fff&size=64&bold=true`;
-
-            const wrapper = createElement('div', 'avatar-wrapper');
-            wrapper.classList.add(status.hasStatus ? 'has-status' : 'no-status');
-
-            const img = createElement('img');
-            img.src = avatarUrl;
-            img.alt = status.user;
-            img.loading = 'lazy';
-            wrapper.appendChild(img);
-
-            const dot = createElement('div', 'status-dot');
-            wrapper.appendChild(dot);
-
-            const name = createElement('div', 'status-name', status.user);
-            const time = createElement('div', 'status-time', formatTimeAgo(status.latestTimestamp));
-
-            card.appendChild(wrapper);
-            card.appendChild(name);
-            card.appendChild(time);
-
-            card.addEventListener('click', () => openStatusViewer(status.user));
-
-            grid.appendChild(card);
+            item.addEventListener('click', () => {
+                toastText(`📢 ${ch.name} — channel preview (demo)`);
+            });
+            channelsSection.appendChild(item);
         });
+        container.appendChild(channelsSection);
     }
 
     function formatTimeAgo(timestamp) {
@@ -636,6 +908,28 @@
     }
 
     // =============================================
+    // TOAST HELPER (for channel clicks)
+    // =============================================
+    function toastText(msg) {
+        const el = document.createElement('div');
+        el.className = 'toast';
+        el.style.cssText = `
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.8); color: #fff; padding: 10px 20px;
+            border-radius: 10px; font-size: 14px; z-index: 99999;
+            animation: fadeIn 0.3s ease;
+            max-width: 80%; text-align: center;
+        `;
+        el.textContent = msg;
+        document.body.appendChild(el);
+        setTimeout(() => {
+            el.style.opacity = '0';
+            el.style.transition = 'opacity 0.3s';
+            setTimeout(() => el.remove(), 400);
+        }, 2000);
+    }
+
+    // =============================================
     // MAIN UPDATES UI
     // =============================================
     function createUpdatesUI() {
@@ -650,8 +944,9 @@
         `;
         container.appendChild(header);
 
-        const grid = createElement('div', 'status-grid');
-        container.appendChild(grid);
+        const body = createElement('div', 'updates-body');
+        body.id = 'updates-body';
+        container.appendChild(body);
 
         header.querySelector('#updates-back').addEventListener('click', hideUpdates);
         header.querySelector('#updates-refresh').addEventListener('click', async (e) => {
@@ -667,40 +962,31 @@
     function renderIfVisible() {
         const container = document.getElementById('updates-container');
         if (container && container.classList.contains('active')) {
-            renderStatusGrid(container);
+            const body = document.getElementById('updates-body');
+            if (body) renderUpdatesBody(body);
         }
     }
 
     async function refreshUpdates() {
         processStatuses();
-        const container = document.getElementById('updates-container');
-        if (container) renderStatusGrid(container);
+        const body = document.getElementById('updates-body');
+        if (body) renderUpdatesBody(body);
         return statuses;
     }
 
     // =============================================
-    // SHOW / HIDE – fixed to work with your layout
+    // SHOW / HIDE
     // =============================================
     function showUpdates() {
         let container = document.getElementById('updates-container');
         if (!container) {
             container = createUpdatesUI();
-            // Insert the updates container inside #app, alongside #chatArea
-            const app = document.getElementById('app');
-            const chatArea = document.getElementById('chatArea');
-            if (app && chatArea) {
-                app.insertBefore(container, chatArea);
-            } else {
-                // fallback
-                document.body.appendChild(container);
-            }
+            document.body.appendChild(container);
         }
 
-        // Hide the main chat area
         const chatArea = document.getElementById('chatArea');
         if (chatArea) chatArea.style.display = 'none';
 
-        // Show updates
         container.classList.add('active');
         isUpdatesVisible = true;
         refreshUpdates();
@@ -708,7 +994,6 @@
         if (refreshTimer) clearInterval(refreshTimer);
         refreshTimer = setInterval(refreshUpdates, CONFIG.REFRESH_INTERVAL);
 
-        // Highlight nav button
         const navBtn = document.querySelector('[data-nav="updates"]');
         if (navBtn) navBtn.classList.add('active');
     }
@@ -718,7 +1003,6 @@
         if (container) container.classList.remove('active');
         isUpdatesVisible = false;
 
-        // Restore chat area
         const chatArea = document.getElementById('chatArea');
         if (chatArea) chatArea.style.display = '';
 
@@ -738,19 +1022,19 @@
     function initUpdates() {
         injectStyles();
 
-        // Load cached tasks
+        // Load cached tasks if any (from previous setTasks call)
         try {
             const cached = localStorage.getItem('updates_tasks');
             if (cached) {
                 const parsed = JSON.parse(cached);
-                if (parsed.length) {
+                if (Array.isArray(parsed) && parsed.length) {
                     tasks = parsed;
                     processStatuses();
                 }
             }
         } catch (_) {}
 
-        // Hook the Updates button (id="status-update" or data-nav="updates")
+        // Hook the Updates button
         const navBtn = document.querySelector('[data-nav="updates"]') || document.getElementById('status-update');
         if (navBtn) {
             navBtn.addEventListener('click', (e) => {
@@ -765,7 +1049,14 @@
             console.warn('[Updates] No Updates button found.');
         }
 
-        console.log('[Updates] Initialized. Use Updates.setTasks(tasks) to inject tasks.');
+        // ---- Apply wallpaper via JS ----
+        const saved = localStorage.getItem('wallpaperEnabled');
+        if (saved !== null) wallpaperEnabled = saved !== 'false';
+        applyWallpaper();
+        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyWallpaper);
+
+        console.log('[Updates] Initialized (no dummy tasks). Use Updates.setTasks(realTasks) to populate.');
+        console.log('[Updates] Channels are static dummy for realism.');
     }
 
     // =============================================
@@ -778,9 +1069,10 @@
         refresh: refreshUpdates,
         setTasks: setTasks,
         getStatuses: () => statuses,
+        applyWallpaper: applyWallpaper,
+        toggleWallpaper: toggleWallpaper,
     };
 
-    // Auto-init
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', initUpdates);
     } else {
